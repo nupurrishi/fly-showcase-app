@@ -46,141 +46,120 @@ const models = [
   },
 ];
 
-const modelStatusClasses = {
-  READY: "status-ready",
-  BACKSTAGE: "status-backstage",
-  WAITING: "status-waiting",
-  LIVE: "status-live",
-  ENDED: "status-ended",
-};
-
 function LiveShow() {
-  const [currentStage, setCurrentStage] = useState(
-    "HAIR & MAKEUP"
-  );
+  const [currentStage, setCurrentStage] =
+    useState("HAIR & MAKEUP");
 
-  const [currentModel, setCurrentModel] = useState(null);
-  const [showMessage, setShowMessage] = useState("");
+  const [currentModel, setCurrentModel] =
+    useState(null);
 
-  const showToast = (message) => {
-    setShowMessage(message);
-
-    setTimeout(() => {
-      setShowMessage("");
-    }, 2500);
-  };
-
-  const moveToNextStage = () => {
-    const currentIndex = stages.indexOf(currentStage);
-
-    if (currentIndex < stages.length - 1) {
-      const nextStage = stages[currentIndex + 1];
-
-      setCurrentStage(nextStage);
-      showToast(`Show moved to ${nextStage}.`);
-    }
-  };
-
-  const moveToPreviousStage = () => {
-    const currentIndex = stages.indexOf(currentStage);
-
-    if (currentIndex > 0) {
-      const previousStage = stages[currentIndex - 1];
-
-      setCurrentStage(previousStage);
-      showToast(`Show moved to ${previousStage}.`);
-    }
-  };
-
-  const callModel = (model) => {
-    setCurrentModel(model);
-    showToast(`${model.name} has been called.`);
-  };
+  const [message, setMessage] =
+    useState("");
 
   const currentStageIndex =
     stages.indexOf(currentStage);
 
+  function showMessage(text) {
+    setMessage(text);
+
+    setTimeout(() => {
+      setMessage("");
+    }, 2500);
+  }
+
+  function nextStage() {
+    if (currentStageIndex < stages.length - 1) {
+      const nextStage =
+        stages[currentStageIndex + 1];
+
+      setCurrentStage(nextStage);
+      showMessage(`Show moved to ${nextStage}`);
+    }
+  }
+
+  function previousStage() {
+    if (currentStageIndex > 0) {
+      const previousStage =
+        stages[currentStageIndex - 1];
+
+      setCurrentStage(previousStage);
+      showMessage(`Show moved to ${previousStage}`);
+    }
+  }
+
+  function callModel(model) {
+    setCurrentModel(model);
+    showMessage(`${model.name} has been called`);
+  }
+
   return (
-    <main className="live-show-page">
-      {/* =========================================
-          TOP BRAND BAR
-      ========================================= */}
+    <main className="page">
+      <div className="brand-bar" />
 
-      <div className="login-brand-bar" />
+      <div className="page-container">
+        {/* HEADER */}
 
-      <div className="live-show-container">
-        {/* =========================================
-            HEADER
-        ========================================= */}
-
-        <header className="live-show-header">
-          <div className="fly-logo">
-            <div className="fly-logo-wordmark">
+        <header className="page-header">
+          <div className="logo">
+            <div className="logo-wordmark">
               FLY
             </div>
 
-            <div className="fly-logo-tagline">
+            <div className="logo-tagline">
               SHOWCASE
             </div>
           </div>
 
-          <div className="live-show-header-info">
-            <div className="page-header-eyebrow">
+          <div className="page-header-info">
+            <div className="eyebrow">
               MANAGER CONTROL
             </div>
 
-            <div className="live-show-header-title">
+            <div className="page-header-title">
               Live Show
             </div>
           </div>
         </header>
 
-        {/* =========================================
-            LIVE HERO
-        ========================================= */}
+        {/* HERO */}
 
-        <section className="live-show-hero">
-          <div className="live-show-hero-top">
+        <section className="hero hero-dark">
+          <div className="hero-top">
             <div>
-              <div className="live-show-hero-eyebrow">
+              <div className="eyebrow eyebrow-gold">
                 LIVE SHOW CONTROL
               </div>
 
-              <h1 className="live-show-hero-title">
+              <h1 className="hero-title">
                 The Show Is
                 <br />
                 Moving.
               </h1>
             </div>
 
-            <div className="live-show-live-badge">
+            <div className="badge badge-live">
               ● LIVE
             </div>
           </div>
 
-          <p className="live-show-hero-description">
-            Use this screen to keep the entire
-            production moving from preparation
-            through the final runway.
+          <p className="hero-description">
+            Keep the entire production moving from
+            preparation through the final runway.
           </p>
         </section>
 
-        {/* =========================================
-            CURRENT SHOW STATUS
-        ========================================= */}
+        {/* CURRENT STAGE */}
 
-        <section className="live-show-section">
-          <div className="page-header-eyebrow">
+        <section className="section">
+          <div className="eyebrow">
             CURRENT SHOW STATUS
           </div>
 
-          <h2 className="live-show-stage-title">
+          <h2 className="section-title">
             {currentStage}
           </h2>
 
-          {/* STAGE TRACKER */}
-
-          <div className="live-show-stage-list">
+          <div className="stage-grid">
             {stages.map((stage, index) => {
               const active =
                 index === currentStageIndex;
@@ -188,27 +167,24 @@ function LiveShow() {
               const completed =
                 index < currentStageIndex;
 
-              let stageClass =
-                "live-show-stage";
-
-              if (active) {
-                stageClass +=
-                  " live-show-stage-active";
-              } else if (completed) {
-                stageClass +=
-                  " live-show-stage-completed";
-              }
-
               return (
                 <div
                   key={stage}
-                  className={stageClass}
+                  className={`stage-card ${
+                    active
+                      ? "stage-active"
+                      : completed
+                      ? "stage-completed"
+                      : ""
+                  }`}
                 >
-                  <div className="live-show-stage-number">
-                    {index + 1}
+                  <div className="stage-number">
+                    {completed
+                      ? "✓"
+                      : `0${index + 1}`}
                   </div>
 
-                  <div className="live-show-stage-name">
+                  <div className="stage-name">
                     {stage}
                   </div>
                 </div>
@@ -216,22 +192,18 @@ function LiveShow() {
             })}
           </div>
 
-          {/* STAGE CONTROLS */}
-
-          <div className="live-show-stage-controls">
+          <div className="button-row">
             <button
-              type="button"
               className="button button-ghost"
-              onClick={moveToPreviousStage}
+              onClick={previousStage}
               disabled={currentStageIndex === 0}
             >
               ← PREVIOUS
             </button>
 
             <button
-              type="button"
-              className="button button-primary live-show-next-button"
-              onClick={moveToNextStage}
+              className="button button-primary"
+              onClick={nextStage}
               disabled={
                 currentStageIndex ===
                 stages.length - 1
@@ -242,223 +214,166 @@ function LiveShow() {
           </div>
         </section>
 
-        {/* =========================================
-            RUNWAY NOW
-        ========================================= */}
+        {/* RUNWAY */}
 
-        <section className="live-show-runway-grid">
-          {/* CURRENT MODEL */}
-
-          <div className="live-show-runway-card live-show-runway-current">
-            <div className="page-header-eyebrow">
+        <section className="two-column">
+          <div className="card card-dark">
+            <div className="eyebrow eyebrow-gold">
               CURRENTLY ON RUNWAY
             </div>
 
-            <h2 className="live-show-runway-title">
+            <h2 className="card-title">
               {currentModel
                 ? currentModel.name
                 : "No Model"}
             </h2>
 
-            <p className="live-show-runway-description">
+            <p className="card-text">
               {currentModel
                 ? `${currentModel.designer} • ${currentModel.look}`
                 : "Waiting for runway call"}
             </p>
           </div>
 
-          {/* NEXT MODEL */}
-
-          <div className="live-show-runway-card live-show-runway-next">
-            <div className="live-show-next-eyebrow">
+          <div className="card card-purple">
+            <div className="eyebrow">
               NEXT MODEL
             </div>
 
-            <h2 className="live-show-runway-title">
+            <h2 className="card-title">
               Model 02
             </h2>
 
-            <p className="live-show-runway-description">
+            <p className="card-text">
               Call time • 6:50 PM
             </p>
           </div>
         </section>
 
-        {/* =========================================
-            MODEL LINEUP
-        ========================================= */}
+        {/* MODEL LINEUP */}
 
-        <section className="live-show-lineup">
-          <div className="live-show-lineup-header">
+        <section className="section">
+          <div className="section-heading">
             <div>
-              <div className="page-header-eyebrow">
+              <div className="eyebrow">
                 MODEL LINEUP
               </div>
 
-              <h2 className="live-show-lineup-title">
+              <h2 className="section-title">
                 Runway Queue
               </h2>
             </div>
 
-            <div className="live-show-model-count">
-              {models.length} models
+            <div className="muted">
+              {models.length} MODELS
             </div>
           </div>
 
-          {models.map((model, index) => {
-            const statusClass =
-              modelStatusClasses[model.status] ||
-              "status-ended";
-
-            return (
+          <div className="list">
+            {models.map((model, index) => (
               <article
                 key={model.id}
-                className="live-show-model-card"
+                className="list-item"
               >
-                <div className="live-show-model-info">
-                  {/* NUMBER */}
+                <div
+                  className={`list-number ${
+                    index === 0
+                      ? "list-number-active"
+                      : ""
+                  }`}
+                >
+                  {String(index + 1).padStart(
+                    2,
+                    "0"
+                  )}
+                </div>
 
-                  <div
-                    className={`live-show-model-number ${
-                      index === 0
-                        ? "live-show-model-number-active"
-                        : ""
-                    }`}
-                  >
-                    {String(index + 1).padStart(
-                      2,
-                      "0"
-                    )}
+                <div className="list-content">
+                  <div className="list-title">
+                    {model.name}
                   </div>
 
-                  {/* MODEL DETAILS */}
-
-                  <div className="live-show-model-details">
-                    <div className="live-show-model-name">
-                      {model.name}
-                    </div>
-
-                    <div className="live-show-model-meta">
-                      {model.designer} •{" "}
-                      {model.look}
-                    </div>
-                  </div>
-
-                  {/* STATUS */}
-
-                  <div
-                    className={`status-badge ${statusClass}`}
-                  >
-                    {model.status}
+                  <div className="list-meta">
+                    {model.designer} •{" "}
+                    {model.look}
                   </div>
                 </div>
 
-                {/* CALL BUTTON */}
+                <div
+                  className={`status status-${model.status.toLowerCase()}`}
+                >
+                  ● {model.status}
+                </div>
 
                 <button
-                  type="button"
-                  className="button button-secondary button-full button-small"
-                  onClick={() => callModel(model)}
+                  className="button button-dark button-small"
+                  onClick={() =>
+                    callModel(model)
+                  }
                 >
-                  CALL{" "}
-                  {model.name.toUpperCase()}
+                  CALL MODEL
                 </button>
               </article>
-            );
-          })}
+            ))}
+          </div>
         </section>
 
-        {/* =========================================
-            QUICK ACTIONS
-        ========================================= */}
+        {/* QUICK ACTIONS */}
 
-        <section className="live-show-quick-actions">
-          <div className="page-header-eyebrow">
+        <section className="section">
+          <div className="eyebrow">
             QUICK ACTIONS
           </div>
 
-          <div className="grid grid-auto">
+          <div className="quick-actions">
             <button
-              type="button"
-              className="quick-action"
-              onClick={() =>
-                (window.location.href =
-                  "/model-calls")
-              }
-            >
-              <span className="quick-action-content">
-                <span className="quick-action-label">
-                  MODEL CALLS
-                </span>
-              </span>
-
-              <span className="quick-action-arrow">
-                →
-              </span>
-            </button>
-
-            <button
-              type="button"
               className="quick-action"
               onClick={() =>
                 (window.location.href =
                   "/hair-makeup")
               }
             >
-              <span className="quick-action-content">
-                <span className="quick-action-label">
-                  HAIR & MAKEUP
-                </span>
-              </span>
-
-              <span className="quick-action-arrow">
-                →
-              </span>
+              HAIR & MAKEUP →
             </button>
 
             <button
-              type="button"
               className="quick-action"
               onClick={() =>
                 (window.location.href =
                   "/schedule")
               }
             >
-              <span className="quick-action-content">
-                <span className="quick-action-label">
-                  SCHEDULE
-                </span>
-              </span>
+              SCHEDULE →
+            </button>
 
-              <span className="quick-action-arrow">
-                →
-              </span>
+            <button
+              className="quick-action"
+              onClick={() =>
+                (window.location.href =
+                  "/model")
+              }
+            >
+              MODEL DASHBOARD →
             </button>
           </div>
         </section>
 
-        {/* =========================================
-            FOOTER
-        ========================================= */}
+        {/* FOOTER */}
 
-        <footer className="live-show-footer">
-          <div className="live-show-footer-title">
+        <footer className="page-footer">
+          <div className="footer-title">
             First Love Yourself
           </div>
 
-          <div className="live-show-footer-subtitle">
+          <div className="footer-subtitle">
             FLY SHOWCASE
           </div>
         </footer>
       </div>
 
-      {/* =========================================
-          TOAST
-      ========================================= */}
-
-      {showMessage && (
+      {message && (
         <div className="toast">
-          {showMessage}
+          {message}
         </div>
       )}
     </main>
