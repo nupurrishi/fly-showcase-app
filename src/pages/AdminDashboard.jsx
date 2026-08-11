@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 
 const COLORS = {
-  black: "#161616",
   purple: "#81247C",
   gold: "#DEB64B",
+  black: "#161616",
   white: "#FFFFFF",
   lightPurple: "#F5EAF4",
   lightGold: "#F8F3E5",
@@ -12,66 +12,62 @@ const COLORS = {
   green: "#2F7D5B",
   lightGreen: "#EAF5EF",
   red: "#B33A3A",
-  lightRed: "#FBEAEA",
 };
 
-const initialUsers = [
-  {
-    id: 1,
-    name: "Model One",
-    email: "model.one@example.com",
-    role: "MODEL",
-    status: "ACTIVE",
-  },
-  {
-    id: 2,
-    name: "Designer A",
-    email: "designer.a@example.com",
-    role: "DESIGNER",
-    status: "ACTIVE",
-  },
-  {
-    id: 3,
-    name: "Stage Manager",
-    email: "stage@example.com",
-    role: "STAGE MANAGER",
-    status: "ACTIVE",
-  },
-  {
-    id: 4,
-    name: "Backstage Manager",
-    email: "backstage@example.com",
-    role: "BACKSTAGE",
-    status: "ACTIVE",
-  },
-];
-
-const initialEvents = [
-  {
-    id: 1,
-    name: "Fly Showcase",
-    location: "Main Stage",
-    date: "November 11",
-    status: "ACTIVE",
-  },
-  {
-    id: 2,
-    name: "Designer Preview",
-    location: "Studio",
-    date: "November 9",
-    status: "UPCOMING",
-  },
-];
-
 function AdminDashboard() {
-  const [activeSection, setActiveSection] =
-    useState("OVERVIEW");
+  // =========================
+  // SAMPLE DATA
+  // =========================
 
-  const [users, setUsers] =
-    useState(initialUsers);
+  const [users, setUsers] = useState([
+    {
+      id: 1,
+      name: "Model One",
+      email: "model.one@example.com",
+      role: "MODEL",
+    },
+    {
+      id: 2,
+      name: "Designer A",
+      email: "designer.a@example.com",
+      role: "DESIGNER",
+    },
+    {
+      id: 3,
+      name: "Stage Manager",
+      email: "stage@example.com",
+      role: "STAGE MANAGER",
+    },
+    {
+      id: 4,
+      name: "Backstage Manager",
+      email: "backstage@example.com",
+      role: "BACKSTAGE",
+    },
+  ]);
 
-  const [events, setEvents] =
-    useState(initialEvents);
+  const [events, setEvents] = useState([
+    {
+      id: 1,
+      name: "Fly Showcase",
+      date: "November 11",
+      location: "Main Stage",
+      status: "ACTIVE",
+    },
+    {
+      id: 2,
+      name: "Designer Preview",
+      date: "November 9",
+      location: "Studio",
+      status: "UPCOMING",
+    },
+  ]);
+
+  // =========================
+  // PAGE STATE
+  // =========================
+
+  const [activePage, setActivePage] = useState("OVERVIEW");
 
   const [showUserModal, setShowUserModal] =
     useState(false);
@@ -79,26 +75,24 @@ function AdminDashboard() {
   const [showEventModal, setShowEventModal] =
     useState(false);
 
-  const [message, setMessage] =
-    useState("");
+  // =========================
+  // FORM STATE
+  // =========================
 
-  const [userName, setUserName] =
-    useState("");
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [userRole, setUserRole] = useState("MODEL");
 
-  const [userEmail, setUserEmail] =
-    useState("");
-
-  const [userRole, setUserRole] =
-    useState("MODEL");
-
-  const [eventName, setEventName] =
-    useState("");
-
-  const [eventDate, setEventDate] =
-    useState("");
-
+  const [eventName, setEventName] = useState("");
+  const [eventDate, setEventDate] = useState("");
   const [eventLocation, setEventLocation] =
     useState("");
+
+  // =========================
+  // MESSAGE
+  // =========================
+
+  const [message, setMessage] = useState("");
 
   function showMessage(text) {
     setMessage(text);
@@ -108,11 +102,13 @@ function AdminDashboard() {
     }, 2500);
   }
 
+  // =========================
+  // USER FUNCTIONS
+  // =========================
+
   function addUser() {
-    if (!userName.trim() || !userEmail.trim()) {
-      showMessage(
-        "Please enter a name and email."
-      );
+    if (!userName || !userEmail) {
+      showMessage("Please enter a name and email.");
       return;
     }
 
@@ -121,13 +117,9 @@ function AdminDashboard() {
       name: userName,
       email: userEmail,
       role: userRole,
-      status: "ACTIVE",
     };
 
-    setUsers((current) => [
-      ...current,
-      newUser,
-    ]);
+    setUsers([...users, newUser]);
 
     setUserName("");
     setUserEmail("");
@@ -137,19 +129,23 @@ function AdminDashboard() {
     showMessage("User added successfully.");
   }
 
-  function removeUser(id) {
-    setUsers((current) =>
-      current.filter((user) => user.id !== id)
+  function deleteUser(id) {
+    setUsers(
+      users.filter((user) => user.id !== id)
     );
 
     showMessage("User removed.");
   }
 
+  // =========================
+  // EVENT FUNCTIONS
+  // =========================
+
   function addEvent() {
     if (
-      !eventName.trim() ||
-      !eventDate.trim() ||
-      !eventLocation.trim()
+      !eventName ||
+      !eventDate ||
+      !eventLocation
     ) {
       showMessage(
         "Please complete all event fields."
@@ -160,15 +156,12 @@ function AdminDashboard() {
     const newEvent = {
       id: Date.now(),
       name: eventName,
-      location: eventLocation,
       date: eventDate,
+      location: eventLocation,
       status: "UPCOMING",
     };
 
-    setEvents((current) => [
-      ...current,
-      newEvent,
-    ]);
+    setEvents([...events, newEvent]);
 
     setEventName("");
     setEventDate("");
@@ -179,14 +172,18 @@ function AdminDashboard() {
   }
 
   function deleteEvent(id) {
-    setEvents((current) =>
-      current.filter((event) => event.id !== id)
+    setEvents(
+      events.filter((event) => event.id !== id)
     );
 
     showMessage("Event removed.");
   }
 
-  const menuItems = [
+  // =========================
+  // NAVIGATION
+  // =========================
+
+  const pages = [
     "OVERVIEW",
     "USERS",
     "EVENTS",
@@ -197,337 +194,147 @@ function AdminDashboard() {
   ];
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        backgroundColor: COLORS.white,
-        color: COLORS.black,
-        fontFamily:
-          '"PT Sans", Arial, sans-serif',
-      }}
-    >
-      {/* BRAND BAR */}
+    <main style={styles.page}>
+      <div style={styles.container}>
 
-      <div
-        style={{
-          height: "7px",
-          backgroundColor: COLORS.purple,
-          width: "100%",
-        }}
-      />
+        {/* TOP BAR */}
+        <div style={styles.topBar}></div>
 
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "1100px",
-          margin: "0 auto",
-          padding: "24px 20px 80px",
-          boxSizing: "border-box",
-        }}
-      >
         {/* HEADER */}
-
-        <header
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: "20px",
-            marginBottom: "30px",
-          }}
-        >
+        <header style={styles.header}>
           <div>
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                color: COLORS.purple,
-                fontSize: "38px",
-                lineHeight: "0.8",
-                fontWeight: "600",
-              }}
-            >
-              FLY
-            </div>
-
-            <div
-              style={{
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "3px",
-                marginTop: "9px",
-              }}
-            >
+            <div style={styles.logo}>FLY</div>
+            <div style={styles.logoText}>
               SHOWCASE
             </div>
           </div>
 
-          <div style={{ textAlign: "right" }}>
-            <div
-              style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                letterSpacing: "1.5px",
-                fontWeight: "700",
-              }}
-            >
+          <div style={styles.headerRight}>
+            <div style={styles.adminLabel}>
               ADMIN
             </div>
 
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "23px",
-                marginTop: "4px",
-              }}
-            >
+            <div style={styles.headerTitle}>
               Control Center
             </div>
           </div>
         </header>
 
-        {/* ADMIN HERO */}
-
-        <section
-          style={{
-            backgroundColor: COLORS.black,
-            color: COLORS.white,
-            padding: "25px",
-            marginBottom: "25px",
-          }}
-        >
-          <div
-            style={{
-              color: COLORS.gold,
-              fontSize: "8px",
-              letterSpacing: "2px",
-              fontWeight: "700",
-              marginBottom: "8px",
-            }}
-          >
+        {/* HERO */}
+        <section style={styles.hero}>
+          <div style={styles.heroLabel}>
             FLY SHOWCASE ADMINISTRATION
           </div>
 
-          <div
-            style={{
-              fontFamily:
-                '"Cormorant Garamond", Georgia, serif',
-              fontSize: "42px",
-              lineHeight: "0.95",
-            }}
-          >
+          <h1 style={styles.heroTitle}>
             Control Center
-          </div>
+          </h1>
 
-          <div
-            style={{
-              color: "#BBBBBB",
-              fontSize: "10px",
-              marginTop: "9px",
-            }}
-          >
+          <p style={styles.heroText}>
             Manage your events, team, schedules
             and show operations.
-          </div>
+          </p>
         </section>
 
         {/* NAVIGATION */}
-
-        <nav
-          style={{
-            display: "flex",
-            gap: "7px",
-            overflowX: "auto",
-            paddingBottom: "8px",
-            marginBottom: "28px",
-          }}
-        >
-          {menuItems.map((item) => {
-            const active =
-              activeSection === item;
-
-            return (
-              <button
-                key={item}
-                type="button"
-                onClick={() =>
-                  setActiveSection(item)
-                }
-                style={{
-                  flexShrink: 0,
-                  minHeight: "40px",
-                  border: active
-                    ? `1px solid ${COLORS.purple}`
-                    : `1px solid ${COLORS.border}`,
-                  backgroundColor: active
-                    ? COLORS.purple
-                    : COLORS.white,
-                  color: active
-                    ? COLORS.white
-                    : COLORS.black,
-                  padding: "0 14px",
-                  cursor: "pointer",
-                  fontSize: "8px",
-                  fontWeight: "700",
-                }}
-              >
-                {item}
-              </button>
-            );
-          })}
-        </nav>
-
-        {/* OVERVIEW */}
-
-        {activeSection === "OVERVIEW" && (
-          <>
-            <section
+        <nav style={styles.nav}>
+          {pages.map((page) => (
+            <button
+              key={page}
+              onClick={() => setActivePage(page)}
               style={{
-                display: "grid",
-                gridTemplateColumns:
-                  "repeat(auto-fit, minmax(150px, 1fr))",
-                gap: "10px",
-                marginBottom: "30px",
+                ...styles.navButton,
+                ...(activePage === page
+                  ? styles.navButtonActive
+                  : {}),
               }}
             >
-              {[
-                [
-                  "USERS",
-                  users.length,
-                  COLORS.purple,
-                ],
-                [
-                  "EVENTS",
-                  events.length,
-                  COLORS.gold,
-                ],
-                [
-                  "MODELS",
+              {page}
+            </button>
+          ))}
+        </nav>
+
+        {/* =========================
+            OVERVIEW
+        ========================= */}
+
+        {activePage === "OVERVIEW" && (
+          <>
+            <section style={styles.stats}>
+              <Stat
+                title="USERS"
+                number={users.length}
+                color={COLORS.purple}
+              />
+
+              <Stat
+                title="EVENTS"
+                number={events.length}
+                color={COLORS.gold}
+              />
+
+              <Stat
+                title="MODELS"
+                number={
                   users.filter(
                     (user) =>
                       user.role === "MODEL"
-                  ).length,
-                  COLORS.green,
-                ],
-                [
-                  "DESIGNERS",
+                  ).length
+                }
+                color={COLORS.green}
+              />
+
+              <Stat
+                title="DESIGNERS"
+                number={
                   users.filter(
                     (user) =>
                       user.role === "DESIGNER"
-                  ).length,
-                  COLORS.black,
-                ],
-              ].map((stat) => (
-                <div
-                  key={stat[0]}
-                  style={{
-                    border: `1px solid ${COLORS.border}`,
-                    borderTop: `4px solid ${stat[2]}`,
-                    padding: "18px",
-                  }}
-                >
-                  <div
-                    style={{
-                      color: COLORS.gray,
-                      fontSize: "8px",
-                      fontWeight: "700",
-                      letterSpacing: "1.5px",
-                    }}
-                  >
-                    {stat[0]}
-                  </div>
-
-                  <div
-                    style={{
-                      fontFamily:
-                        '"Cormorant Garamond", Georgia, serif',
-                      fontSize: "38px",
-                      marginTop: "5px",
-                    }}
-                  >
-                    {stat[1]}
-                  </div>
-                </div>
-              ))}
+                  ).length
+                }
+                color={COLORS.black}
+              />
             </section>
 
-            <section
-              style={{
-                display: "grid",
-                gridTemplateColumns:
-                  "repeat(auto-fit, minmax(240px, 1fr))",
-                gap: "14px",
-              }}
-            >
+            <section style={styles.quickActions}>
               <button
-                type="button"
                 onClick={() =>
                   setShowUserModal(true)
                 }
                 style={{
-                  textAlign: "left",
-                  border: "none",
-                  backgroundColor:
+                  ...styles.quickCard,
+                  background:
                     COLORS.lightPurple,
-                  padding: "20px",
-                  cursor: "pointer",
                 }}
               >
-                <div
-                  style={{
-                    color: COLORS.purple,
-                    fontSize: "9px",
-                    fontWeight: "700",
-                  }}
-                >
+                <div style={styles.quickLabel}>
                   + ADD USER
                 </div>
 
-                <div
-                  style={{
-                    fontFamily:
-                      '"Cormorant Garamond", Georgia, serif',
-                    fontSize: "27px",
-                    marginTop: "6px",
-                  }}
-                >
+                <div style={styles.quickTitle}>
                   Add a team member
                 </div>
               </button>
 
               <button
-                type="button"
                 onClick={() =>
                   setShowEventModal(true)
                 }
                 style={{
-                  textAlign: "left",
-                  border: "none",
-                  backgroundColor:
-                    COLORS.lightGold,
-                  padding: "20px",
-                  cursor: "pointer",
+                  ...styles.quickCard,
+                  background: COLORS.lightGold,
                 }}
               >
                 <div
                   style={{
+                    ...styles.quickLabel,
                     color: "#806313",
-                    fontSize: "9px",
-                    fontWeight: "700",
                   }}
                 >
                   + CREATE EVENT
                 </div>
 
-                <div
-                  style={{
-                    fontFamily:
-                      '"Cormorant Garamond", Georgia, serif',
-                    fontSize: "27px",
-                    marginTop: "6px",
-                  }}
-                >
+                <div style={styles.quickTitle}>
                   Start a new show
                 </div>
               </button>
@@ -535,284 +342,107 @@ function AdminDashboard() {
           </>
         )}
 
-        {/* USERS */}
+        {/* =========================
+            USERS
+        ========================= */}
 
-        {activeSection === "USERS" && (
+        {activePage === "USERS" && (
           <section>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                gap: "15px",
-                marginBottom: "15px",
-                flexWrap: "wrap",
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    fontSize: "9px",
-                    fontWeight: "700",
-                    letterSpacing: "2px",
-                  }}
-                >
-                  USER MANAGEMENT
-                </div>
+            <SectionHeader
+              title="USER MANAGEMENT"
+              text="Manage access to Fly Showcase."
+              button="+ ADD USER"
+              onClick={() =>
+                setShowUserModal(true)
+              }
+            />
 
-                <div
-                  style={{
-                    color: COLORS.gray,
-                    fontSize: "9px",
-                    marginTop: "4px",
-                  }}
-                >
-                  Manage access to Fly Showcase.
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() =>
-                  setShowUserModal(true)
-                }
-                style={{
-                  minHeight: "44px",
-                  border: "none",
-                  backgroundColor: COLORS.purple,
-                  color: COLORS.white,
-                  padding: "0 16px",
-                  cursor: "pointer",
-                  fontWeight: "700",
-                  fontSize: "8px",
-                }}
+            {users.map((user) => (
+              <div
+                key={user.id}
+                style={styles.userRow}
               >
-                + ADD USER
-              </button>
-            </div>
-
-            <div
-              style={{
-                borderTop: `1px solid ${COLORS.border}`,
-              }}
-            >
-              {users.map((user) => (
-                <div
-                  key={user.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: "15px",
-                    padding: "16px 0",
-                    borderBottom: `1px solid ${COLORS.border}`,
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <div style={{ flex: 1 }}>
-                    <div
-                      style={{
-                        fontFamily:
-                          '"Cormorant Garamond", Georgia, serif',
-                        fontSize: "23px",
-                      }}
-                    >
-                      {user.name}
-                    </div>
-
-                    <div
-                      style={{
-                        color: COLORS.gray,
-                        fontSize: "8px",
-                        marginTop: "3px",
-                      }}
-                    >
-                      {user.email}
-                    </div>
+                <div style={styles.userInfo}>
+                  <div style={styles.userName}>
+                    {user.name}
                   </div>
 
-                  <div
-                    style={{
-                      backgroundColor:
-                        COLORS.lightPurple,
-                      color: COLORS.purple,
-                      padding: "6px 8px",
-                      fontSize: "7px",
-                      fontWeight: "700",
-                    }}
-                  >
-                    {user.role}
+                  <div style={styles.userEmail}>
+                    {user.email}
                   </div>
-
-                  <div
-                    style={{
-                      color: COLORS.green,
-                      fontSize: "7px",
-                      fontWeight: "700",
-                    }}
-                  >
-                    ● {user.status}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      removeUser(user.id)
-                    }
-                    style={{
-                      border: `1px solid ${COLORS.border}`,
-                      backgroundColor:
-                        COLORS.white,
-                      color: COLORS.red,
-                      minHeight: "38px",
-                      padding: "0 11px",
-                      cursor: "pointer",
-                      fontSize: "7px",
-                      fontWeight: "700",
-                    }}
-                  >
-                    REMOVE
-                  </button>
                 </div>
-              ))}
-            </div>
+
+                <div style={styles.role}>
+                  {user.role}
+                </div>
+
+                <div style={styles.active}>
+                  ● ACTIVE
+                </div>
+
+                <button
+                  onClick={() =>
+                    deleteUser(user.id)
+                  }
+                  style={styles.deleteButton}
+                >
+                  REMOVE
+                </button>
+              </div>
+            ))}
           </section>
         )}
 
-        {/* EVENTS */}
+        {/* =========================
+            EVENTS
+        ========================= */}
 
-        {activeSection === "EVENTS" && (
+        {activePage === "EVENTS" && (
           <section>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                gap: "15px",
-                marginBottom: "15px",
-                flexWrap: "wrap",
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    fontSize: "9px",
-                    fontWeight: "700",
-                    letterSpacing: "2px",
-                  }}
-                >
-                  EVENT MANAGEMENT
-                </div>
+            <SectionHeader
+              title="EVENT MANAGEMENT"
+              text="Create and manage your shows."
+              button="+ CREATE EVENT"
+              onClick={() =>
+                setShowEventModal(true)
+              }
+            />
 
-                <div
-                  style={{
-                    color: COLORS.gray,
-                    fontSize: "9px",
-                    marginTop: "4px",
-                  }}
-                >
-                  Create and manage your shows.
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() =>
-                  setShowEventModal(true)
-                }
-                style={{
-                  minHeight: "44px",
-                  border: "none",
-                  backgroundColor: COLORS.purple,
-                  color: COLORS.white,
-                  padding: "0 16px",
-                  cursor: "pointer",
-                  fontWeight: "700",
-                  fontSize: "8px",
-                }}
-              >
-                + CREATE EVENT
-              </button>
-            </div>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns:
-                  "repeat(auto-fit, minmax(250px, 1fr))",
-                gap: "12px",
-              }}
-            >
+            <div style={styles.eventGrid}>
               {events.map((event) => (
                 <div
                   key={event.id}
-                  style={{
-                    border: `1px solid ${COLORS.border}`,
-                    padding: "18px",
-                  }}
+                  style={styles.eventCard}
                 >
                   <div
                     style={{
+                      ...styles.eventStatus,
                       color:
                         event.status === "ACTIVE"
                           ? COLORS.green
                           : COLORS.purple,
-                      fontSize: "7px",
-                      fontWeight: "700",
-                      letterSpacing: "1px",
                     }}
                   >
                     ● {event.status}
                   </div>
 
-                  <div
-                    style={{
-                      fontFamily:
-                        '"Cormorant Garamond", Georgia, serif',
-                      fontSize: "28px",
-                      marginTop: "7px",
-                    }}
-                  >
+                  <div style={styles.eventName}>
                     {event.name}
                   </div>
 
-                  <div
-                    style={{
-                      color: COLORS.gray,
-                      fontSize: "9px",
-                      marginTop: "7px",
-                    }}
-                  >
+                  <div style={styles.eventInfo}>
                     {event.date}
                   </div>
 
-                  <div
-                    style={{
-                      color: COLORS.gray,
-                      fontSize: "9px",
-                      marginTop: "3px",
-                    }}
-                  >
+                  <div style={styles.eventInfo}>
                     {event.location}
                   </div>
 
                   <button
-                    type="button"
                     onClick={() =>
                       deleteEvent(event.id)
                     }
-                    style={{
-                      marginTop: "15px",
-                      minHeight: "38px",
-                      border: `1px solid ${COLORS.border}`,
-                      backgroundColor:
-                        COLORS.white,
-                      color: COLORS.red,
-                      padding: "0 12px",
-                      cursor: "pointer",
-                      fontSize: "7px",
-                      fontWeight: "700",
-                    }}
+                    style={styles.deleteButton}
                   >
                     REMOVE EVENT
                   </button>
@@ -822,164 +452,88 @@ function AdminDashboard() {
           </section>
         )}
 
-        {/* COMING SOON SECTIONS */}
+        {/* =========================
+            OTHER PAGES
+        ========================= */}
 
         {[
           "SCHEDULE",
           "MAKEUP",
           "LOOKS",
           "NOTIFICATIONS",
-        ].includes(activeSection) && (
-          <section
-            style={{
-              backgroundColor:
-                COLORS.lightPurple,
-              padding: "30px 20px",
-              textAlign: "center",
-            }}
-          >
-            <div
-              style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "2px",
-              }}
-            >
+        ].includes(activePage) && (
+          <section style={styles.comingSoon}>
+            <div style={styles.comingSoonLabel}>
               ADMIN CONTROL
             </div>
 
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "34px",
-                marginTop: "7px",
-              }}
-            >
-              {activeSection}
+            <div style={styles.comingSoonTitle}>
+              {activePage}
             </div>
 
-            <div
-              style={{
-                color: COLORS.gray,
-                fontSize: "10px",
-                marginTop: "7px",
-              }}
-            >
-              This control panel will be connected
-              to your live event data next.
-            </div>
+            <p style={styles.comingSoonText}>
+              This section will connect to your
+              live event data.
+            </p>
           </section>
         )}
+
       </div>
 
-      {/* ADD USER MODAL */}
+      {/* =========================
+          ADD USER MODAL
+      ========================= */}
 
       {showUserModal && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor:
-              "rgba(22,22,22,0.65)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "20px",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "500px",
-              backgroundColor: COLORS.white,
-              padding: "25px",
-              boxSizing: "border-box",
-            }}
-          >
-            <div
-              style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "2px",
-              }}
-            >
+        <div style={styles.overlay}>
+          <div style={styles.modal}>
+            <div style={styles.modalLabel}>
               USER MANAGEMENT
             </div>
 
-            <h2
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "34px",
-                fontWeight: "500",
-                margin: "7px 0 22px",
-              }}
-            >
+            <h2 style={styles.modalTitle}>
               Add Team Member
             </h2>
 
+            <label style={styles.label}>
+              NAME
+            </label>
+
             <input
               value={userName}
-              onChange={(event) =>
-                setUserName(
-                  event.target.value
-                )
+              onChange={(e) =>
+                setUserName(e.target.value)
               }
               placeholder="Full name"
-              style={{
-                width: "100%",
-                height: "46px",
-                border: `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing: "border-box",
-                marginBottom: "12px",
-              }}
+              style={styles.input}
             />
+
+            <label style={styles.label}>
+              EMAIL
+            </label>
 
             <input
               value={userEmail}
-              onChange={(event) =>
-                setUserEmail(
-                  event.target.value
-                )
+              onChange={(e) =>
+                setUserEmail(e.target.value)
               }
               placeholder="Email address"
               type="email"
-              style={{
-                width: "100%",
-                height: "46px",
-                border: `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing: "border-box",
-                marginBottom: "12px",
-              }}
+              style={styles.input}
             />
+
+            <label style={styles.label}>
+              ROLE
+            </label>
 
             <select
               value={userRole}
-              onChange={(event) =>
-                setUserRole(
-                  event.target.value
-                )
+              onChange={(e) =>
+                setUserRole(e.target.value)
               }
-              style={{
-                width: "100%",
-                height: "46px",
-                border: `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing: "border-box",
-                marginBottom: "20px",
-                backgroundColor:
-                  COLORS.white,
-              }}
+              style={styles.input}
             >
-              <option value="MODEL">
-                Model
-              </option>
+              <option value="MODEL">Model</option>
               <option value="DESIGNER">
                 Designer
               </option>
@@ -989,233 +543,571 @@ function AdminDashboard() {
               <option value="BACKSTAGE">
                 Backstage Manager
               </option>
-              <option value="ADMIN">
-                Admin
-              </option>
+              <option value="ADMIN">Admin</option>
             </select>
 
-            <div
-              style={{
-                display: "flex",
-                gap: "9px",
-              }}
-            >
-              <button
-                type="button"
-                onClick={() =>
-                  setShowUserModal(false)
-                }
-                style={{
-                  flex: 1,
-                  minHeight: "48px",
-                  border: `1px solid ${COLORS.border}`,
-                  backgroundColor:
-                    COLORS.white,
-                  cursor: "pointer",
-                  fontWeight: "700",
-                  fontSize: "8px",
-                }}
-              >
-                CANCEL
-              </button>
-
-              <button
-                type="button"
-                onClick={addUser}
-                style={{
-                  flex: 1,
-                  minHeight: "48px",
-                  border: "none",
-                  backgroundColor:
-                    COLORS.purple,
-                  color: COLORS.white,
-                  cursor: "pointer",
-                  fontWeight: "700",
-                  fontSize: "8px",
-                }}
-              >
-                ADD USER
-              </button>
-            </div>
+            <ModalButtons
+              cancel={() =>
+                setShowUserModal(false)
+              }
+              save={addUser}
+              saveText="ADD USER"
+            />
           </div>
         </div>
       )}
 
-      {/* CREATE EVENT MODAL */}
+      {/* =========================
+          ADD EVENT MODAL
+      ========================= */}
 
       {showEventModal && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor:
-              "rgba(22,22,22,0.65)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "20px",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "500px",
-              backgroundColor: COLORS.white,
-              padding: "25px",
-              boxSizing: "border-box",
-            }}
-          >
-            <div
-              style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "2px",
-              }}
-            >
+        <div style={styles.overlay}>
+          <div style={styles.modal}>
+            <div style={styles.modalLabel}>
               EVENT MANAGEMENT
             </div>
 
-            <h2
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "34px",
-                fontWeight: "500",
-                margin: "7px 0 22px",
-              }}
-            >
+            <h2 style={styles.modalTitle}>
               Create New Event
             </h2>
 
+            <label style={styles.label}>
+              EVENT NAME
+            </label>
+
             <input
               value={eventName}
-              onChange={(event) =>
-                setEventName(
-                  event.target.value
-                )
+              onChange={(e) =>
+                setEventName(e.target.value)
               }
               placeholder="Event name"
-              style={{
-                width: "100%",
-                height: "46px",
-                border: `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing: "border-box",
-                marginBottom: "12px",
-              }}
+              style={styles.input}
             />
+
+            <label style={styles.label}>
+              DATE
+            </label>
 
             <input
               value={eventDate}
-              onChange={(event) =>
-                setEventDate(
-                  event.target.value
-                )
+              onChange={(e) =>
+                setEventDate(e.target.value)
               }
-              placeholder="Event date"
-              style={{
-                width: "100%",
-                height: "46px",
-                border: `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing: "border-box",
-                marginBottom: "12px",
-              }}
+              placeholder="November 11"
+              style={styles.input}
             />
+
+            <label style={styles.label}>
+              LOCATION
+            </label>
 
             <input
               value={eventLocation}
-              onChange={(event) =>
-                setEventLocation(
-                  event.target.value
-                )
+              onChange={(e) =>
+                setEventLocation(e.target.value)
               }
-              placeholder="Location"
-              style={{
-                width: "100%",
-                height: "46px",
-                border: `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing: "border-box",
-                marginBottom: "20px",
-              }}
+              placeholder="Main Stage"
+              style={styles.input}
             />
 
-            <div
-              style={{
-                display: "flex",
-                gap: "9px",
-              }}
-            >
-              <button
-                type="button"
-                onClick={() =>
-                  setShowEventModal(false)
-                }
-                style={{
-                  flex: 1,
-                  minHeight: "48px",
-                  border: `1px solid ${COLORS.border}`,
-                  backgroundColor:
-                    COLORS.white,
-                  cursor: "pointer",
-                  fontWeight: "700",
-                  fontSize: "8px",
-                }}
-              >
-                CANCEL
-              </button>
-
-              <button
-                type="button"
-                onClick={addEvent}
-                style={{
-                  flex: 1,
-                  minHeight: "48px",
-                  border: "none",
-                  backgroundColor:
-                    COLORS.purple,
-                  color: COLORS.white,
-                  cursor: "pointer",
-                  fontWeight: "700",
-                  fontSize: "8px",
-                }}
-              >
-                CREATE EVENT
-              </button>
-            </div>
+            <ModalButtons
+              cancel={() =>
+                setShowEventModal(false)
+              }
+              save={addEvent}
+              saveText="CREATE EVENT"
+            />
           </div>
         </div>
       )}
 
-      {/* TOAST */}
-
+      {/* MESSAGE */}
       {message && (
-        <div
-          style={{
-            position: "fixed",
-            left: "50%",
-            bottom: "25px",
-            transform: "translateX(-50%)",
-            width: "calc(100% - 40px)",
-            maxWidth: "450px",
-            backgroundColor: COLORS.black,
-            color: COLORS.white,
-            padding: "15px 18px",
-            textAlign: "center",
-            fontSize: "10px",
-            fontWeight: "700",
-            zIndex: 1200,
-            boxSizing: "border-box",
-          }}
-        >
+        <div style={styles.message}>
           {message}
         </div>
       )}
     </main>
   );
 }
+
+
+/* =========================
+   SMALL COMPONENTS
+========================= */
+
+function Stat({ title, number, color }) {
+  return (
+    <div
+      style={{
+        ...styles.stat,
+        borderTop: `4px solid ${color}`,
+      }}
+    >
+      <div style={styles.statTitle}>
+        {title}
+      </div>
+
+      <div style={styles.statNumber}>
+        {number}
+      </div>
+    </div>
+  );
+}
+
+
+function SectionHeader({
+  title,
+  text,
+  button,
+  onClick,
+}) {
+  return (
+    <div style={styles.sectionHeader}>
+      <div>
+        <div style={styles.sectionTitle}>
+          {title}
+        </div>
+
+        <div style={styles.sectionSubtitle}>
+          {text}
+        </div>
+      </div>
+
+      <button
+        onClick={onClick}
+        style={styles.primaryButton}
+      >
+        {button}
+      </button>
+    </div>
+  );
+}
+
+
+function ModalButtons({
+  cancel,
+  save,
+  saveText,
+}) {
+  return (
+    <div style={styles.modalButtons}>
+      <button
+        onClick={cancel}
+        style={styles.cancelButton}
+      >
+        CANCEL
+      </button>
+
+      <button
+        onClick={save}
+        style={styles.primaryButton}
+      >
+        {saveText}
+      </button>
+    </div>
+  );
+}
+
+
+/* =========================
+   STYLES
+   EDIT COLORS HERE
+========================= */
+
+const styles = {
+  page: {
+    minHeight: "100vh",
+    background: COLORS.white,
+    color: COLORS.black,
+    fontFamily: '"PT Sans", Arial, sans-serif',
+    padding: "0 20px 80px",
+  },
+
+  container: {
+    maxWidth: "1100px",
+    margin: "0 auto",
+  },
+
+  topBar: {
+    height: "7px",
+    background: COLORS.purple,
+  },
+
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "25px 0",
+    marginBottom: "30px",
+  },
+
+  logo: {
+    fontFamily:
+      '"Cormorant Garamond", Georgia, serif',
+    color: COLORS.purple,
+    fontSize: "38px",
+    fontWeight: "600",
+    lineHeight: "0.8",
+  },
+
+  logoText: {
+    fontSize: "8px",
+    fontWeight: "700",
+    letterSpacing: "3px",
+    marginTop: "9px",
+  },
+
+  headerRight: {
+    textAlign: "right",
+  },
+
+  adminLabel: {
+    color: COLORS.purple,
+    fontSize: "8px",
+    fontWeight: "700",
+    letterSpacing: "1.5px",
+  },
+
+  headerTitle: {
+    fontFamily:
+      '"Cormorant Garamond", Georgia, serif',
+    fontSize: "23px",
+    marginTop: "4px",
+  },
+
+  hero: {
+    background: COLORS.black,
+    color: COLORS.white,
+    padding: "30px",
+    marginBottom: "20px",
+  },
+
+  heroLabel: {
+    color: COLORS.gold,
+    fontSize: "8px",
+    fontWeight: "700",
+    letterSpacing: "2px",
+  },
+
+  heroTitle: {
+    fontFamily:
+      '"Cormorant Garamond", Georgia, serif',
+    fontSize: "44px",
+    fontWeight: "500",
+    margin: "10px 0",
+  },
+
+  heroText: {
+    color: "#BBBBBB",
+    fontSize: "10px",
+    margin: 0,
+  },
+
+  nav: {
+    display: "flex",
+    gap: "7px",
+    overflowX: "auto",
+    paddingBottom: "10px",
+    marginBottom: "30px",
+  },
+
+  navButton: {
+    flexShrink: 0,
+    minHeight: "40px",
+    border: `1px solid ${COLORS.border}`,
+    background: COLORS.white,
+    color: COLORS.black,
+    padding: "0 14px",
+    cursor: "pointer",
+    fontSize: "8px",
+    fontWeight: "700",
+  },
+
+  navButtonActive: {
+    background: COLORS.purple,
+    color: COLORS.white,
+    border: `1px solid ${COLORS.purple}`,
+  },
+
+  stats: {
+    display: "grid",
+    gridTemplateColumns:
+      "repeat(auto-fit, minmax(150px, 1fr))",
+    gap: "10px",
+    marginBottom: "30px",
+  },
+
+  stat: {
+    border: `1px solid ${COLORS.border}`,
+    padding: "18px",
+  },
+
+  statTitle: {
+    color: COLORS.gray,
+    fontSize: "8px",
+    fontWeight: "700",
+    letterSpacing: "1.5px",
+  },
+
+  statNumber: {
+    fontFamily:
+      '"Cormorant Garamond", Georgia, serif',
+    fontSize: "38px",
+    marginTop: "5px",
+  },
+
+  quickActions: {
+    display: "grid",
+    gridTemplateColumns:
+      "repeat(auto-fit, minmax(240px, 1fr))",
+    gap: "12px",
+  },
+
+  quickCard: {
+    border: "none",
+    padding: "20px",
+    textAlign: "left",
+    cursor: "pointer",
+  },
+
+  quickLabel: {
+    color: COLORS.purple,
+    fontSize: "9px",
+    fontWeight: "700",
+  },
+
+  quickTitle: {
+    fontFamily:
+      '"Cormorant Garamond", Georgia, serif',
+    fontSize: "27px",
+    marginTop: "6px",
+  },
+
+  sectionHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "15px",
+    flexWrap: "wrap",
+    marginBottom: "15px",
+  },
+
+  sectionTitle: {
+    fontSize: "9px",
+    fontWeight: "700",
+    letterSpacing: "2px",
+  },
+
+  sectionSubtitle: {
+    color: COLORS.gray,
+    fontSize: "9px",
+    marginTop: "4px",
+  },
+
+  primaryButton: {
+    minHeight: "44px",
+    border: "none",
+    background: COLORS.purple,
+    color: COLORS.white,
+    padding: "0 15px",
+    cursor: "pointer",
+    fontSize: "8px",
+    fontWeight: "700",
+  },
+
+  userRow: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "15px",
+    padding: "16px 0",
+    borderTop: `1px solid ${COLORS.border}`,
+    flexWrap: "wrap",
+  },
+
+  userInfo: {
+    flex: 1,
+    minWidth: "180px",
+  },
+
+  userName: {
+    fontFamily:
+      '"Cormorant Garamond", Georgia, serif',
+    fontSize: "23px",
+  },
+
+  userEmail: {
+    color: COLORS.gray,
+    fontSize: "8px",
+    marginTop: "3px",
+  },
+
+  role: {
+    background: COLORS.lightPurple,
+    color: COLORS.purple,
+    padding: "6px 8px",
+    fontSize: "7px",
+    fontWeight: "700",
+  },
+
+  active: {
+    color: COLORS.green,
+    fontSize: "7px",
+    fontWeight: "700",
+  },
+
+  deleteButton: {
+    minHeight: "38px",
+    border: `1px solid ${COLORS.border}`,
+    background: COLORS.white,
+    color: COLORS.red,
+    padding: "0 11px",
+    cursor: "pointer",
+    fontSize: "7px",
+    fontWeight: "700",
+  },
+
+  eventGrid: {
+    display: "grid",
+    gridTemplateColumns:
+      "repeat(auto-fit, minmax(250px, 1fr))",
+    gap: "12px",
+  },
+
+  eventCard: {
+    border: `1px solid ${COLORS.border}`,
+    padding: "18px",
+  },
+
+  eventStatus: {
+    fontSize: "7px",
+    fontWeight: "700",
+    letterSpacing: "1px",
+  },
+
+  eventName: {
+    fontFamily:
+      '"Cormorant Garamond", Georgia, serif',
+    fontSize: "28px",
+    marginTop: "7px",
+  },
+
+  eventInfo: {
+    color: COLORS.gray,
+    fontSize: "9px",
+    marginTop: "4px",
+  },
+
+  comingSoon: {
+    background: COLORS.lightPurple,
+    padding: "35px 20px",
+    textAlign: "center",
+  },
+
+  comingSoonLabel: {
+    color: COLORS.purple,
+    fontSize: "8px",
+    fontWeight: "700",
+    letterSpacing: "2px",
+  },
+
+  comingSoonTitle: {
+    fontFamily:
+      '"Cormorant Garamond", Georgia, serif',
+    fontSize: "34px",
+    marginTop: "7px",
+  },
+
+  comingSoonText: {
+    color: COLORS.gray,
+    fontSize: "10px",
+  },
+
+  overlay: {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(22,22,22,0.65)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "20px",
+    zIndex: 1000,
+  },
+
+  modal: {
+    width: "100%",
+    maxWidth: "500px",
+    background: COLORS.white,
+    padding: "25px",
+    boxSizing: "border-box",
+  },
+
+  modalLabel: {
+    color: COLORS.purple,
+    fontSize: "8px",
+    fontWeight: "700",
+    letterSpacing: "2px",
+  },
+
+  modalTitle: {
+    fontFamily:
+      '"Cormorant Garamond", Georgia, serif',
+    fontSize: "34px",
+    fontWeight: "500",
+    margin: "7px 0 22px",
+  },
+
+  label: {
+    display: "block",
+    fontSize: "8px",
+    fontWeight: "700",
+    marginBottom: "6px",
+  },
+
+  input: {
+    width: "100%",
+    height: "46px",
+    border: `1px solid ${COLORS.border}`,
+    padding: "0 12px",
+    boxSizing: "border-box",
+    marginBottom: "14px",
+    background: COLORS.white,
+  },
+
+  modalButtons: {
+    display: "flex",
+    gap: "9px",
+    marginTop: "5px",
+  },
+
+  cancelButton: {
+    flex: 1,
+    minHeight: "44px",
+    border: `1px solid ${COLORS.border}`,
+    background: COLORS.white,
+    cursor: "pointer",
+    fontSize: "8px",
+    fontWeight: "700",
+  },
+
+  message: {
+    position: "fixed",
+    left: "50%",
+    bottom: "25px",
+    transform: "translateX(-50%)",
+    width: "calc(100% - 40px)",
+    maxWidth: "450px",
+    background: COLORS.black,
+    color: COLORS.white,
+    padding: "15px",
+    textAlign: "center",
+    fontSize: "10px",
+    fontWeight: "700",
+    zIndex: 1200,
+    boxSizing: "border-box",
+  },
+};
 
 export default AdminDashboard;

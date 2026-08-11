@@ -15,8 +15,8 @@ function Login({ onLogin }) {
       return;
     }
 
-    // Temporary demo login.
-    // Real Supabase authentication will replace this later.
+    // TEMPORARY DEMO LOGIN
+    // Replace this with Supabase authentication later.
     if (
       email === "demo@flyshowcase.com" &&
       password === "fly123"
@@ -40,7 +40,9 @@ function Login({ onLogin }) {
   };
 
   const handleForgotPassword = () => {
-    setMessage("Password recovery will be connected with Supabase.");
+    setMessage(
+      "Password recovery will be connected with Supabase."
+    );
   };
 
   const handleRequestAccess = () => {
@@ -49,10 +51,14 @@ function Login({ onLogin }) {
 
   return (
     <main className="login-page">
-      <div className="login-brand-bar"></div>
+      {/* BRAND BAR */}
+      <div className="login-brand-bar" />
 
       <div className="login-container">
-        {/* BRAND */}
+        {/* ================================
+            BRAND
+        ================================= */}
+
         <header className="login-header">
           <div className="login-logo">FLY</div>
 
@@ -61,7 +67,10 @@ function Login({ onLogin }) {
           </div>
         </header>
 
-        {/* INTRO */}
+        {/* ================================
+            INTRO
+        ================================= */}
+
         <section className="login-intro">
           <div className="login-eyebrow">
             WELCOME BACK
@@ -79,7 +88,10 @@ function Login({ onLogin }) {
           </p>
         </section>
 
-        {/* LOGIN CARD */}
+        {/* ================================
+            LOGIN CARD
+        ================================= */}
+
         <section className="login-card">
           <div className="login-card-title">
             SIGN IN
@@ -87,6 +99,7 @@ function Login({ onLogin }) {
 
           <form onSubmit={handleLogin}>
             {/* EMAIL */}
+
             <div className="login-field">
               <label
                 htmlFor="email"
@@ -110,6 +123,7 @@ function Login({ onLogin }) {
             </div>
 
             {/* PASSWORD */}
+
             <div className="login-field login-password-field">
               <label
                 htmlFor="password"
@@ -135,7 +149,7 @@ function Login({ onLogin }) {
                 <button
                   type="button"
                   onClick={() =>
-                    setShowPassword(!showPassword)
+                    setShowPassword((current) => !current)
                   }
                   className="login-show-password"
                 >
@@ -145,6 +159,7 @@ function Login({ onLogin }) {
             </div>
 
             {/* FORGOT PASSWORD */}
+
             <div className="login-forgot-wrapper">
               <button
                 type="button"
@@ -156,6 +171,7 @@ function Login({ onLogin }) {
             </div>
 
             {/* SIGN IN */}
+
             <Button
               type="submit"
               variant="gold"
@@ -166,6 +182,7 @@ function Login({ onLogin }) {
           </form>
 
           {/* MESSAGE */}
+
           {message && (
             <div className="login-message">
               {message}
@@ -173,7 +190,10 @@ function Login({ onLogin }) {
           )}
         </section>
 
-        {/* ACCESS INFORMATION */}
+        {/* ================================
+            ACCESS INFORMATION
+        ================================= */}
+
         <div className="login-access-info">
           <p>
             Your access is managed by the Fly Showcase
@@ -182,7 +202,10 @@ function Login({ onLogin }) {
           </p>
         </div>
 
-        {/* REQUEST ACCESS */}
+        {/* ================================
+            REQUEST ACCESS
+        ================================= */}
+
         <section className="login-request">
           <p>
             Don't have access yet?
@@ -198,7 +221,10 @@ function Login({ onLogin }) {
           </Button>
         </section>
 
-        {/* FOOTER */}
+        {/* ================================
+            FOOTER
+        ================================= */}
+
         <footer className="login-footer">
           <span>FLY</span>
           {" "}• FIRST LOVE YOURSELF

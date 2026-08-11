@@ -6,7 +6,7 @@
 :root {
   /* -------------------------------------------------------
      BRAND COLORS
-     CHANGE THESE VALUES TO CHANGE THE ENTIRE APP
+     Change these values to change the entire app
      ------------------------------------------------------- */
 
   --color-black: #161616;
@@ -36,19 +36,20 @@
 
   /* -------------------------------------------------------
      TYPOGRAPHY
+     Change these values to change text sizes globally
      ------------------------------------------------------- */
 
   --font-heading: "Cormorant Garamond", Georgia, serif;
   --font-body: "PT Sans", Arial, sans-serif;
 
-  --font-size-xs: 9px;
-  --font-size-sm: 11px;
-  --font-size-md: 13px;
-  --font-size-lg: 16px;
-  --font-size-xl: 20px;
-  --font-size-2xl: 28px;
-  --font-size-3xl: 38px;
-  --font-size-4xl: 48px;
+  --font-size-xs: 10px;
+  --font-size-sm: 13px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 32px;
+  --font-size-3xl: 42px;
+  --font-size-4xl: 52px;
 
   --font-weight-regular: 400;
   --font-weight-medium: 500;
@@ -75,9 +76,11 @@
 
   --border-width: 1px;
   --border-color: var(--color-gray-200);
+
   --border-radius-sm: 2px;
   --border-radius-md: 4px;
   --border-radius-lg: 8px;
+  --border-radius-full: 999px;
 
   /* -------------------------------------------------------
      SHADOWS
@@ -116,7 +119,6 @@
   --transition-fast: 150ms ease;
   --transition-normal: 250ms ease;
 }
-
 
 /* =========================================================
    RESET
@@ -159,7 +161,6 @@ body {
   width: 100%;
   min-height: 100vh;
 }
-
 
 /* =========================================================
    TYPOGRAPHY
@@ -209,7 +210,6 @@ a {
   text-decoration: none;
 }
 
-
 /* =========================================================
    IMAGES
    ========================================================= */
@@ -218,7 +218,6 @@ img {
   display: block;
   max-width: 100%;
 }
-
 
 /* =========================================================
    MOBILE
@@ -240,7 +239,6 @@ img {
   }
 }
 
-
 /* =========================================================
    TABLET
    ========================================================= */
@@ -250,7 +248,6 @@ img {
     --page-padding-mobile: var(--page-padding-tablet);
   }
 }
-
 
 /* =========================================================
    DESKTOP

@@ -1,1317 +1,713 @@
 import React, { useState } from "react";
 
-const COLORS = {
-  black: "#161616",
-  purple: "#81247C",
-  gold: "#DEB64B",
-  white: "#FFFFFF",
-  lightPurple: "#F5EAF4",
-  lightGold: "#F8F3E5",
-  border: "#E8E8E8",
-  gray: "#777777",
-  green: "#2F7D5B",
-  lightGreen: "#EAF5EF",
-  red: "#B33A3A",
-};
-
-const initialAppointments = [
-  {
-    id: 1,
-    time: "08:30 AM",
-    model: "Model 01",
-    service: "Hair",
-    artist: "Sophia",
-    chair: "Chair 01",
-    status: "WAITING",
-  },
-  {
-    id: 2,
-    time: "08:45 AM",
-    model: "Model 02",
-    service: "Makeup",
-    artist: "Maya",
-    chair: "Chair 02",
-    status: "IN CHAIR",
-  },
-  {
-    id: 3,
-    time: "09:00 AM",
-    model: "Model 03",
-    service: "Hair + Makeup",
-    artist: "Sophia + Maya",
-    chair: "Chair 03",
-    status: "WAITING",
-  },
-  {
-    id: 4,
-    time: "09:15 AM",
-    model: "Model 04",
-    service: "Makeup",
-    artist: "Aisha",
-    chair: "Chair 04",
-    status: "COMPLETE",
-  },
-  {
-    id: 5,
-    time: "09:30 AM",
-    model: "Model 05",
-    service: "Hair",
-    artist: "Sophia",
-    chair: "Chair 01",
-    status: "WAITING",
-  },
-];
-
-const statusColors = {
-  WAITING: {
-    background: COLORS.lightGold,
-    color: "#806313",
-  },
-  "IN CHAIR": {
-    background: COLORS.lightPurple,
-    color: COLORS.purple,
-  },
-  COMPLETE: {
-    background: COLORS.lightGreen,
-    color: COLORS.green,
-  },
-};
-
 function HairMakeup() {
-  const [appointments, setAppointments] =
-    useState(initialAppointments);
+  const [appointments, setAppointments] = useState([
+    {
+      id: 1,
+      model: "Model One",
+      time: "8:00 AM",
+      service: "Hair",
+      artist: "Hair Team",
+      status: "READY",
+    },
+    {
+      id: 2,
+      model: "Model Two",
+      time: "8:30 AM",
+      service: "Makeup",
+      artist: "Makeup Team",
+      status: "WAITING",
+    },
+    {
+      id: 3,
+      model: "Model Three",
+      time: "9:00 AM",
+      service: "Hair & Makeup",
+      artist: "Beauty Team",
+      status: "WAITING",
+    },
+  ]);
 
-  const [filter, setFilter] =
-    useState("ALL");
+  const [showForm, setShowForm] = useState(false);
+  const [model, setModel] = useState("");
+  const [time, setTime] = useState("");
+  const [service, setService] = useState("Hair");
+  const [artist, setArtist] = useState("");
 
-  const [showModal, setShowModal] =
-    useState(false);
-
-  const [editingAppointment, setEditingAppointment] =
-    useState(null);
-
-  const [message, setMessage] =
-    useState("");
-
-  const [time, setTime] =
-    useState("");
-
-  const [model, setModel] =
-    useState("");
-
-  const [service, setService] =
-    useState("Makeup");
-
-  const [artist, setArtist] =
-    useState("");
-
-  const [chair, setChair] =
-    useState("Chair 01");
-
-  function showMessage(text) {
-    setMessage(text);
-
-    setTimeout(() => {
-      setMessage("");
-    }, 2500);
-  }
-
-  function resetForm() {
-    setTime("");
-    setModel("");
-    setService("Makeup");
-    setArtist("");
-    setChair("Chair 01");
-    setEditingAppointment(null);
-  }
-
-  function openAddModal() {
-    resetForm();
-    setShowModal(true);
-  }
-
-  function openEditModal(appointment) {
-    setEditingAppointment(appointment);
-    setTime(appointment.time);
-    setModel(appointment.model);
-    setService(appointment.service);
-    setArtist(appointment.artist);
-    setChair(appointment.chair);
-    setShowModal(true);
-  }
-
-  function saveAppointment() {
-    if (
-      !time.trim() ||
-      !model.trim() ||
-      !artist.trim()
-    ) {
-      showMessage(
-        "Please complete the appointment details."
-      );
+  function addAppointment() {
+    if (!model || !time || !artist) {
+      alert("Please complete all fields.");
       return;
     }
 
-    if (editingAppointment) {
-      setAppointments((current) =>
-        current.map((item) =>
-          item.id === editingAppointment.id
-            ? {
-                ...item,
-                time,
-                model,
-                service,
-                artist,
-                chair,
-              }
-            : item
-        )
-      );
+    const newAppointment = {
+      id: Date.now(),
+      model,
+      time,
+      service,
+      artist,
+      status: "WAITING",
+    };
 
-      showMessage(
-        "Appointment updated."
-      );
-    } else {
-      const newAppointment = {
-        id: Date.now(),
-        time,
-        model,
-        service,
-        artist,
-        chair,
-        status: "WAITING",
-      };
+    setAppointments([...appointments, newAppointment]);
 
-      setAppointments((current) => [
-        ...current,
-        newAppointment,
-      ]);
-
-      showMessage(
-        "Appointment added."
-      );
-    }
-
-    setShowModal(false);
-    resetForm();
+    setModel("");
+    setTime("");
+    setService("Hair");
+    setArtist("");
+    setShowForm(false);
   }
 
-  function deleteAppointment(id) {
-    setAppointments((current) =>
-      current.filter(
-        (item) => item.id !== id
-      )
-    );
+  function updateStatus(id) {
+    setAppointments(
+      appointments.map((appointment) => {
+        if (appointment.id !== id) return appointment;
 
-    showMessage(
-      "Appointment removed."
-    );
-  }
-
-  function changeStatus(id) {
-    setAppointments((current) =>
-      current.map((item) => {
-        if (item.id !== id) {
-          return item;
-        }
-
-        if (item.status === "WAITING") {
-          return {
-            ...item,
-            status: "IN CHAIR",
-          };
-        }
-
-        if (item.status === "IN CHAIR") {
-          return {
-            ...item,
-            status: "COMPLETE",
-          };
-        }
+        const nextStatus =
+          appointment.status === "WAITING"
+            ? "IN PROGRESS"
+            : appointment.status === "IN PROGRESS"
+            ? "DONE"
+            : "DONE";
 
         return {
-          ...item,
-          status: "WAITING",
+          ...appointment,
+          status: nextStatus,
         };
       })
     );
   }
 
-  const filteredAppointments =
-    filter === "ALL"
-      ? appointments
-      : appointments.filter(
-          (item) =>
-            item.status === filter
-        );
-
-  const waitingCount =
-    appointments.filter(
-      (item) =>
-        item.status === "WAITING"
-    ).length;
-
-  const inChairCount =
-    appointments.filter(
-      (item) =>
-        item.status === "IN CHAIR"
-    ).length;
-
-  const completeCount =
-    appointments.filter(
-      (item) =>
-        item.status === "COMPLETE"
-    ).length;
-
-  const filters = [
-    "ALL",
-    "WAITING",
-    "IN CHAIR",
-    "COMPLETE",
-  ];
+  function deleteAppointment(id) {
+    setAppointments(
+      appointments.filter(
+        (appointment) => appointment.id !== id
+      )
+    );
+  }
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        backgroundColor: COLORS.white,
-        color: COLORS.black,
-        fontFamily:
-          '"PT Sans", Arial, sans-serif',
-      }}
-    >
-      {/* TOP PURPLE BAR */}
+    <main style={styles.page}>
+      <div style={styles.container}>
 
-      <div
-        style={{
-          height: "7px",
-          backgroundColor: COLORS.purple,
-          width: "100%",
-        }}
-      />
+        {/* TOP BAR */}
+        <div style={styles.topBar}></div>
 
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "1050px",
-          margin: "0 auto",
-          padding:
-            "24px 20px 80px",
-          boxSizing: "border-box",
-        }}
-      >
         {/* HEADER */}
-
-        <header
-          style={{
-            display: "flex",
-            justifyContent:
-              "space-between",
-            alignItems: "center",
-            gap: "20px",
-            marginBottom: "30px",
-          }}
-        >
+        <header style={styles.header}>
           <div>
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                color: COLORS.purple,
-                fontSize: "38px",
-                lineHeight: "0.8",
-                fontWeight: "600",
-              }}
-            >
-              FLY
-            </div>
-
-            <div
-              style={{
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "3px",
-                marginTop: "9px",
-              }}
-            >
-              SHOWCASE
-            </div>
+            <div style={styles.logo}>FLY</div>
+            <div style={styles.logoText}>SHOWCASE</div>
           </div>
 
-          <div
-            style={{
-              textAlign: "right",
-            }}
-          >
-            <div
-              style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "1.5px",
-              }}
-            >
+          <div style={styles.headerRight}>
+            <div style={styles.smallPurple}>
               BACKSTAGE
             </div>
 
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "23px",
-                marginTop: "4px",
-              }}
-            >
+            <div style={styles.headerTitle}>
               Hair & Makeup
             </div>
           </div>
         </header>
 
         {/* HERO */}
-
-        <section
-          style={{
-            backgroundColor:
-              COLORS.black,
-            color: COLORS.white,
-            padding: "25px",
-            marginBottom: "25px",
-          }}
-        >
-          <div
-            style={{
-              color: COLORS.gold,
-              fontSize: "8px",
-              fontWeight: "700",
-              letterSpacing: "2px",
-              marginBottom: "8px",
-            }}
-          >
-            SHOW DAY BEAUTY
+        <section style={styles.hero}>
+          <div style={styles.heroLabel}>
+            BEAUTY SCHEDULE
           </div>
 
-          <div
-            style={{
-              fontFamily:
-                '"Cormorant Garamond", Georgia, serif',
-              fontSize: "42px",
-              lineHeight: "0.95",
-            }}
-          >
-            Hair & Makeup
-          </div>
+          <h1 style={styles.heroTitle}>
+            Hair &
+            <br />
+            <em>Makeup.</em>
+          </h1>
 
-          <div
-            style={{
-              color: "#BBBBBB",
-              fontSize: "10px",
-              lineHeight: "1.5",
-              marginTop: "9px",
-              maxWidth: "500px",
-            }}
-          >
-            Keep every model moving through
-            beauty smoothly and on time.
-          </div>
+          <p style={styles.description}>
+            Manage model beauty appointments,
+            artists, timing and backstage readiness.
+          </p>
         </section>
 
-        {/* STATS */}
-
-        <section
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(130px, 1fr))",
-            gap: "10px",
-            marginBottom: "28px",
-          }}
-        >
-          <div
-            style={{
-              backgroundColor:
-                COLORS.lightGold,
-              padding: "18px",
-            }}
-          >
-            <div
-              style={{
-                color: "#806313",
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "1.5px",
-              }}
-            >
-              WAITING
+        {/* SUMMARY */}
+        <section style={styles.summary}>
+          <div style={styles.stat}>
+            <div style={styles.statLabel}>
+              APPOINTMENTS
             </div>
 
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "32px",
-                marginTop: "3px",
-              }}
-            >
-              {waitingCount}
+            <div style={styles.statNumber}>
+              {appointments.length}
             </div>
           </div>
 
-          <div
-            style={{
-              backgroundColor:
-                COLORS.lightPurple,
-              padding: "18px",
-            }}
-          >
-            <div
-              style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "1.5px",
-              }}
-            >
-              IN CHAIR
+          <div style={styles.stat}>
+            <div style={styles.statLabel}>
+              READY
             </div>
 
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "32px",
-                marginTop: "3px",
-              }}
-            >
-              {inChairCount}
+            <div style={styles.statNumber}>
+              {
+                appointments.filter(
+                  (item) => item.status === "READY"
+                ).length
+              }
             </div>
           </div>
 
-          <div
-            style={{
-              backgroundColor:
-                COLORS.lightGreen,
-              padding: "18px",
-            }}
-          >
-            <div
-              style={{
-                color: COLORS.green,
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "1.5px",
-              }}
-            >
+          <div style={styles.stat}>
+            <div style={styles.statLabel}>
               COMPLETE
             </div>
 
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "32px",
-                marginTop: "3px",
-              }}
-            >
-              {completeCount}
+            <div style={styles.statNumber}>
+              {
+                appointments.filter(
+                  (item) => item.status === "DONE"
+                ).length
+              }
             </div>
           </div>
         </section>
 
-        {/* ACTION BAR */}
-
-        <section
-          style={{
-            display: "flex",
-            justifyContent:
-              "space-between",
-            alignItems: "center",
-            gap: "15px",
-            flexWrap: "wrap",
-            marginBottom: "15px",
-          }}
-        >
+        {/* SECTION HEADER */}
+        <section style={styles.sectionHeader}>
           <div>
-            <div
-              style={{
-                fontSize: "9px",
-                fontWeight: "700",
-                letterSpacing: "2px",
-              }}
-            >
-              BEAUTY BOARD
+            <div style={styles.sectionTitle}>
+              BEAUTY SCHEDULE
             </div>
 
-            <div
-              style={{
-                color: COLORS.gray,
-                fontSize: "9px",
-                marginTop: "4px",
-              }}
-            >
-              Today's hair and makeup schedule.
+            <div style={styles.sectionSubtitle}>
+              Today's model appointments
             </div>
           </div>
 
           <button
-            type="button"
-            onClick={openAddModal}
-            style={{
-              minHeight: "44px",
-              border: "none",
-              backgroundColor:
-                COLORS.purple,
-              color: COLORS.white,
-              padding: "0 17px",
-              cursor: "pointer",
-              fontWeight: "700",
-              fontSize: "8px",
-            }}
+            onClick={() => setShowForm(true)}
+            style={styles.primaryButton}
           >
             + ADD APPOINTMENT
           </button>
         </section>
 
-        {/* FILTERS */}
-
-        <section
-          style={{
-            display: "flex",
-            gap: "7px",
-            overflowX: "auto",
-            paddingBottom: "8px",
-            marginBottom: "20px",
-          }}
-        >
-          {filters.map(
-            (filterItem) => {
-              const active =
-                filter === filterItem;
-
-              return (
-                <button
-                  key={filterItem}
-                  type="button"
-                  onClick={() =>
-                    setFilter(
-                      filterItem
-                    )
-                  }
-                  style={{
-                    flexShrink: 0,
-                    minHeight: "38px",
-                    padding:
-                      "0 13px",
-                    border: active
-                      ? `1px solid ${COLORS.purple}`
-                      : `1px solid ${COLORS.border}`,
-                    backgroundColor:
-                      active
-                        ? COLORS.purple
-                        : COLORS.white,
-                    color: active
-                      ? COLORS.white
-                      : COLORS.black,
-                    cursor: "pointer",
-                    fontSize: "7px",
-                    fontWeight: "700",
-                  }}
-                >
-                  {filterItem}
-                </button>
-              );
-            }
-          )}
-        </section>
-
         {/* APPOINTMENTS */}
-
         <section>
-          {filteredAppointments.map(
-            (appointment) => {
-              const status =
-                statusColors[
-                  appointment.status
-                ];
+          {appointments.length === 0 ? (
+            <div style={styles.empty}>
+              No appointments scheduled yet.
+            </div>
+          ) : (
+            appointments.map((appointment) => (
+              <div
+                key={appointment.id}
+                style={styles.appointment}
+              >
+                {/* TIME */}
+                <div style={styles.time}>
+                  {appointment.time}
+                </div>
 
-              return (
-                <article
-                  key={appointment.id}
-                  style={{
-                    border:
-                      `1px solid ${COLORS.border}`,
-                    marginBottom: "12px",
-                    padding: "18px",
-                    backgroundColor:
-                      COLORS.white,
-                  }}
-                >
-                  {/* TOP ROW */}
-
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent:
-                        "space-between",
-                      alignItems:
-                        "flex-start",
-                      gap: "15px",
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems:
-                          "center",
-                        gap: "15px",
-                      }}
-                    >
-                      {/* TIME */}
-
-                      <div
-                        style={{
-                          minWidth: "75px",
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontFamily:
-                              '"Cormorant Garamond", Georgia, serif',
-                            fontSize: "22px",
-                          }}
-                        >
-                          {
-                            appointment.time
-                          }
-                        </div>
-                      </div>
-
-                      {/* MODEL */}
-
-                      <div>
-                        <div
-                          style={{
-                            color:
-                              COLORS.purple,
-                            fontSize: "7px",
-                            fontWeight:
-                              "700",
-                            letterSpacing:
-                              "1.5px",
-                          }}
-                        >
-                          MODEL
-                        </div>
-
-                        <div
-                          style={{
-                            fontFamily:
-                              '"Cormorant Garamond", Georgia, serif',
-                            fontSize: "27px",
-                            lineHeight:
-                              "1",
-                            marginTop:
-                              "3px",
-                          }}
-                        >
-                          {
-                            appointment.model
-                          }
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* STATUS */}
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        changeStatus(
-                          appointment.id
-                        )
-                      }
-                      style={{
-                        border: "none",
-                        backgroundColor:
-                          status.background,
-                        color:
-                          status.color,
-                        padding:
-                          "8px 11px",
-                        cursor: "pointer",
-                        fontSize: "7px",
-                        fontWeight:
-                          "700",
-                      }}
-                    >
-                      ●{" "}
-                      {
-                        appointment.status
-                      }
-                    </button>
+                {/* DETAILS */}
+                <div style={styles.details}>
+                  <div style={styles.model}>
+                    {appointment.model}
                   </div>
 
-                  {/* DETAILS */}
-
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns:
-                        "repeat(auto-fit, minmax(130px, 1fr))",
-                      gap: "15px",
-                      borderTop:
-                        `1px solid ${COLORS.border}`,
-                      marginTop: "15px",
-                      paddingTop: "15px",
-                    }}
-                  >
-                    <div>
-                      <div
-                        style={{
-                          color:
-                            COLORS.gray,
-                          fontSize: "7px",
-                          fontWeight:
-                            "700",
-                          letterSpacing:
-                            "1px",
-                        }}
-                      >
-                        SERVICE
-                      </div>
-
-                      <div
-                        style={{
-                          fontSize: "9px",
-                          marginTop: "4px",
-                        }}
-                      >
-                        {
-                          appointment.service
-                        }
-                      </div>
-                    </div>
-
-                    <div>
-                      <div
-                        style={{
-                          color:
-                            COLORS.gray,
-                          fontSize: "7px",
-                          fontWeight:
-                            "700",
-                          letterSpacing:
-                            "1px",
-                        }}
-                      >
-                        ARTIST
-                      </div>
-
-                      <div
-                        style={{
-                          fontSize: "9px",
-                          marginTop: "4px",
-                        }}
-                      >
-                        {
-                          appointment.artist
-                        }
-                      </div>
-                    </div>
-
-                    <div>
-                      <div
-                        style={{
-                          color:
-                            COLORS.gray,
-                          fontSize: "7px",
-                          fontWeight:
-                            "700",
-                          letterSpacing:
-                            "1px",
-                        }}
-                      >
-                        CHAIR
-                      </div>
-
-                      <div
-                        style={{
-                          fontSize: "9px",
-                          marginTop: "4px",
-                        }}
-                      >
-                        {
-                          appointment.chair
-                        }
-                      </div>
-                    </div>
+                  <div style={styles.service}>
+                    {appointment.service}
                   </div>
 
-                  {/* ACTIONS */}
-
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "8px",
-                      marginTop: "15px",
-                    }}
-                  >
-                    <button
-                      type="button"
-                      onClick={() =>
-                        openEditModal(
-                          appointment
-                        )
-                      }
-                      style={{
-                        minHeight:
-                          "38px",
-                        border:
-                          `1px solid ${COLORS.purple}`,
-                        backgroundColor:
-                          COLORS.white,
-                        color:
-                          COLORS.purple,
-                        padding:
-                          "0 13px",
-                        cursor:
-                          "pointer",
-                        fontSize:
-                          "7px",
-                        fontWeight:
-                          "700",
-                      }}
-                    >
-                      EDIT
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        deleteAppointment(
-                          appointment.id
-                        )
-                      }
-                      style={{
-                        minHeight:
-                          "38px",
-                        border:
-                          `1px solid ${COLORS.border}`,
-                        backgroundColor:
-                          COLORS.white,
-                        color:
-                          COLORS.red,
-                        padding:
-                          "0 13px",
-                        cursor:
-                          "pointer",
-                        fontSize:
-                          "7px",
-                        fontWeight:
-                          "700",
-                      }}
-                    >
-                      DELETE
-                    </button>
+                  <div style={styles.artist}>
+                    Artist: {appointment.artist}
                   </div>
-                </article>
-              );
-            }
+                </div>
+
+                {/* STATUS */}
+                <div style={styles.actions}>
+                  <button
+                    onClick={() =>
+                      updateStatus(appointment.id)
+                    }
+                    style={getStatusStyle(
+                      appointment.status
+                    )}
+                  >
+                    {appointment.status}
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      deleteAppointment(appointment.id)
+                    }
+                    style={styles.deleteButton}
+                  >
+                    DELETE
+                  </button>
+                </div>
+              </div>
+            ))
           )}
         </section>
 
-        {/* INFO CARD */}
-
-        <section
-          style={{
-            marginTop: "25px",
-            backgroundColor:
-              COLORS.lightPurple,
-            padding: "20px",
-          }}
-        >
-          <div
-            style={{
-              color: COLORS.purple,
-              fontSize: "8px",
-              fontWeight: "700",
-              letterSpacing: "1.5px",
-            }}
-          >
-            BACKSTAGE BEAUTY
+        {/* BACKSTAGE NOTE */}
+        <section style={styles.note}>
+          <div style={styles.noteTitle}>
+            BACKSTAGE NOTE
           </div>
 
-          <div
-            style={{
-              fontFamily:
-                '"Cormorant Garamond", Georgia, serif',
-              fontSize: "28px",
-              marginTop: "5px",
-            }}
-          >
-            Keep the glam moving.
-          </div>
-
-          <div
-            style={{
-              color: COLORS.gray,
-              fontSize: "9px",
-              lineHeight: "1.5",
-              marginTop: "5px",
-            }}
-          >
-            Tap a status to move a model
-            from waiting, to in-chair, to
-            complete.
+          <div style={styles.noteText}>
+            Models should arrive at their beauty
+            appointment on time and remain backstage
+            until their look is complete.
           </div>
         </section>
-      </div>
 
-      {/* MODAL */}
+        {/* ADD APPOINTMENT MODAL */}
+        {showForm && (
+          <div style={styles.overlay}>
+            <div style={styles.modal}>
 
-      {showModal && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor:
-              "rgba(22,22,22,0.65)",
-            zIndex: 1000,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "20px",
-            overflowY: "auto",
-          }}
-        >
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "500px",
-              backgroundColor:
-                COLORS.white,
-              padding: "25px",
-              boxSizing:
-                "border-box",
-              margin: "20px 0",
-            }}
-          >
-            <div
-              style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "2px",
-              }}
-            >
-              {editingAppointment
-                ? "EDIT APPOINTMENT"
-                : "NEW APPOINTMENT"}
-            </div>
+              <div style={styles.modalLabel}>
+                BEAUTY SCHEDULE
+              </div>
 
-            <h2
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "34px",
-                fontWeight: "500",
-                margin:
-                  "7px 0 22px",
-              }}
-            >
-              Beauty Appointment
-            </h2>
+              <h2 style={styles.modalTitle}>
+                Add Appointment
+              </h2>
 
-            <label
-              style={{
-                display: "block",
-                fontSize: "8px",
-                fontWeight: "700",
-                marginBottom: "6px",
-              }}
-            >
-              TIME
-            </label>
+              <label style={styles.label}>
+                MODEL
+              </label>
 
-            <input
-              value={time}
-              onChange={(event) =>
-                setTime(
-                  event.target.value
-                )
-              }
-              placeholder="08:30 AM"
-              style={{
-                width: "100%",
-                height: "46px",
-                border:
-                  `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing:
-                  "border-box",
-                marginBottom:
-                  "14px",
-              }}
-            />
-
-            <label
-              style={{
-                display: "block",
-                fontSize: "8px",
-                fontWeight: "700",
-                marginBottom: "6px",
-              }}
-            >
-              MODEL NAME
-            </label>
-
-            <input
-              value={model}
-              onChange={(event) =>
-                setModel(
-                  event.target.value
-                )
-              }
-              placeholder="Model 01"
-              style={{
-                width: "100%",
-                height: "46px",
-                border:
-                  `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing:
-                  "border-box",
-                marginBottom:
-                  "14px",
-              }}
-            />
-
-            <label
-              style={{
-                display: "block",
-                fontSize: "8px",
-                fontWeight: "700",
-                marginBottom: "6px",
-              }}
-            >
-              SERVICE
-            </label>
-
-            <select
-              value={service}
-              onChange={(event) =>
-                setService(
-                  event.target.value
-                )
-              }
-              style={{
-                width: "100%",
-                height: "46px",
-                border:
-                  `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing:
-                  "border-box",
-                backgroundColor:
-                  COLORS.white,
-                marginBottom:
-                  "14px",
-              }}
-            >
-              <option value="Hair">
-                Hair
-              </option>
-
-              <option value="Makeup">
-                Makeup
-              </option>
-
-              <option value="Hair + Makeup">
-                Hair + Makeup
-              </option>
-            </select>
-
-            <label
-              style={{
-                display: "block",
-                fontSize: "8px",
-                fontWeight: "700",
-                marginBottom: "6px",
-              }}
-            >
-              ARTIST
-            </label>
-
-            <input
-              value={artist}
-              onChange={(event) =>
-                setArtist(
-                  event.target.value
-                )
-              }
-              placeholder="Artist name"
-              style={{
-                width: "100%",
-                height: "46px",
-                border:
-                  `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing:
-                  "border-box",
-                marginBottom:
-                  "14px",
-              }}
-            />
-
-            <label
-              style={{
-                display: "block",
-                fontSize: "8px",
-                fontWeight: "700",
-                marginBottom: "6px",
-              }}
-            >
-              CHAIR
-            </label>
-
-            <select
-              value={chair}
-              onChange={(event) =>
-                setChair(
-                  event.target.value
-                )
-              }
-              style={{
-                width: "100%",
-                height: "46px",
-                border:
-                  `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing:
-                  "border-box",
-                backgroundColor:
-                  COLORS.white,
-                marginBottom:
-                  "20px",
-              }}
-            >
-              <option value="Chair 01">
-                Chair 01
-              </option>
-
-              <option value="Chair 02">
-                Chair 02
-              </option>
-
-              <option value="Chair 03">
-                Chair 03
-              </option>
-
-              <option value="Chair 04">
-                Chair 04
-              </option>
-
-              <option value="Chair 05">
-                Chair 05
-              </option>
-            </select>
-
-            <div
-              style={{
-                display: "flex",
-                gap: "9px",
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => {
-                  setShowModal(false);
-                  resetForm();
-                }}
-                style={{
-                  flex: 1,
-                  minHeight:
-                    "48px",
-                  border:
-                    `1px solid ${COLORS.border}`,
-                  backgroundColor:
-                    COLORS.white,
-                  cursor:
-                    "pointer",
-                  fontWeight:
-                    "700",
-                  fontSize:
-                    "8px",
-                }}
-              >
-                CANCEL
-              </button>
-
-              <button
-                type="button"
-                onClick={
-                  saveAppointment
+              <input
+                value={model}
+                onChange={(e) =>
+                  setModel(e.target.value)
                 }
-                style={{
-                  flex: 1,
-                  minHeight:
-                    "48px",
-                  border: "none",
-                  backgroundColor:
-                    COLORS.purple,
-                  color:
-                    COLORS.white,
-                  cursor:
-                    "pointer",
-                  fontWeight:
-                    "700",
-                  fontSize:
-                    "8px",
-                }}
+                placeholder="Model name"
+                style={styles.input}
+              />
+
+              <label style={styles.label}>
+                TIME
+              </label>
+
+              <input
+                value={time}
+                onChange={(e) =>
+                  setTime(e.target.value)
+                }
+                placeholder="8:00 AM"
+                style={styles.input}
+              />
+
+              <label style={styles.label}>
+                SERVICE
+              </label>
+
+              <select
+                value={service}
+                onChange={(e) =>
+                  setService(e.target.value)
+                }
+                style={styles.input}
               >
-                {editingAppointment
-                  ? "SAVE CHANGES"
-                  : "ADD APPOINTMENT"}
-              </button>
+                <option>Hair</option>
+                <option>Makeup</option>
+                <option>Hair & Makeup</option>
+              </select>
+
+              <label style={styles.label}>
+                ARTIST / TEAM
+              </label>
+
+              <input
+                value={artist}
+                onChange={(e) =>
+                  setArtist(e.target.value)
+                }
+                placeholder="Artist or team"
+                style={styles.input}
+              />
+
+              <div style={styles.modalButtons}>
+                <button
+                  onClick={() => setShowForm(false)}
+                  style={styles.cancelButton}
+                >
+                  CANCEL
+                </button>
+
+                <button
+                  onClick={addAppointment}
+                  style={styles.primaryButton}
+                >
+                  ADD APPOINTMENT
+                </button>
+              </div>
+
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* TOAST */}
-
-      {message && (
-        <div
-          style={{
-            position: "fixed",
-            left: "50%",
-            bottom: "25px",
-            transform:
-              "translateX(-50%)",
-            width:
-              "calc(100% - 40px)",
-            maxWidth: "440px",
-            backgroundColor:
-              COLORS.black,
-            color:
-              COLORS.white,
-            padding:
-              "15px 18px",
-            textAlign:
-              "center",
-            fontSize: "10px",
-            fontWeight:
-              "700",
-            zIndex: 1200,
-            boxSizing:
-              "border-box",
-          }}
-        >
-          {message}
-        </div>
-      )}
+      </div>
     </main>
   );
+}
+
+
+/* ============================
+   EASY-TO-EDIT STYLES
+============================ */
+
+const styles = {
+  page: {
+    minHeight: "100vh",
+    background: "#FFFFFF",
+    color: "#161616",
+    fontFamily: '"PT Sans", Arial, sans-serif',
+    padding: "0 20px 60px",
+  },
+
+  container: {
+    maxWidth: "1000px",
+    margin: "0 auto",
+  },
+
+  topBar: {
+    height: "7px",
+    background: "#81247C",
+  },
+
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "25px 0",
+    marginBottom: "35px",
+  },
+
+  logo: {
+    fontFamily: '"Cormorant Garamond", Georgia, serif',
+    color: "#81247C",
+    fontSize: "38px",
+    fontWeight: "600",
+    lineHeight: "0.8",
+  },
+
+  logoText: {
+    fontSize: "8px",
+    fontWeight: "700",
+    letterSpacing: "3px",
+    marginTop: "9px",
+  },
+
+  headerRight: {
+    textAlign: "right",
+  },
+
+  smallPurple: {
+    color: "#81247C",
+    fontSize: "8px",
+    fontWeight: "700",
+    letterSpacing: "1.5px",
+  },
+
+  headerTitle: {
+    fontFamily: '"Cormorant Garamond", Georgia, serif',
+    fontSize: "23px",
+    marginTop: "4px",
+  },
+
+  hero: {
+    background: "#161616",
+    color: "#FFFFFF",
+    padding: "30px",
+    marginBottom: "20px",
+  },
+
+  heroLabel: {
+    color: "#DEB64B",
+    fontSize: "8px",
+    fontWeight: "700",
+    letterSpacing: "2px",
+  },
+
+  heroTitle: {
+    fontFamily: '"Cormorant Garamond", Georgia, serif',
+    fontSize: "52px",
+    fontWeight: "500",
+    lineHeight: "0.85",
+    margin: "12px 0 0",
+  },
+
+  description: {
+    color: "#BBBBBB",
+    fontSize: "11px",
+    lineHeight: "1.6",
+    maxWidth: "500px",
+    marginTop: "15px",
+  },
+
+  summary: {
+    display: "grid",
+    gridTemplateColumns:
+      "repeat(auto-fit, minmax(160px, 1fr))",
+    gap: "10px",
+    marginBottom: "35px",
+  },
+
+  stat: {
+    border: "1px solid #E8E8E8",
+    padding: "18px",
+  },
+
+  statLabel: {
+    color: "#777777",
+    fontSize: "8px",
+    fontWeight: "700",
+    letterSpacing: "1.5px",
+  },
+
+  statNumber: {
+    fontFamily: '"Cormorant Garamond", Georgia, serif',
+    fontSize: "36px",
+    marginTop: "5px",
+  },
+
+  sectionHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "15px",
+    flexWrap: "wrap",
+    marginBottom: "15px",
+  },
+
+  sectionTitle: {
+    fontSize: "9px",
+    fontWeight: "700",
+    letterSpacing: "2px",
+  },
+
+  sectionSubtitle: {
+    color: "#777777",
+    fontSize: "9px",
+    marginTop: "4px",
+  },
+
+  primaryButton: {
+    minHeight: "44px",
+    border: "none",
+    background: "#81247C",
+    color: "#FFFFFF",
+    padding: "0 15px",
+    cursor: "pointer",
+    fontSize: "8px",
+    fontWeight: "700",
+  },
+
+  appointment: {
+    display: "flex",
+    alignItems: "center",
+    gap: "18px",
+    borderTop: "1px solid #E8E8E8",
+    padding: "18px 0",
+    flexWrap: "wrap",
+  },
+
+  time: {
+    width: "75px",
+    fontFamily: '"Cormorant Garamond", Georgia, serif',
+    fontSize: "20px",
+  },
+
+  details: {
+    flex: 1,
+    minWidth: "180px",
+  },
+
+  model: {
+    fontFamily: '"Cormorant Garamond", Georgia, serif',
+    fontSize: "23px",
+  },
+
+  service: {
+    color: "#81247C",
+    fontSize: "8px",
+    fontWeight: "700",
+    marginTop: "4px",
+  },
+
+  artist: {
+    color: "#777777",
+    fontSize: "8px",
+    marginTop: "4px",
+  },
+
+  actions: {
+    display: "flex",
+    gap: "8px",
+    alignItems: "center",
+  },
+
+  deleteButton: {
+    minHeight: "36px",
+    border: "1px solid #E8E8E8",
+    background: "#FFFFFF",
+    color: "#B33A3A",
+    padding: "0 10px",
+    cursor: "pointer",
+    fontSize: "7px",
+    fontWeight: "700",
+  },
+
+  empty: {
+    border: "1px solid #E8E8E8",
+    padding: "30px",
+    textAlign: "center",
+    color: "#777777",
+    fontSize: "10px",
+  },
+
+  note: {
+    background: "#F5EAF4",
+    borderLeft: "5px solid #81247C",
+    padding: "18px",
+    marginTop: "30px",
+  },
+
+  noteTitle: {
+    color: "#81247C",
+    fontSize: "8px",
+    fontWeight: "700",
+    letterSpacing: "1.5px",
+  },
+
+  noteText: {
+    fontSize: "10px",
+    lineHeight: "1.5",
+    marginTop: "7px",
+  },
+
+  overlay: {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(22,22,22,0.65)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "20px",
+    zIndex: 1000,
+  },
+
+  modal: {
+    width: "100%",
+    maxWidth: "500px",
+    background: "#FFFFFF",
+    padding: "25px",
+    boxSizing: "border-box",
+  },
+
+  modalLabel: {
+    color: "#81247C",
+    fontSize: "8px",
+    fontWeight: "700",
+    letterSpacing: "2px",
+  },
+
+  modalTitle: {
+    fontFamily: '"Cormorant Garamond", Georgia, serif',
+    fontSize: "34px",
+    fontWeight: "500",
+    margin: "7px 0 22px",
+  },
+
+  label: {
+    display: "block",
+    fontSize: "8px",
+    fontWeight: "700",
+    marginBottom: "6px",
+  },
+
+  input: {
+    width: "100%",
+    height: "46px",
+    border: "1px solid #E8E8E8",
+    padding: "0 12px",
+    boxSizing: "border-box",
+    marginBottom: "14px",
+    background: "#FFFFFF",
+  },
+
+  modalButtons: {
+    display: "flex",
+    gap: "9px",
+    marginTop: "5px",
+  },
+
+  cancelButton: {
+    flex: 1,
+    minHeight: "48px",
+    border: "1px solid #E8E8E8",
+    background: "#FFFFFF",
+    cursor: "pointer",
+    fontWeight: "700",
+    fontSize: "8px",
+  },
+};
+
+
+function getStatusStyle(status) {
+  if (status === "DONE") {
+    return {
+      minHeight: "36px",
+      border: "none",
+      background: "#EAF5EF",
+      color: "#2F7D5B",
+      padding: "0 10px",
+      cursor: "pointer",
+      fontSize: "7px",
+      fontWeight: "700",
+    };
+  }
+
+  if (status === "IN PROGRESS") {
+    return {
+      minHeight: "36px",
+      border: "none",
+      background: "#F8F3E5",
+      color: "#806313",
+      padding: "0 10px",
+      cursor: "pointer",
+      fontSize: "7px",
+      fontWeight: "700",
+    };
+  }
+
+  if (status === "READY") {
+    return {
+      minHeight: "36px",
+      border: "none",
+      background: "#EAF5EF",
+      color: "#2F7D5B",
+      padding: "0 10px",
+      cursor: "pointer",
+      fontSize: "7px",
+      fontWeight: "700",
+    };
+  }
+
+  return {
+    minHeight: "36px",
+    border: "none",
+    background: "#F5EAF4",
+    color: "#81247C",
+    padding: "0 10px",
+    cursor: "pointer",
+    fontSize: "7px",
+    fontWeight: "700",
+  };
 }
 
 export default HairMakeup;

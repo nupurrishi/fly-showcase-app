@@ -5,17 +5,14 @@ const COLORS = {
   purple: "#81247C",
   gold: "#DEB64B",
   white: "#FFFFFF",
+  gray: "#777777",
   lightPurple: "#F5EAF4",
   lightGold: "#F8F3E5",
   border: "#E8E8E8",
-  gray: "#777777",
-  green: "#2F7D5B",
-  lightGreen: "#EAF5EF",
   red: "#B33A3A",
-  lightRed: "#FBEAEA",
 };
 
-const initialLooks = [
+const STARTING_LOOKS = [
   {
     id: 1,
     number: "01",
@@ -42,178 +39,136 @@ const initialLooks = [
   },
 ];
 
-function DesignerDashboard() {
-  const [looks, setLooks] = useState(initialLooks);
-
-  const [showAddLook, setShowAddLook] =
-    useState(false);
-
-  const [editingLook, setEditingLook] =
-    useState(null);
-
+export default function DesignerDashboard() {
+  const [looks, setLooks] = useState(STARTING_LOOKS);
+  const [showForm, setShowForm] = useState(false);
+  const [editingLook, setEditingLook] = useState(null);
   const [message, setMessage] = useState("");
 
-  const [lookNumber, setLookNumber] =
-    useState("");
-
-  const [lookName, setLookName] =
-    useState("");
-
-  const [modelName, setModelName] =
-    useState("");
-
-  const [description, setDescription] =
-    useState("");
-
+  const [number, setNumber] = useState("");
+  const [name, setName] = useState("");
+  const [model, setModel] = useState("");
+  const [description, setDescription] = useState("");
   const [notes, setNotes] = useState("");
 
-  function resetForm() {
-    setLookNumber("");
-    setLookName("");
-    setModelName("");
+  const showMessage = (text) => {
+    setMessage(text);
+    setTimeout(() => setMessage(""), 2500);
+  };
+
+  const clearForm = () => {
+    setNumber("");
+    setName("");
+    setModel("");
     setDescription("");
     setNotes("");
     setEditingLook(null);
-  }
+  };
 
-  function openAddLook() {
-    resetForm();
-    setShowAddLook(true);
-  }
-
-  function openEditLook(look) {
-    setEditingLook(look);
-    setLookNumber(look.number);
-    setLookName(look.name);
-    setModelName(look.model);
-    setDescription(look.description);
-    setNotes(look.notes);
-    setShowAddLook(true);
-  }
-
-  function saveLook() {
-    if (!lookName.trim()) {
-      setMessage("Please enter a look name.");
-
-      setTimeout(() => {
-        setMessage("");
-      }, 2500);
-
+  const addLook = () => {
+    if (!name.trim()) {
+      showMessage("Please enter a look name.");
       return;
     }
 
-    if (editingLook) {
-      setLooks((current) =>
-        current.map((look) =>
-          look.id === editingLook.id
-            ? {
-                ...look,
-                number:
-                  lookNumber ||
-                  look.number,
-                name: lookName,
-                model:
-                  modelName ||
-                  "Unassigned",
-                description,
-                notes,
-              }
-            : look
-        )
-      );
+    const newLook = {
+      id: Date.now(),
+      number: number || String(looks.length + 1).padStart(2, "0"),
+      name,
+      model: model || "Unassigned",
+      description,
+      notes,
+    };
 
-      setMessage("Lookbook entry updated.");
-    } else {
-      const newLook = {
-        id: Date.now(),
-        number:
-          lookNumber ||
-          String(looks.length + 1).padStart(2, "0"),
-        name: lookName,
-        model:
-          modelName ||
-          "Unassigned",
-        description,
-        notes,
-      };
+    setLooks([...looks, newLook]);
+    setShowForm(false);
+    clearForm();
+    showMessage("Look added.");
+  };
 
-      setLooks((current) => [
-        ...current,
-        newLook,
-      ]);
-
-      setMessage("New look added to your lookbook.");
-    }
-
-    setShowAddLook(false);
-    resetForm();
-
-    setTimeout(() => {
-      setMessage("");
-    }, 2500);
-  }
-
-  function deleteLook(id) {
-    setLooks((current) =>
-      current.filter((look) => look.id !== id)
+  const updateLook = () => {
+    setLooks(
+      looks.map((look) =>
+        look.id === editingLook.id
+          ? {
+              ...look,
+              number,
+              name,
+              model: model || "Unassigned",
+              description,
+              notes,
+            }
+          : look
+      )
     );
 
-    setMessage("Look removed from your lookbook.");
+    setShowForm(false);
+    clearForm();
+    showMessage("Look updated.");
+  };
 
-    setTimeout(() => {
-      setMessage("");
-    }, 2500);
-  }
+  const saveLook = () => {
+    if (editingLook) {
+      updateLook();
+    } else {
+      addLook();
+    }
+  };
+
+  const editLook = (look) => {
+    setEditingLook(look);
+    setNumber(look.number);
+    setName(look.name);
+    setModel(look.model);
+    setDescription(look.description);
+    setNotes(look.notes);
+    setShowForm(true);
+  };
+
+  const deleteLook = (id) => {
+    setLooks(looks.filter((look) => look.id !== id));
+    showMessage("Look deleted.");
+  };
 
   return (
     <main
       style={{
         minHeight: "100vh",
-        backgroundColor: COLORS.white,
+        background: COLORS.white,
         color: COLORS.black,
-        fontFamily:
-          '"PT Sans", Arial, sans-serif',
+        fontFamily: "Arial, sans-serif",
       }}
     >
-      {/* BRAND BAR */}
-
+      {/* TOP BAR */}
       <div
         style={{
           height: "7px",
-          width: "100%",
-          backgroundColor: COLORS.purple,
+          background: COLORS.purple,
         }}
       />
 
       <div
         style={{
-          width: "100%",
           maxWidth: "1000px",
-          margin: "0 auto",
-          padding: "24px 20px 80px",
-          boxSizing: "border-box",
+          margin: "auto",
+          padding: "25px 20px 70px",
         }}
       >
         {/* HEADER */}
-
         <header
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            gap: "20px",
-            marginBottom: "32px",
+            marginBottom: "30px",
           }}
         >
           <div>
             <div
               style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                color: COLORS.purple,
                 fontSize: "38px",
-                lineHeight: "0.8",
-                fontWeight: "600",
+                fontWeight: "bold",
+                color: COLORS.purple,
               }}
             >
               FLY
@@ -221,597 +176,374 @@ function DesignerDashboard() {
 
             <div
               style={{
-                fontSize: "8px",
-                fontWeight: "700",
+                fontSize: "9px",
                 letterSpacing: "3px",
-                marginTop: "9px",
+                fontWeight: "bold",
               }}
             >
               SHOWCASE
             </div>
           </div>
 
-          <div
-            style={{
-              textAlign: "right",
-            }}
-          >
+          <div style={{ textAlign: "right" }}>
             <div
               style={{
                 color: COLORS.purple,
-                fontSize: "8px",
-                letterSpacing: "1.5px",
-                fontWeight: "700",
+                fontSize: "9px",
+                fontWeight: "bold",
               }}
             >
               DESIGNER
             </div>
 
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "23px",
-                marginTop: "4px",
-              }}
-            >
+            <div style={{ fontSize: "22px" }}>
               Designer Studio
             </div>
           </div>
         </header>
 
-        {/* DESIGNER PROFILE */}
-
+        {/* PROFILE */}
         <section
           style={{
-            backgroundColor: COLORS.black,
+            background: COLORS.black,
             color: COLORS.white,
-            padding: "24px",
-            marginBottom: "24px",
+            padding: "25px",
+            marginBottom: "25px",
           }}
         >
           <div
             style={{
               color: COLORS.gold,
-              fontSize: "8px",
-              fontWeight: "700",
+              fontSize: "9px",
+              fontWeight: "bold",
               letterSpacing: "2px",
-              marginBottom: "9px",
             }}
           >
             YOUR DESIGNER PROFILE
           </div>
 
-          <div
+          <h1
             style={{
-              fontFamily:
-                '"Cormorant Garamond", Georgia, serif',
+              margin: "8px 0 0",
               fontSize: "40px",
-              lineHeight: "0.95",
+              fontWeight: "normal",
             }}
           >
             Designer A
-          </div>
+          </h1>
 
-          <div
+          <p
             style={{
               color: "#BBBBBB",
-              fontSize: "10px",
-              marginTop: "9px",
+              fontSize: "11px",
             }}
           >
             Fly Showcase • Main Fashion Show
-          </div>
+          </p>
         </section>
 
-        {/* SHOW INFORMATION */}
-
+        {/* SHOW INFO */}
         <section
           style={{
             display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(170px, 1fr))",
+            gridTemplateColumns: "repeat(3, 1fr)",
             gap: "10px",
             marginBottom: "30px",
           }}
         >
-          <div
-            style={{
-              border: `1px solid ${COLORS.border}`,
-              padding: "17px",
-            }}
-          >
-            <div
-              style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "1.5px",
-              }}
-            >
-              SHOW DATE
-            </div>
-
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "23px",
-                marginTop: "6px",
-              }}
-            >
-              November 11
-            </div>
-          </div>
-
-          <div
-            style={{
-              border: `1px solid ${COLORS.border}`,
-              padding: "17px",
-            }}
-          >
-            <div
-              style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "1.5px",
-              }}
-            >
-              RUNWAY
-            </div>
-
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "23px",
-                marginTop: "6px",
-              }}
-            >
-              Main Stage
-            </div>
-          </div>
-
-          <div
-            style={{
-              border: `1px solid ${COLORS.border}`,
-              padding: "17px",
-            }}
-          >
-            <div
-              style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "1.5px",
-              }}
-            >
-              YOUR LOOKS
-            </div>
-
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "23px",
-                marginTop: "6px",
-              }}
-            >
-              {looks.length}
-            </div>
-          </div>
+          <InfoBox title="SHOW DATE" value="November 11" />
+          <InfoBox title="RUNWAY" value="Main Stage" />
+          <InfoBox title="YOUR LOOKS" value={looks.length} />
         </section>
 
-        {/* IMPORTANT PERMISSION NOTICE */}
-
+        {/* PERMISSION NOTICE */}
         <section
           style={{
-            backgroundColor: COLORS.lightPurple,
+            background: COLORS.lightPurple,
             borderLeft: `5px solid ${COLORS.purple}`,
-            padding: "17px 18px",
-            marginBottom: "32px",
+            padding: "18px",
+            marginBottom: "30px",
           }}
         >
-          <div
+          <strong
             style={{
               color: COLORS.purple,
-              fontSize: "8px",
-              fontWeight: "700",
-              letterSpacing: "1.5px",
-              marginBottom: "6px",
+              fontSize: "9px",
             }}
           >
             DESIGNER ACCESS
-          </div>
+          </strong>
 
-          <div
-            style={{
-              fontSize: "10px",
-              lineHeight: "1.5",
-            }}
-          >
-            You can manage your lookbook and
-            designer information. The official
-            show schedule is managed by the
-            Stage Manager.
-          </div>
+          <p style={{ fontSize: "11px", lineHeight: "1.5" }}>
+            You can manage your lookbook and designer
+            information. The official show schedule is
+            managed by the Stage Manager.
+          </p>
         </section>
 
         {/* LOOKBOOK HEADER */}
+        <section
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "15px",
+          }}
+        >
+          <div>
+            <strong style={{ fontSize: "10px", letterSpacing: "2px" }}>
+              MY LOOKBOOK
+            </strong>
 
-        <section style={{ marginBottom: "18px" }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: "15px",
-              flexWrap: "wrap",
-            }}
-          >
-            <div>
-              <div
-                style={{
-                  fontSize: "9px",
-                  fontWeight: "700",
-                  letterSpacing: "2px",
-                }}
-              >
-                MY LOOKBOOK
-              </div>
-
-              <div
-                style={{
-                  color: COLORS.gray,
-                  fontSize: "9px",
-                  marginTop: "4px",
-                }}
-              >
-                Manage your runway looks
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={openAddLook}
+            <div
               style={{
-                minHeight: "44px",
-                border: "none",
-                backgroundColor: COLORS.purple,
-                color: COLORS.white,
-                padding: "0 17px",
-                cursor: "pointer",
-                fontWeight: "700",
-                fontSize: "9px",
+                color: COLORS.gray,
+                fontSize: "10px",
+                marginTop: "4px",
               }}
             >
-              + ADD LOOK
-            </button>
+              Manage your runway looks
+            </div>
           </div>
+
+          <button
+            onClick={() => {
+              clearForm();
+              setShowForm(true);
+            }}
+            style={buttonStyle}
+          >
+            + ADD LOOK
+          </button>
         </section>
 
-        {/* LOOKBOOK GRID */}
-
+        {/* LOOKS */}
         <section
           style={{
             display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(250px, 1fr))",
-            gap: "14px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+            gap: "15px",
             marginBottom: "35px",
           }}
         >
           {looks.map((look) => (
-            <article
+            <div
               key={look.id}
               style={{
                 border: `1px solid ${COLORS.border}`,
-                backgroundColor: COLORS.white,
-                overflow: "hidden",
               }}
             >
               {/* IMAGE PLACEHOLDER */}
-
               <div
                 style={{
-                  height: "210px",
-                  backgroundColor: COLORS.black,
+                  height: "200px",
+                  background: COLORS.black,
+                  color: COLORS.gold,
                   display: "flex",
-                  alignItems: "center",
                   justifyContent: "center",
+                  alignItems: "center",
+                  fontSize: "60px",
                   position: "relative",
                 }}
               >
-                <div
-                  style={{
-                    color: COLORS.gold,
-                    fontFamily:
-                      '"Cormorant Garamond", Georgia, serif',
-                    fontSize: "58px",
-                    opacity: 0.9,
-                  }}
-                >
-                  {look.number}
-                </div>
+                {look.number}
 
-                <div
+                <span
                   style={{
                     position: "absolute",
                     top: "12px",
                     left: "12px",
-                    backgroundColor: COLORS.gold,
+                    background: COLORS.gold,
                     color: COLORS.black,
-                    padding: "5px 8px",
-                    fontSize: "7px",
-                    fontWeight: "700",
+                    padding: "6px 8px",
+                    fontSize: "8px",
+                    fontWeight: "bold",
                   }}
                 >
                   LOOK {look.number}
-                </div>
+                </span>
               </div>
 
-              {/* LOOK DETAILS */}
-
-              <div style={{ padding: "17px" }}>
-                <div
+              {/* DETAILS */}
+              <div style={{ padding: "18px" }}>
+                <h2
                   style={{
-                    fontFamily:
-                      '"Cormorant Garamond", Georgia, serif',
+                    margin: 0,
                     fontSize: "27px",
-                    lineHeight: "1",
+                    fontWeight: "normal",
                   }}
                 >
                   {look.name}
-                </div>
+                </h2>
 
                 <div
                   style={{
                     color: COLORS.purple,
-                    fontSize: "8px",
-                    fontWeight: "700",
+                    fontSize: "9px",
+                    fontWeight: "bold",
                     marginTop: "8px",
                   }}
                 >
                   MODEL: {look.model}
                 </div>
 
-                <div
+                <p
                   style={{
                     color: COLORS.gray,
-                    fontSize: "9px",
+                    fontSize: "10px",
                     lineHeight: "1.5",
-                    marginTop: "10px",
                   }}
                 >
                   {look.description}
-                </div>
+                </p>
 
                 <div
                   style={{
-                    backgroundColor: COLORS.lightGold,
-                    padding: "10px",
-                    marginTop: "12px",
+                    background: COLORS.lightGold,
+                    padding: "12px",
+                    fontSize: "10px",
                   }}
                 >
-                  <div
+                  <strong
                     style={{
-                      fontSize: "7px",
-                      fontWeight: "700",
                       color: "#806313",
-                      letterSpacing: "1px",
+                      fontSize: "8px",
                     }}
                   >
                     DESIGNER NOTES
-                  </div>
+                  </strong>
 
-                  <div
-                    style={{
-                      fontSize: "9px",
-                      marginTop: "4px",
-                      lineHeight: "1.4",
-                    }}
-                  >
+                  <div style={{ marginTop: "5px" }}>
                     {look.notes}
                   </div>
                 </div>
 
-                {/* ACTIONS */}
-
+                {/* BUTTONS */}
                 <div
                   style={{
                     display: "flex",
                     gap: "8px",
-                    marginTop: "14px",
+                    marginTop: "15px",
                   }}
                 >
                   <button
-                    type="button"
-                    onClick={() =>
-                      openEditLook(look)
-                    }
+                    onClick={() => editLook(look)}
                     style={{
+                      ...outlineButton,
                       flex: 1,
-                      minHeight: "42px",
-                      border: `1px solid ${COLORS.purple}`,
-                      backgroundColor:
-                        COLORS.white,
-                      color: COLORS.purple,
-                      cursor: "pointer",
-                      fontWeight: "700",
-                      fontSize: "8px",
                     }}
                   >
                     EDIT
                   </button>
 
                   <button
-                    type="button"
-                    onClick={() =>
-                      deleteLook(look.id)
-                    }
+                    onClick={() => deleteLook(look.id)}
                     style={{
+                      ...outlineButton,
                       flex: 1,
-                      minHeight: "42px",
-                      border: `1px solid ${COLORS.border}`,
-                      backgroundColor:
-                        COLORS.white,
                       color: COLORS.red,
-                      cursor: "pointer",
-                      fontWeight: "700",
-                      fontSize: "8px",
                     }}
                   >
                     DELETE
                   </button>
                 </div>
               </div>
-            </article>
+            </div>
           ))}
         </section>
 
         {/* ASSIGNED MODELS */}
-
         <section style={{ marginBottom: "35px" }}>
-          <div
+          <strong
             style={{
-              fontSize: "9px",
-              fontWeight: "700",
+              fontSize: "10px",
               letterSpacing: "2px",
-              marginBottom: "14px",
             }}
           >
             YOUR ASSIGNED MODELS
-          </div>
+          </strong>
 
-          <div
-            style={{
-              borderTop: `1px solid ${COLORS.border}`,
-            }}
-          >
-            {[
-              ["Model One", "Look 01", "READY"],
-              ["Model Two", "Look 02", "STANDBY"],
-              ["Model Three", "Look 03", "MAKEUP"],
-            ].map((model) => (
+          {["Model One", "Model Two", "Model Three"].map(
+            (modelName, index) => (
               <div
-                key={model[0]}
+                key={modelName}
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: "15px",
-                  padding: "15px 0",
                   borderBottom: `1px solid ${COLORS.border}`,
-                  flexWrap: "wrap",
+                  padding: "15px 0",
+                  display: "flex",
+                  justifyContent: "space-between",
                 }}
               >
                 <div>
-                  <div
-                    style={{
-                      fontFamily:
-                        '"Cormorant Garamond", Georgia, serif',
-                      fontSize: "21px",
-                    }}
-                  >
-                    {model[0]}
+                  <div style={{ fontSize: "20px" }}>
+                    {modelName}
                   </div>
 
                   <div
                     style={{
                       color: COLORS.gray,
-                      fontSize: "8px",
-                      marginTop: "3px",
+                      fontSize: "9px",
                     }}
                   >
-                    {model[1]}
+                    Look {String(index + 1).padStart(2, "0")}
                   </div>
                 </div>
 
-                <div
+                <span
                   style={{
-                    padding: "6px 9px",
-                    backgroundColor:
-                      model[2] === "READY"
-                        ? COLORS.lightGreen
-                        : model[2] ===
-                          "STANDBY"
-                        ? COLORS.lightGold
-                        : COLORS.lightPurple,
-                    color:
-                      model[2] === "READY"
-                        ? COLORS.green
-                        : model[2] ===
-                          "STANDBY"
-                        ? "#806313"
-                        : COLORS.purple,
-                    fontSize: "7px",
-                    fontWeight: "700",
+                    background: COLORS.lightPurple,
+                    color: COLORS.purple,
+                    padding: "7px 10px",
+                    fontSize: "8px",
+                    fontWeight: "bold",
                   }}
                 >
-                  {model[2]}
-                </div>
+                  {index === 0
+                    ? "READY"
+                    : index === 1
+                    ? "STANDBY"
+                    : "MAKEUP"}
+                </span>
               </div>
-            ))}
-          </div>
+            )
+          )}
         </section>
 
-        {/* DESIGNER NOTES */}
-
+        {/* SHOW NOTES */}
         <section
           style={{
             border: `1px solid ${COLORS.border}`,
             padding: "20px",
           }}
         >
-          <div
+          <strong
             style={{
-              fontSize: "9px",
-              fontWeight: "700",
+              fontSize: "10px",
               letterSpacing: "2px",
-              marginBottom: "10px",
             }}
           >
             SHOW NOTES
-          </div>
+          </strong>
 
           <textarea
             defaultValue="Please ensure all looks are steamed before backstage call. Finale look should remain with the designer until final fitting."
-            rows={5}
+            rows="5"
             style={{
               width: "100%",
               boxSizing: "border-box",
-              resize: "vertical",
-              border: `1px solid ${COLORS.border}`,
+              marginTop: "12px",
               padding: "12px",
-              fontFamily:
-                '"PT Sans", Arial, sans-serif',
-              fontSize: "10px",
-              lineHeight: "1.5",
+              border: `1px solid ${COLORS.border}`,
+              fontFamily: "Arial, sans-serif",
             }}
           />
 
           <button
-            type="button"
-            onClick={() => {
-              setMessage(
-                "Designer notes saved."
-              );
-
-              setTimeout(() => {
-                setMessage("");
-              }, 2500);
-            }}
+            onClick={() => showMessage("Notes saved.")}
             style={{
+              ...buttonStyle,
               width: "100%",
-              minHeight: "46px",
               marginTop: "10px",
-              border: "none",
-              backgroundColor: COLORS.black,
-              color: COLORS.white,
-              cursor: "pointer",
-              fontWeight: "700",
-              fontSize: "9px",
             }}
           >
             SAVE NOTES
@@ -819,274 +551,101 @@ function DesignerDashboard() {
         </section>
       </div>
 
-      {/* ADD / EDIT LOOK MODAL */}
-
-      {showAddLook && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor:
-              "rgba(22,22,22,0.65)",
-            zIndex: 1000,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "20px",
-            overflowY: "auto",
-          }}
-        >
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "500px",
-              backgroundColor: COLORS.white,
-              padding: "25px",
-              boxSizing: "border-box",
-              margin: "20px 0",
-            }}
-          >
+      {/* ADD / EDIT MODAL */}
+      {showForm && (
+        <div style={modalBackground}>
+          <div style={modal}>
             <div
               style={{
                 color: COLORS.purple,
-                fontSize: "8px",
-                fontWeight: "700",
+                fontSize: "9px",
+                fontWeight: "bold",
                 letterSpacing: "2px",
               }}
             >
-              {editingLook
-                ? "EDIT LOOK"
-                : "ADD NEW LOOK"}
+              {editingLook ? "EDIT LOOK" : "ADD NEW LOOK"}
             </div>
 
             <h2
               style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "34px",
-                fontWeight: "500",
-                margin: "7px 0 22px",
+                fontSize: "32px",
+                fontWeight: "normal",
+                margin: "8px 0 20px",
               }}
             >
               Lookbook Details
             </h2>
 
-            <label
-              style={{
-                display: "block",
-                fontSize: "8px",
-                fontWeight: "700",
-                marginBottom: "6px",
-              }}
-            >
-              LOOK NUMBER
-            </label>
-
-            <input
-              value={lookNumber}
-              onChange={(event) =>
-                setLookNumber(
-                  event.target.value
-                )
-              }
+            <Input
+              label="LOOK NUMBER"
+              value={number}
+              setValue={setNumber}
               placeholder="01"
-              style={{
-                width: "100%",
-                height: "46px",
-                border: `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing: "border-box",
-                marginBottom: "14px",
-              }}
             />
 
-            <label
-              style={{
-                display: "block",
-                fontSize: "8px",
-                fontWeight: "700",
-                marginBottom: "6px",
-              }}
-            >
-              LOOK NAME
-            </label>
-
-            <input
-              value={lookName}
-              onChange={(event) =>
-                setLookName(
-                  event.target.value
-                )
-              }
+            <Input
+              label="LOOK NAME"
+              value={name}
+              setValue={setName}
               placeholder="Opening Look"
-              style={{
-                width: "100%",
-                height: "46px",
-                border: `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing: "border-box",
-                marginBottom: "14px",
-              }}
             />
 
-            <label
-              style={{
-                display: "block",
-                fontSize: "8px",
-                fontWeight: "700",
-                marginBottom: "6px",
-              }}
-            >
-              ASSIGNED MODEL
-            </label>
-
-            <input
-              value={modelName}
-              onChange={(event) =>
-                setModelName(
-                  event.target.value
-                )
-              }
+            <Input
+              label="ASSIGNED MODEL"
+              value={model}
+              setValue={setModel}
               placeholder="Model name"
-              style={{
-                width: "100%",
-                height: "46px",
-                border: `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing: "border-box",
-                marginBottom: "14px",
-              }}
             />
 
-            <label
-              style={{
-                display: "block",
-                fontSize: "8px",
-                fontWeight: "700",
-                marginBottom: "6px",
-              }}
-            >
-              DESCRIPTION
-            </label>
-
-            <textarea
+            <TextArea
+              label="DESCRIPTION"
               value={description}
-              onChange={(event) =>
-                setDescription(
-                  event.target.value
-                )
-              }
+              setValue={setDescription}
               placeholder="Describe the look..."
-              rows={3}
-              style={{
-                width: "100%",
-                border: `1px solid ${COLORS.border}`,
-                padding: "12px",
-                boxSizing: "border-box",
-                resize: "vertical",
-                marginBottom: "14px",
-              }}
             />
 
-            <label
-              style={{
-                display: "block",
-                fontSize: "8px",
-                fontWeight: "700",
-                marginBottom: "6px",
-              }}
-            >
-              DESIGNER NOTES
-            </label>
-
-            <textarea
+            <TextArea
+              label="DESIGNER NOTES"
               value={notes}
-              onChange={(event) =>
-                setNotes(
-                  event.target.value
-                )
-              }
-              placeholder="Hair, accessories, shoes, fitting notes..."
-              rows={3}
-              style={{
-                width: "100%",
-                border: `1px solid ${COLORS.border}`,
-                padding: "12px",
-                boxSizing: "border-box",
-                resize: "vertical",
-                marginBottom: "20px",
-              }}
+              setValue={setNotes}
+              placeholder="Hair, shoes, accessories, fitting notes..."
             />
 
-            <div
-              style={{
-                display: "flex",
-                gap: "9px",
-              }}
-            >
+            <div style={{ display: "flex", gap: "10px" }}>
               <button
-                type="button"
                 onClick={() => {
-                  setShowAddLook(false);
-                  resetForm();
+                  setShowForm(false);
+                  clearForm();
                 }}
-                style={{
-                  flex: 1,
-                  minHeight: "48px",
-                  border: `1px solid ${COLORS.border}`,
-                  backgroundColor:
-                    COLORS.white,
-                  cursor: "pointer",
-                  fontWeight: "700",
-                  fontSize: "8px",
-                }}
+                style={{ ...outlineButton, flex: 1 }}
               >
                 CANCEL
               </button>
 
               <button
-                type="button"
                 onClick={saveLook}
-                style={{
-                  flex: 1,
-                  minHeight: "48px",
-                  border: "none",
-                  backgroundColor:
-                    COLORS.purple,
-                  color: COLORS.white,
-                  cursor: "pointer",
-                  fontWeight: "700",
-                  fontSize: "8px",
-                }}
+                style={{ ...buttonStyle, flex: 1 }}
               >
-                {editingLook
-                  ? "SAVE CHANGES"
-                  : "ADD LOOK"}
+                {editingLook ? "SAVE CHANGES" : "ADD LOOK"}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* TOAST */}
-
+      {/* MESSAGE */}
       {message && (
         <div
           style={{
             position: "fixed",
-            left: "50%",
             bottom: "25px",
+            left: "50%",
             transform: "translateX(-50%)",
-            width: "calc(100% - 40px)",
-            maxWidth: "440px",
-            backgroundColor: COLORS.black,
+            background: COLORS.black,
             color: COLORS.white,
-            padding: "15px 18px",
-            textAlign: "center",
+            padding: "15px 25px",
             fontSize: "10px",
-            fontWeight: "700",
-            zIndex: 1200,
-            boxSizing: "border-box",
+            zIndex: 2000,
           }}
         >
           {message}
@@ -1096,4 +655,145 @@ function DesignerDashboard() {
   );
 }
 
-export default DesignerDashboard;
+/* SMALL REUSABLE COMPONENTS */
+
+function InfoBox({ title, value }) {
+  return (
+    <div
+      style={{
+        border: `1px solid ${COLORS.border}`,
+        padding: "18px",
+      }}
+    >
+      <div
+        style={{
+          color: COLORS.purple,
+          fontSize: "8px",
+          fontWeight: "bold",
+          letterSpacing: "1.5px",
+        }}
+      >
+        {title}
+      </div>
+
+      <div
+        style={{
+          fontSize: "23px",
+          marginTop: "6px",
+        }}
+      >
+        {value}
+      </div>
+    </div>
+  );
+}
+
+function Input({ label, value, setValue, placeholder }) {
+  return (
+    <div style={{ marginBottom: "14px" }}>
+      <label
+        style={{
+          display: "block",
+          fontSize: "8px",
+          fontWeight: "bold",
+          marginBottom: "6px",
+        }}
+      >
+        {label}
+      </label>
+
+      <input
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder={placeholder}
+        style={{
+          width: "100%",
+          height: "45px",
+          boxSizing: "border-box",
+          padding: "0 12px",
+          border: `1px solid ${COLORS.border}`,
+        }}
+      />
+    </div>
+  );
+}
+
+function TextArea({
+  label,
+  value,
+  setValue,
+  placeholder,
+}) {
+  return (
+    <div style={{ marginBottom: "14px" }}>
+      <label
+        style={{
+          display: "block",
+          fontSize: "8px",
+          fontWeight: "bold",
+          marginBottom: "6px",
+        }}
+      >
+        {label}
+      </label>
+
+      <textarea
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder={placeholder}
+        rows="3"
+        style={{
+          width: "100%",
+          boxSizing: "border-box",
+          padding: "12px",
+          border: `1px solid ${COLORS.border}`,
+          resize: "vertical",
+        }}
+      />
+    </div>
+  );
+}
+
+/* STYLES */
+
+const buttonStyle = {
+  minHeight: "44px",
+  border: "none",
+  background: COLORS.purple,
+  color: COLORS.white,
+  padding: "0 16px",
+  cursor: "pointer",
+  fontWeight: "bold",
+  fontSize: "9px",
+};
+
+const outlineButton = {
+  minHeight: "42px",
+  border: `1px solid ${COLORS.border}`,
+  background: COLORS.white,
+  color: COLORS.purple,
+  cursor: "pointer",
+  fontWeight: "bold",
+  fontSize: "8px",
+};
+
+const modalBackground = {
+  position: "fixed",
+  inset: 0,
+  background: "rgba(22,22,22,0.65)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "20px",
+  zIndex: 1000,
+};
+
+const modal = {
+  width: "100%",
+  maxWidth: "500px",
+  maxHeight: "90vh",
+  overflowY: "auto",
+  background: COLORS.white,
+  padding: "25px",
+  boxSizing: "border-box",
+};

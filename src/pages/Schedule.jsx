@@ -1,1347 +1,253 @@
-import React, { useState } from "react";
+import React from "react";
 
 const COLORS = {
   black: "#161616",
   purple: "#81247C",
   gold: "#DEB64B",
   white: "#FFFFFF",
+  gray: "#777777",
   lightPurple: "#F5EAF4",
   lightGold: "#F8F3E5",
-  border: "#E8E8E8",
-  gray: "#777777",
   green: "#2F7D5B",
   lightGreen: "#EAF5EF",
-  red: "#B33A3A",
-};
-
-const initialSchedule = [
-  {
-    id: 1,
-    time: "08:00 AM",
-    title: "Model Check-In",
-    category: "CHECK-IN",
-    location: "Registration",
-    people: "All Models",
-    status: "UPCOMING",
-  },
-  {
-    id: 2,
-    time: "09:00 AM",
-    title: "Hair & Makeup",
-    category: "BEAUTY",
-    location: "Beauty Area",
-    people: "Models 01–10",
-    status: "UPCOMING",
-  },
-  {
-    id: 3,
-    time: "10:30 AM",
-    title: "Designer Fittings",
-    category: "FITTING",
-    location: "Backstage",
-    people: "All Designers",
-    status: "UPCOMING",
-  },
-  {
-    id: 4,
-    time: "01:00 PM",
-    title: "Full Rehearsal",
-    category: "REHEARSAL",
-    location: "Main Stage",
-    people: "Models + Stage Team",
-    status: "UPCOMING",
-  },
-  {
-    id: 5,
-    time: "06:30 PM",
-    title: "Backstage Lineup",
-    category: "LINEUP",
-    location: "Stage Left",
-    people: "Models 01–25",
-    status: "UPCOMING",
-  },
-  {
-    id: 6,
-    time: "07:00 PM",
-    title: "FLY SHOWCASE",
-    category: "RUNWAY",
-    location: "Main Stage",
-    people: "All Show Team",
-    status: "UPCOMING",
-  },
-];
-
-const categoryColors = {
-  "CHECK-IN": COLORS.purple,
-  BEAUTY: COLORS.gold,
-  FITTING: COLORS.green,
-  REHEARSAL: COLORS.black,
-  LINEUP: COLORS.purple,
-  RUNWAY: COLORS.gold,
+  border: "#E8E8E8",
 };
 
 function Schedule() {
-  const [schedule, setSchedule] =
-    useState(initialSchedule);
-
-  const [filter, setFilter] = useState("ALL");
-
-  const [showModal, setShowModal] =
-    useState(false);
-
-  const [editingItem, setEditingItem] =
-    useState(null);
-
-  const [message, setMessage] =
-    useState("");
-
-  const [time, setTime] = useState("");
-  const [title, setTitle] = useState("");
-  const [category, setCategory] =
-    useState("CHECK-IN");
-  const [location, setLocation] =
-    useState("");
-  const [people, setPeople] = useState("");
-
-  function showMessage(text) {
-    setMessage(text);
-
-    setTimeout(() => {
-      setMessage("");
-    }, 2500);
-  }
-
-  function resetForm() {
-    setTime("");
-    setTitle("");
-    setCategory("CHECK-IN");
-    setLocation("");
-    setPeople("");
-    setEditingItem(null);
-  }
-
-  function openAddModal() {
-    resetForm();
-    setShowModal(true);
-  }
-
-  function openEditModal(item) {
-    setEditingItem(item);
-    setTime(item.time);
-    setTitle(item.title);
-    setCategory(item.category);
-    setLocation(item.location);
-    setPeople(item.people);
-    setShowModal(true);
-  }
-
-  function saveItem() {
-    if (
-      !time.trim() ||
-      !title.trim() ||
-      !location.trim()
-    ) {
-      showMessage(
-        "Please complete the schedule details."
-      );
-      return;
-    }
-
-    if (editingItem) {
-      setSchedule((current) =>
-        current.map((item) =>
-          item.id === editingItem.id
-            ? {
-                ...item,
-                time,
-                title,
-                category,
-                location,
-                people:
-                  people || "Show Team",
-              }
-            : item
-        )
-      );
-
-      showMessage(
-        "Schedule item updated."
-      );
-    } else {
-      const newItem = {
-        id: Date.now(),
-        time,
-        title,
-        category,
-        location,
-        people:
-          people || "Show Team",
-        status: "UPCOMING",
-      };
-
-      setSchedule((current) => [
-        ...current,
-        newItem,
-      ]);
-
-      showMessage(
-        "Schedule item added."
-      );
-    }
-
-    setShowModal(false);
-    resetForm();
-  }
-
-  function deleteItem(id) {
-    setSchedule((current) =>
-      current.filter(
-        (item) => item.id !== id
-      )
-    );
-
-    showMessage(
-      "Schedule item removed."
-    );
-  }
-
-  function changeStatus(id) {
-    setSchedule((current) =>
-      current.map((item) => {
-        if (item.id !== id) {
-          return item;
-        }
-
-        if (item.status === "UPCOMING") {
-          return {
-            ...item,
-            status: "LIVE",
-          };
-        }
-
-        if (item.status === "LIVE") {
-          return {
-            ...item,
-            status: "COMPLETED",
-          };
-        }
-
-        return {
-          ...item,
-          status: "UPCOMING",
-        };
-      })
-    );
-  }
-
-  const filteredSchedule =
-    filter === "ALL"
-      ? schedule
-      : schedule.filter(
-          (item) =>
-            item.category === filter
-        );
-
-  const categories = [
-    "ALL",
-    "CHECK-IN",
-    "BEAUTY",
-    "FITTING",
-    "REHEARSAL",
-    "LINEUP",
-    "RUNWAY",
+  const schedule = [
+    {
+      time: "9:00 AM",
+      title: "Model Check-In",
+      location: "Main Entrance",
+      status: "COMPLETED",
+    },
+    {
+      time: "10:00 AM",
+      title: "Hair & Makeup",
+      location: "Beauty Area",
+      status: "UPCOMING",
+    },
+    {
+      time: "12:00 PM",
+      title: "Designer Fitting",
+      location: "Designer Room",
+      status: "UPCOMING",
+    },
+    {
+      time: "2:00 PM",
+      title: "Backstage Call",
+      location: "Backstage",
+      status: "UPCOMING",
+    },
+    {
+      time: "3:00 PM",
+      title: "Runway",
+      location: "Main Stage",
+      status: "UPCOMING",
+    },
   ];
 
   return (
     <main
       style={{
         minHeight: "100vh",
-        backgroundColor: COLORS.white,
+        background: COLORS.white,
         color: COLORS.black,
-        fontFamily:
-          '"PT Sans", Arial, sans-serif',
+        fontFamily: '"PT Sans", Arial, sans-serif',
       }}
     >
-      {/* PURPLE TOP BAR */}
+      <div style={{ height: "7px", background: COLORS.purple }} />
 
       <div
         style={{
-          height: "7px",
-          width: "100%",
-          backgroundColor: COLORS.purple,
-        }}
-      />
-
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "1050px",
+          maxWidth: "850px",
           margin: "0 auto",
-          padding:
-            "24px 20px 80px",
-          boxSizing: "border-box",
+          padding: "24px 20px 70px",
         }}
       >
-        {/* HEADER */}
+        <Header />
 
-        <header
-          style={{
-            display: "flex",
-            justifyContent:
-              "space-between",
-            alignItems: "center",
-            gap: "20px",
-            marginBottom: "30px",
-          }}
-        >
-          <div>
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                color: COLORS.purple,
-                fontSize: "38px",
-                lineHeight: "0.8",
-                fontWeight: "600",
-              }}
-            >
-              FLY
-            </div>
-
-            <div
-              style={{
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "3px",
-                marginTop: "9px",
-              }}
-            >
-              SHOWCASE
-            </div>
-          </div>
-
-          <div
-            style={{
-              textAlign: "right",
-            }}
-          >
-            <div
-              style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                letterSpacing: "1.5px",
-                fontWeight: "700",
-              }}
-            >
-              EVENT MANAGEMENT
-            </div>
-
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "23px",
-                marginTop: "4px",
-              }}
-            >
-              Schedule Builder
-            </div>
-          </div>
-        </header>
-
-        {/* HERO */}
-
-        <section
-          style={{
-            backgroundColor: COLORS.black,
-            color: COLORS.white,
-            padding: "25px",
-            marginBottom: "25px",
-          }}
-        >
-          <div
-            style={{
-              color: COLORS.gold,
-              fontSize: "8px",
-              fontWeight: "700",
-              letterSpacing: "2px",
-              marginBottom: "8px",
-            }}
-          >
-            FLY SHOWCASE
-          </div>
-
-          <div
-            style={{
-              fontFamily:
-                '"Cormorant Garamond", Georgia, serif',
-              fontSize: "42px",
-              lineHeight: "0.95",
-            }}
-          >
-            Master Schedule
-          </div>
-
-          <div
-            style={{
-              color: "#BBBBBB",
-              fontSize: "10px",
-              marginTop: "9px",
-            }}
-          >
-            One place for every important
-            moment of show day.
-          </div>
+        <section style={{ marginBottom: "30px" }}>
+          <div style={labelStyle}>SHOW DAY</div>
+          <h1 style={titleStyle}>My Schedule</h1>
+          <p style={subTitleStyle}>
+            November 11 • Main Stage
+          </p>
         </section>
 
-        {/* EVENT INFORMATION */}
-
-        <section
+        <div
           style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(170px, 1fr))",
-            gap: "10px",
-            marginBottom: "28px",
+            borderTop: `1px solid ${COLORS.border}`,
           }}
         >
-          <div
-            style={{
-              border:
-                `1px solid ${COLORS.border}`,
-              padding: "17px",
-            }}
-          >
+          {schedule.map((item, index) => (
             <div
+              key={index}
               style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "1.5px",
+                display: "grid",
+                gridTemplateColumns:
+                  "100px 1fr auto",
+                gap: "20px",
+                alignItems: "center",
+                padding: "20px 0",
+                borderBottom:
+                  `1px solid ${COLORS.border}`,
               }}
             >
-              EVENT
-            </div>
+              <div
+                style={{
+                  color: COLORS.purple,
+                  fontSize: "10px",
+                  fontWeight: "700",
+                }}
+              >
+                {item.time}
+              </div>
 
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "23px",
-                marginTop: "5px",
-              }}
-            >
-              Fly Showcase
-            </div>
-          </div>
-
-          <div
-            style={{
-              border:
-                `1px solid ${COLORS.border}`,
-              padding: "17px",
-            }}
-          >
-            <div
-              style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "1.5px",
-              }}
-            >
-              SHOW DATE
-            </div>
-
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "23px",
-                marginTop: "5px",
-              }}
-            >
-              November 11
-            </div>
-          </div>
-
-          <div
-            style={{
-              border:
-                `1px solid ${COLORS.border}`,
-              padding: "17px",
-            }}
-          >
-            <div
-              style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "1.5px",
-              }}
-            >
-              SCHEDULE ITEMS
-            </div>
-
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "23px",
-                marginTop: "5px",
-              }}
-            >
-              {schedule.length}
-            </div>
-          </div>
-        </section>
-
-        {/* ACTION BAR */}
-
-        <section
-          style={{
-            display: "flex",
-            justifyContent:
-              "space-between",
-            alignItems: "center",
-            gap: "15px",
-            flexWrap: "wrap",
-            marginBottom: "15px",
-          }}
-        >
-          <div>
-            <div
-              style={{
-                fontSize: "9px",
-                fontWeight: "700",
-                letterSpacing: "2px",
-              }}
-            >
-              SHOW DAY TIMELINE
-            </div>
-
-            <div
-              style={{
-                color: COLORS.gray,
-                fontSize: "9px",
-                marginTop: "4px",
-              }}
-            >
-              Build and control the official
-              event schedule.
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={openAddModal}
-            style={{
-              minHeight: "44px",
-              border: "none",
-              backgroundColor:
-                COLORS.purple,
-              color: COLORS.white,
-              padding: "0 17px",
-              cursor: "pointer",
-              fontWeight: "700",
-              fontSize: "8px",
-            }}
-          >
-            + ADD SCHEDULE ITEM
-          </button>
-        </section>
-
-        {/* FILTER BUTTONS */}
-
-        <section
-          style={{
-            display: "flex",
-            gap: "7px",
-            overflowX: "auto",
-            paddingBottom: "8px",
-            marginBottom: "20px",
-          }}
-        >
-          {categories.map(
-            (categoryItem) => {
-              const active =
-                filter === categoryItem;
-
-              return (
-                <button
-                  key={categoryItem}
-                  type="button"
-                  onClick={() =>
-                    setFilter(
-                      categoryItem
-                    )
-                  }
-                  style={{
-                    flexShrink: 0,
-                    minHeight: "38px",
-                    padding:
-                      "0 12px",
-                    border: active
-                      ? `1px solid ${COLORS.purple}`
-                      : `1px solid ${COLORS.border}`,
-                    backgroundColor:
-                      active
-                        ? COLORS.purple
-                        : COLORS.white,
-                    color: active
-                      ? COLORS.white
-                      : COLORS.black,
-                    cursor: "pointer",
-                    fontSize: "7px",
-                    fontWeight: "700",
-                  }}
-                >
-                  {categoryItem}
-                </button>
-              );
-            }
-          )}
-        </section>
-
-        {/* TIMELINE */}
-
-        <section>
-          {filteredSchedule.map(
-            (item, index) => {
-              const categoryColor =
-                categoryColors[
-                  item.category
-                ] ||
-                COLORS.purple;
-
-              return (
-                <div
-                  key={item.id}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns:
-                      "90px 1fr",
-                    gap: "15px",
-                    position: "relative",
-                    paddingBottom:
-                      "20px",
-                  }}
-                >
-                  {/* TIMELINE LINE */}
-
-                  {index <
-                    filteredSchedule.length -
-                      1 && (
-                    <div
-                      style={{
-                        position:
-                          "absolute",
-                        left: "44px",
-                        top: "28px",
-                        bottom: "0",
-                        width: "1px",
-                        backgroundColor:
-                          COLORS.border,
-                      }}
-                    />
-                  )}
-
-                  {/* TIME */}
-
-                  <div
-                    style={{
-                      position:
-                        "relative",
-                      zIndex: 1,
-                      backgroundColor:
-                        COLORS.white,
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontFamily:
-                          '"Cormorant Garamond", Georgia, serif',
-                        fontSize: "20px",
-                        lineHeight: "1",
-                      }}
-                    >
-                      {item.time}
-                    </div>
-
-                    <div
-                      style={{
-                        width: "8px",
-                        height: "8px",
-                        borderRadius:
-                          "50%",
-                        backgroundColor:
-                          categoryColor,
-                        margin:
-                          "10px auto 0",
-                        border:
-                          `2px solid ${COLORS.white}`,
-                        boxShadow:
-                          `0 0 0 1px ${categoryColor}`,
-                      }}
-                    />
-                  </div>
-
-                  {/* SCHEDULE CARD */}
-
-                  <article
-                    style={{
-                      border:
-                        `1px solid ${COLORS.border}`,
-                      borderLeft:
-                        `4px solid ${categoryColor}`,
-                      backgroundColor:
-                        COLORS.white,
-                      padding: "17px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent:
-                          "space-between",
-                        alignItems:
-                          "flex-start",
-                        gap: "12px",
-                        flexWrap:
-                          "wrap",
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            color:
-                              categoryColor,
-                            fontSize: "7px",
-                            fontWeight:
-                              "700",
-                            letterSpacing:
-                              "1.5px",
-                          }}
-                        >
-                          {
-                            item.category
-                          }
-                        </div>
-
-                        <div
-                          style={{
-                            fontFamily:
-                              '"Cormorant Garamond", Georgia, serif',
-                            fontSize: "27px",
-                            lineHeight:
-                              "1",
-                            marginTop:
-                              "5px",
-                          }}
-                        >
-                          {item.title}
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          changeStatus(
-                            item.id
-                          )
-                        }
-                        style={{
-                          border: "none",
-                          backgroundColor:
-                            item.status ===
-                            "LIVE"
-                              ? COLORS.lightGreen
-                              : item.status ===
-                                "COMPLETED"
-                              ? "#EEEEEE"
-                              : COLORS.lightGold,
-                          color:
-                            item.status ===
-                            "LIVE"
-                              ? COLORS.green
-                              : item.status ===
-                                "COMPLETED"
-                              ? COLORS.gray
-                              : "#806313",
-                          padding:
-                            "7px 9px",
-                          cursor: "pointer",
-                          fontSize: "7px",
-                          fontWeight:
-                            "700",
-                        }}
-                      >
-                        ●{" "}
-                        {item.status}
-                      </button>
-                    </div>
-
-                    <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns:
-                          "repeat(auto-fit, minmax(120px, 1fr))",
-                        gap: "10px",
-                        marginTop:
-                          "15px",
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            color:
-                              COLORS.gray,
-                            fontSize:
-                              "7px",
-                            fontWeight:
-                              "700",
-                            letterSpacing:
-                              "1px",
-                          }}
-                        >
-                          LOCATION
-                        </div>
-
-                        <div
-                          style={{
-                            fontSize:
-                              "9px",
-                            marginTop:
-                              "4px",
-                          }}
-                        >
-                          {
-                            item.location
-                          }
-                        </div>
-                      </div>
-
-                      <div>
-                        <div
-                          style={{
-                            color:
-                              COLORS.gray,
-                            fontSize:
-                              "7px",
-                            fontWeight:
-                              "700",
-                            letterSpacing:
-                              "1px",
-                          }}
-                        >
-                          WHO
-                        </div>
-
-                        <div
-                          style={{
-                            fontSize:
-                              "9px",
-                            marginTop:
-                              "4px",
-                          }}
-                        >
-                          {
-                            item.people
-                          }
-                        </div>
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "8px",
-                        marginTop:
-                          "15px",
-                      }}
-                    >
-                      <button
-                        type="button"
-                        onClick={() =>
-                          openEditModal(
-                            item
-                          )
-                        }
-                        style={{
-                          minHeight:
-                            "38px",
-                          border:
-                            `1px solid ${COLORS.purple}`,
-                          backgroundColor:
-                            COLORS.white,
-                          color:
-                            COLORS.purple,
-                          padding:
-                            "0 12px",
-                          cursor:
-                            "pointer",
-                          fontSize:
-                            "7px",
-                          fontWeight:
-                            "700",
-                        }}
-                      >
-                        EDIT
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          deleteItem(
-                            item.id
-                          )
-                        }
-                        style={{
-                          minHeight:
-                            "38px",
-                          border:
-                            `1px solid ${COLORS.border}`,
-                          backgroundColor:
-                            COLORS.white,
-                          color:
-                            COLORS.red,
-                          padding:
-                            "0 12px",
-                          cursor:
-                            "pointer",
-                          fontSize:
-                            "7px",
-                          fontWeight:
-                            "700",
-                        }}
-                      >
-                        DELETE
-                      </button>
-                    </div>
-                  </article>
+              <div>
+                <div style={cardTitle}>
+                  {item.title}
                 </div>
-              );
-            }
-          )}
-        </section>
 
-        {/* EMPTY STATE */}
+                <div style={subTitleStyle}>
+                  {item.location}
+                </div>
+              </div>
 
-        {filteredSchedule.length ===
-          0 && (
-          <div
-            style={{
-              border:
-                `1px dashed ${COLORS.border}`,
-              padding: "40px 20px",
-              textAlign: "center",
-            }}
-          >
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "30px",
-              }}
-            >
-              No schedule items
+              <Status status={item.status} />
             </div>
-
-            <div
-              style={{
-                color: COLORS.gray,
-                fontSize: "9px",
-                marginTop: "5px",
-              }}
-            >
-              Try another category or
-              create a new schedule item.
-            </div>
-          </div>
-        )}
-
-        {/* BOTTOM INFO */}
+          ))}
+        </div>
 
         <section
           style={{
-            marginTop: "25px",
-            backgroundColor:
-              COLORS.lightPurple,
+            background: COLORS.lightGold,
             padding: "20px",
+            marginTop: "30px",
           }}
         >
-          <div
-            style={{
-              color: COLORS.purple,
-              fontSize: "8px",
-              fontWeight: "700",
-              letterSpacing: "1.5px",
-            }}
-          >
-            SCHEDULE CONTROL
-          </div>
+          <div style={goldLabel}>IMPORTANT</div>
 
           <div
             style={{
               fontFamily:
                 '"Cormorant Garamond", Georgia, serif',
-              fontSize: "28px",
-              marginTop: "5px",
+              fontSize: "25px",
+              marginTop: "6px",
             }}
           >
-            Official Show Timeline
+            Stay backstage after your call.
           </div>
 
-          <div
-            style={{
-              color: COLORS.gray,
-              fontSize: "9px",
-              lineHeight: "1.5",
-              marginTop: "5px",
-            }}
-          >
-            Changes made here will eventually
-            become the official schedule visible
-            to models, designers, backstage staff,
-            and stage management.
-          </div>
+          <p style={subTitleStyle}>
+            Show times can change. Keep checking your
+            notifications for updates from the stage
+            manager.
+          </p>
         </section>
       </div>
-
-      {/* ADD / EDIT MODAL */}
-
-      {showModal && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor:
-              "rgba(22,22,22,0.65)",
-            zIndex: 1000,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "20px",
-            overflowY: "auto",
-          }}
-        >
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "500px",
-              backgroundColor:
-                COLORS.white,
-              padding: "25px",
-              boxSizing:
-                "border-box",
-              margin: "20px 0",
-            }}
-          >
-            <div
-              style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "2px",
-              }}
-            >
-              {editingItem
-                ? "EDIT SCHEDULE ITEM"
-                : "NEW SCHEDULE ITEM"}
-            </div>
-
-            <h2
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "34px",
-                fontWeight: "500",
-                margin:
-                  "7px 0 22px",
-              }}
-            >
-              Schedule Details
-            </h2>
-
-            <label
-              style={{
-                display: "block",
-                fontSize: "8px",
-                fontWeight: "700",
-                marginBottom: "6px",
-              }}
-            >
-              TIME
-            </label>
-
-            <input
-              value={time}
-              onChange={(event) =>
-                setTime(
-                  event.target.value
-                )
-              }
-              placeholder="08:00 AM"
-              style={{
-                width: "100%",
-                height: "46px",
-                border:
-                  `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing:
-                  "border-box",
-                marginBottom:
-                  "14px",
-              }}
-            />
-
-            <label
-              style={{
-                display: "block",
-                fontSize: "8px",
-                fontWeight: "700",
-                marginBottom: "6px",
-              }}
-            >
-              TITLE
-            </label>
-
-            <input
-              value={title}
-              onChange={(event) =>
-                setTitle(
-                  event.target.value
-                )
-              }
-              placeholder="Model Check-In"
-              style={{
-                width: "100%",
-                height: "46px",
-                border:
-                  `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing:
-                  "border-box",
-                marginBottom:
-                  "14px",
-              }}
-            />
-
-            <label
-              style={{
-                display: "block",
-                fontSize: "8px",
-                fontWeight: "700",
-                marginBottom: "6px",
-              }}
-            >
-              CATEGORY
-            </label>
-
-            <select
-              value={category}
-              onChange={(event) =>
-                setCategory(
-                  event.target.value
-                )
-              }
-              style={{
-                width: "100%",
-                height: "46px",
-                border:
-                  `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing:
-                  "border-box",
-                backgroundColor:
-                  COLORS.white,
-                marginBottom:
-                  "14px",
-              }}
-            >
-              <option value="CHECK-IN">
-                Check-In
-              </option>
-
-              <option value="BEAUTY">
-                Hair & Makeup
-              </option>
-
-              <option value="FITTING">
-                Fitting
-              </option>
-
-              <option value="REHEARSAL">
-                Rehearsal
-              </option>
-
-              <option value="LINEUP">
-                Backstage Lineup
-              </option>
-
-              <option value="RUNWAY">
-                Runway
-              </option>
-            </select>
-
-            <label
-              style={{
-                display: "block",
-                fontSize: "8px",
-                fontWeight: "700",
-                marginBottom: "6px",
-              }}
-            >
-              LOCATION
-            </label>
-
-            <input
-              value={location}
-              onChange={(event) =>
-                setLocation(
-                  event.target.value
-                )
-              }
-              placeholder="Main Stage"
-              style={{
-                width: "100%",
-                height: "46px",
-                border:
-                  `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing:
-                  "border-box",
-                marginBottom:
-                  "14px",
-              }}
-            />
-
-            <label
-              style={{
-                display: "block",
-                fontSize: "8px",
-                fontWeight: "700",
-                marginBottom: "6px",
-              }}
-            >
-              WHO NEEDS TO BE THERE?
-            </label>
-
-            <input
-              value={people}
-              onChange={(event) =>
-                setPeople(
-                  event.target.value
-                )
-              }
-              placeholder="All Models"
-              style={{
-                width: "100%",
-                height: "46px",
-                border:
-                  `1px solid ${COLORS.border}`,
-                padding: "0 12px",
-                boxSizing:
-                  "border-box",
-                marginBottom:
-                  "20px",
-              }}
-            />
-
-            <div
-              style={{
-                display: "flex",
-                gap: "9px",
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => {
-                  setShowModal(false);
-                  resetForm();
-                }}
-                style={{
-                  flex: 1,
-                  minHeight:
-                    "48px",
-                  border:
-                    `1px solid ${COLORS.border}`,
-                  backgroundColor:
-                    COLORS.white,
-                  cursor:
-                    "pointer",
-                  fontWeight:
-                    "700",
-                  fontSize:
-                    "8px",
-                }}
-              >
-                CANCEL
-              </button>
-
-              <button
-                type="button"
-                onClick={saveItem}
-                style={{
-                  flex: 1,
-                  minHeight:
-                    "48px",
-                  border: "none",
-                  backgroundColor:
-                    COLORS.purple,
-                  color:
-                    COLORS.white,
-                  cursor:
-                    "pointer",
-                  fontWeight:
-                    "700",
-                  fontSize:
-                    "8px",
-                }}
-              >
-                {editingItem
-                  ? "SAVE CHANGES"
-                  : "ADD TO SCHEDULE"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* TOAST */}
-
-      {message && (
-        <div
-          style={{
-            position: "fixed",
-            left: "50%",
-            bottom: "25px",
-            transform:
-              "translateX(-50%)",
-            width:
-              "calc(100% - 40px)",
-            maxWidth: "440px",
-            backgroundColor:
-              COLORS.black,
-            color:
-              COLORS.white,
-            padding:
-              "15px 18px",
-            textAlign:
-              "center",
-            fontSize: "10px",
-            fontWeight:
-              "700",
-            zIndex: 1200,
-            boxSizing:
-              "border-box",
-          }}
-        >
-          {message}
-        </div>
-      )}
     </main>
   );
 }
+
+function Header() {
+  return (
+    <header
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        marginBottom: "45px",
+      }}
+    >
+      <div>
+        <div style={logoStyle}>FLY</div>
+        <div style={logoSubStyle}>SHOWCASE</div>
+      </div>
+
+      <div style={{ textAlign: "right" }}>
+        <div style={purpleText}>MODEL</div>
+        <div style={headerTitle}>Schedule</div>
+      </div>
+    </header>
+  );
+}
+
+function Status({ status }) {
+  const completed = status === "COMPLETED";
+
+  return (
+    <div
+      style={{
+        background: completed
+          ? COLORS.lightGreen
+          : COLORS.lightPurple,
+        color: completed
+          ? COLORS.green
+          : COLORS.purple,
+        padding: "7px 9px",
+        fontSize: "7px",
+        fontWeight: "700",
+      }}
+    >
+      {status}
+    </div>
+  );
+}
+
+const labelStyle = {
+  color: COLORS.purple,
+  fontSize: "8px",
+  fontWeight: "700",
+  letterSpacing: "2px",
+};
+
+const goldLabel = {
+  color: "#806313",
+  fontSize: "8px",
+  fontWeight: "700",
+  letterSpacing: "2px",
+};
+
+const titleStyle = {
+  fontFamily: '"Cormorant Garamond", Georgia, serif',
+  fontSize: "46px",
+  fontWeight: "500",
+  margin: "5px 0",
+};
+
+const cardTitle = {
+  fontFamily: '"Cormorant Garamond", Georgia, serif',
+  fontSize: "25px",
+};
+
+const subTitleStyle = {
+  color: COLORS.gray,
+  fontSize: "9px",
+  lineHeight: "1.6",
+};
+
+const purpleText = {
+  color: COLORS.purple,
+  fontSize: "8px",
+  fontWeight: "700",
+};
+
+const logoStyle = {
+  fontFamily: '"Cormorant Garamond", Georgia, serif',
+  color: COLORS.purple,
+  fontSize: "38px",
+  fontWeight: "600",
+};
+
+const logoSubStyle = {
+  fontSize: "8px",
+  fontWeight: "700",
+  letterSpacing: "3px",
+};
+
+const headerTitle = {
+  fontFamily: '"Cormorant Garamond", Georgia, serif',
+  fontSize: "23px",
+};
 
 export default Schedule;

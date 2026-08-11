@@ -1,18 +1,4 @@
-import React, { useState } from "react";
-
-const COLORS = {
-  black: "#161616",
-  purple: "#81247C",
-  gold: "#DEB64B",
-  white: "#FFFFFF",
-  lightPurple: "#F5EAF4",
-  lightGold: "#F8F3E5",
-  border: "#E8E8E8",
-  gray: "#777777",
-  green: "#2F7D5B",
-  lightGreen: "#EAF5EF",
-  red: "#B33A3A",
-};
+import { useState } from "react";
 
 const stages = [
   "PREP",
@@ -60,27 +46,12 @@ const models = [
   },
 ];
 
-const modelStatusStyles = {
-  READY: {
-    background: COLORS.lightGreen,
-    color: COLORS.green,
-  },
-  BACKSTAGE: {
-    background: COLORS.lightPurple,
-    color: COLORS.purple,
-  },
-  WAITING: {
-    background: COLORS.lightGold,
-    color: "#806313",
-  },
-  LIVE: {
-    background: COLORS.black,
-    color: COLORS.gold,
-  },
-  ENDED: {
-    background: "#EEEEEE",
-    color: COLORS.gray,
-  },
+const modelStatusClasses = {
+  READY: "status-ready",
+  BACKSTAGE: "status-backstage",
+  WAITING: "status-waiting",
+  LIVE: "status-live",
+  ENDED: "status-ended",
 };
 
 function LiveShow() {
@@ -89,311 +60,155 @@ function LiveShow() {
   );
 
   const [currentModel, setCurrentModel] = useState(null);
-
   const [showMessage, setShowMessage] = useState("");
 
-  function moveToNextStage() {
+  const showToast = (message) => {
+    setShowMessage(message);
+
+    setTimeout(() => {
+      setShowMessage("");
+    }, 2500);
+  };
+
+  const moveToNextStage = () => {
     const currentIndex = stages.indexOf(currentStage);
 
     if (currentIndex < stages.length - 1) {
       const nextStage = stages[currentIndex + 1];
 
       setCurrentStage(nextStage);
-
-      setShowMessage(`Show moved to ${nextStage}.`);
-
-      setTimeout(() => {
-        setShowMessage("");
-      }, 2500);
+      showToast(`Show moved to ${nextStage}.`);
     }
-  }
+  };
 
-  function moveToPreviousStage() {
+  const moveToPreviousStage = () => {
     const currentIndex = stages.indexOf(currentStage);
 
     if (currentIndex > 0) {
       const previousStage = stages[currentIndex - 1];
 
       setCurrentStage(previousStage);
-
-      setShowMessage(`Show moved to ${previousStage}.`);
-
-      setTimeout(() => {
-        setShowMessage("");
-      }, 2500);
+      showToast(`Show moved to ${previousStage}.`);
     }
-  }
+  };
 
-  function callModel(model) {
+  const callModel = (model) => {
     setCurrentModel(model);
-
-    setShowMessage(`${model.name} has been called.`);
-
-    setTimeout(() => {
-      setShowMessage("");
-    }, 2500);
-  }
+    showToast(`${model.name} has been called.`);
+  };
 
   const currentStageIndex =
     stages.indexOf(currentStage);
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        backgroundColor: COLORS.white,
-        color: COLORS.black,
-        fontFamily:
-          '"PT Sans", Arial, sans-serif',
-      }}
-    >
-      {/* PURPLE TOP BAR */}
+    <main className="live-show-page">
+      {/* =========================================
+          TOP BRAND BAR
+      ========================================= */}
 
-      <div
-        style={{
-          height: "7px",
-          width: "100%",
-          backgroundColor: COLORS.purple,
-        }}
-      />
+      <div className="login-brand-bar" />
 
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "1050px",
-          margin: "0 auto",
-          padding: "24px 20px 80px",
-          boxSizing: "border-box",
-        }}
-      >
-        {/* HEADER */}
+      <div className="live-show-container">
+        {/* =========================================
+            HEADER
+        ========================================= */}
 
-        <header
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: "20px",
-            marginBottom: "30px",
-          }}
-        >
-          <div>
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                color: COLORS.purple,
-                fontSize: "38px",
-                lineHeight: "0.8",
-                fontWeight: "600",
-              }}
-            >
+        <header className="live-show-header">
+          <div className="fly-logo">
+            <div className="fly-logo-wordmark">
               FLY
             </div>
 
-            <div
-              style={{
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "3px",
-                marginTop: "9px",
-              }}
-            >
+            <div className="fly-logo-tagline">
               SHOWCASE
             </div>
           </div>
 
-          <div
-            style={{
-              textAlign: "right",
-            }}
-          >
-            <div
-              style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "1.5px",
-              }}
-            >
+          <div className="live-show-header-info">
+            <div className="page-header-eyebrow">
               MANAGER CONTROL
             </div>
 
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "23px",
-                marginTop: "4px",
-              }}
-            >
+            <div className="live-show-header-title">
               Live Show
             </div>
           </div>
         </header>
 
-        {/* LIVE HERO */}
+        {/* =========================================
+            LIVE HERO
+        ========================================= */}
 
-        <section
-          style={{
-            backgroundColor: COLORS.black,
-            color: COLORS.white,
-            padding: "28px",
-            marginBottom: "20px",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-              gap: "15px",
-            }}
-          >
+        <section className="live-show-hero">
+          <div className="live-show-hero-top">
             <div>
-              <div
-                style={{
-                  color: COLORS.gold,
-                  fontSize: "8px",
-                  fontWeight: "700",
-                  letterSpacing: "2px",
-                  marginBottom: "8px",
-                }}
-              >
+              <div className="live-show-hero-eyebrow">
                 LIVE SHOW CONTROL
               </div>
 
-              <div
-                style={{
-                  fontFamily:
-                    '"Cormorant Garamond", Georgia, serif',
-                  fontSize: "43px",
-                  lineHeight: "0.95",
-                }}
-              >
+              <h1 className="live-show-hero-title">
                 The Show Is
                 <br />
                 Moving.
-              </div>
+              </h1>
             </div>
 
-            <div
-              style={{
-                backgroundColor: COLORS.purple,
-                padding: "9px 12px",
-                fontSize: "7px",
-                fontWeight: "700",
-                whiteSpace: "nowrap",
-              }}
-            >
+            <div className="live-show-live-badge">
               ● LIVE
             </div>
           </div>
 
-          <div
-            style={{
-              color: "#BBBBBB",
-              fontSize: "9px",
-              lineHeight: "1.5",
-              marginTop: "12px",
-              maxWidth: "500px",
-            }}
-          >
+          <p className="live-show-hero-description">
             Use this screen to keep the entire
             production moving from preparation
             through the final runway.
-          </div>
+          </p>
         </section>
 
-        {/* CURRENT STAGE */}
+        {/* =========================================
+            CURRENT SHOW STATUS
+        ========================================= */}
 
-        <section
-          style={{
-            border: `1px solid ${COLORS.border}`,
-            padding: "22px",
-            marginBottom: "20px",
-          }}
-        >
-          <div
-            style={{
-              color: COLORS.purple,
-              fontSize: "8px",
-              fontWeight: "700",
-              letterSpacing: "1.5px",
-            }}
-          >
+        <section className="live-show-section">
+          <div className="page-header-eyebrow">
             CURRENT SHOW STATUS
           </div>
 
-          <div
-            style={{
-              fontFamily:
-                '"Cormorant Garamond", Georgia, serif',
-              fontSize: "38px",
-              marginTop: "5px",
-              lineHeight: "1",
-            }}
-          >
+          <h2 className="live-show-stage-title">
             {currentStage}
-          </div>
+          </h2>
 
-          <div
-            style={{
-              display: "flex",
-              gap: "5px",
-              marginTop: "20px",
-              overflowX: "auto",
-              paddingBottom: "5px",
-            }}
-          >
+          {/* STAGE TRACKER */}
+
+          <div className="live-show-stage-list">
             {stages.map((stage, index) => {
-              const active = index === currentStageIndex;
+              const active =
+                index === currentStageIndex;
+
               const completed =
                 index < currentStageIndex;
+
+              let stageClass =
+                "live-show-stage";
+
+              if (active) {
+                stageClass +=
+                  " live-show-stage-active";
+              } else if (completed) {
+                stageClass +=
+                  " live-show-stage-completed";
+              }
 
               return (
                 <div
                   key={stage}
-                  style={{
-                    flex: "1 0 105px",
-                    minHeight: "50px",
-                    padding: "9px",
-                    boxSizing: "border-box",
-                    backgroundColor: active
-                      ? COLORS.purple
-                      : completed
-                      ? COLORS.lightPurple
-                      : "#F7F7F7",
-                    color: active
-                      ? COLORS.white
-                      : completed
-                      ? COLORS.purple
-                      : COLORS.gray,
-                    border:
-                      `1px solid ${
-                        active
-                          ? COLORS.purple
-                          : COLORS.border
-                      }`,
-                  }}
+                  className={stageClass}
                 >
-                  <div
-                    style={{
-                      fontSize: "7px",
-                      fontWeight: "700",
-                    }}
-                  >
+                  <div className="live-show-stage-number">
                     {index + 1}
                   </div>
 
-                  <div
-                    style={{
-                      fontSize: "7px",
-                      fontWeight: "700",
-                      marginTop: "5px",
-                      lineHeight: "1.2",
-                    }}
-                  >
+                  <div className="live-show-stage-name">
                     {stage}
                   </div>
                 </div>
@@ -403,257 +218,112 @@ function LiveShow() {
 
           {/* STAGE CONTROLS */}
 
-          <div
-            style={{
-              display: "flex",
-              gap: "8px",
-              marginTop: "18px",
-            }}
-          >
+          <div className="live-show-stage-controls">
             <button
               type="button"
+              className="button button-ghost"
               onClick={moveToPreviousStage}
               disabled={currentStageIndex === 0}
-              style={{
-                flex: 1,
-                minHeight: "44px",
-                border:
-                  `1px solid ${COLORS.border}`,
-                backgroundColor:
-                  COLORS.white,
-                color:
-                  currentStageIndex === 0
-                    ? "#BBBBBB"
-                    : COLORS.black,
-                cursor:
-                  currentStageIndex === 0
-                    ? "default"
-                    : "pointer",
-                fontSize: "8px",
-                fontWeight: "700",
-              }}
             >
               ← PREVIOUS
             </button>
 
             <button
               type="button"
+              className="button button-primary live-show-next-button"
               onClick={moveToNextStage}
               disabled={
                 currentStageIndex ===
                 stages.length - 1
               }
-              style={{
-                flex: 2,
-                minHeight: "44px",
-                border: "none",
-                backgroundColor:
-                  currentStageIndex ===
-                  stages.length - 1
-                    ? "#CCCCCC"
-                    : COLORS.purple,
-                color: COLORS.white,
-                cursor:
-                  currentStageIndex ===
-                  stages.length - 1
-                    ? "default"
-                    : "pointer",
-                fontSize: "8px",
-                fontWeight: "700",
-              }}
             >
               MOVE TO NEXT STAGE →
             </button>
           </div>
         </section>
 
-        {/* RUNWAY NOW */}
+        {/* =========================================
+            RUNWAY NOW
+        ========================================= */}
 
-        <section
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(260px, 1fr))",
-            gap: "15px",
-            marginBottom: "20px",
-          }}
-        >
-          <div
-            style={{
-              backgroundColor:
-                COLORS.lightPurple,
-              padding: "22px",
-            }}
-          >
-            <div
-              style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "1.5px",
-              }}
-            >
+        <section className="live-show-runway-grid">
+          {/* CURRENT MODEL */}
+
+          <div className="live-show-runway-card live-show-runway-current">
+            <div className="page-header-eyebrow">
               CURRENTLY ON RUNWAY
             </div>
 
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "34px",
-                marginTop: "8px",
-              }}
-            >
+            <h2 className="live-show-runway-title">
               {currentModel
                 ? currentModel.name
                 : "No Model"}
-            </div>
+            </h2>
 
-            <div
-              style={{
-                fontSize: "9px",
-                color: COLORS.gray,
-                marginTop: "5px",
-              }}
-            >
+            <p className="live-show-runway-description">
               {currentModel
                 ? `${currentModel.designer} • ${currentModel.look}`
                 : "Waiting for runway call"}
-            </div>
+            </p>
           </div>
 
-          <div
-            style={{
-              backgroundColor:
-                COLORS.lightGold,
-              padding: "22px",
-            }}
-          >
-            <div
-              style={{
-                color: "#806313",
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "1.5px",
-              }}
-            >
+          {/* NEXT MODEL */}
+
+          <div className="live-show-runway-card live-show-runway-next">
+            <div className="live-show-next-eyebrow">
               NEXT MODEL
             </div>
 
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "34px",
-                marginTop: "8px",
-              }}
-            >
+            <h2 className="live-show-runway-title">
               Model 02
-            </div>
+            </h2>
 
-            <div
-              style={{
-                fontSize: "9px",
-                color: COLORS.gray,
-                marginTop: "5px",
-              }}
-            >
+            <p className="live-show-runway-description">
               Call time • 6:50 PM
-            </div>
+            </p>
           </div>
         </section>
 
-        {/* MODEL LINEUP */}
+        {/* =========================================
+            MODEL LINEUP
+        ========================================= */}
 
-        <section>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: "10px",
-              marginBottom: "12px",
-            }}
-          >
+        <section className="live-show-lineup">
+          <div className="live-show-lineup-header">
             <div>
-              <div
-                style={{
-                  color: COLORS.purple,
-                  fontSize: "8px",
-                  fontWeight: "700",
-                  letterSpacing: "1.5px",
-                }}
-              >
+              <div className="page-header-eyebrow">
                 MODEL LINEUP
               </div>
 
-              <div
-                style={{
-                  fontFamily:
-                    '"Cormorant Garamond", Georgia, serif',
-                  fontSize: "29px",
-                  marginTop: "3px",
-                }}
-              >
+              <h2 className="live-show-lineup-title">
                 Runway Queue
-              </div>
+              </h2>
             </div>
 
-            <div
-              style={{
-                color: COLORS.gray,
-                fontSize: "8px",
-              }}
-            >
+            <div className="live-show-model-count">
               {models.length} models
             </div>
           </div>
 
           {models.map((model, index) => {
-            const status =
-              modelStatusStyles[
-                model.status
-              ];
+            const statusClass =
+              modelStatusClasses[model.status] ||
+              "status-ended";
 
             return (
               <article
                 key={model.id}
-                style={{
-                  border:
-                    `1px solid ${COLORS.border}`,
-                  padding: "17px",
-                  marginBottom: "9px",
-                }}
+                className="live-show-model-card"
               >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "13px",
-                  }}
-                >
+                <div className="live-show-model-info">
                   {/* NUMBER */}
 
                   <div
-                    style={{
-                      width: "34px",
-                      height: "34px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor:
-                        index === 0
-                          ? COLORS.purple
-                          : COLORS.lightPurple,
-                      color:
-                        index === 0
-                          ? COLORS.white
-                          : COLORS.purple,
-                      fontFamily:
-                        '"Cormorant Garamond", Georgia, serif',
-                      fontSize: "19px",
-                      flexShrink: 0,
-                    }}
+                    className={`live-show-model-number ${
+                      index === 0
+                        ? "live-show-model-number-active"
+                        : ""
+                    }`}
                   >
                     {String(index + 1).padStart(
                       2,
@@ -661,32 +331,14 @@ function LiveShow() {
                     )}
                   </div>
 
-                  {/* MODEL INFO */}
+                  {/* MODEL DETAILS */}
 
-                  <div
-                    style={{
-                      flex: 1,
-                      minWidth: 0,
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontFamily:
-                          '"Cormorant Garamond", Georgia, serif',
-                        fontSize: "24px",
-                        lineHeight: "1",
-                      }}
-                    >
+                  <div className="live-show-model-details">
+                    <div className="live-show-model-name">
                       {model.name}
                     </div>
 
-                    <div
-                      style={{
-                        color: COLORS.gray,
-                        fontSize: "8px",
-                        marginTop: "5px",
-                      }}
-                    >
+                    <div className="live-show-model-meta">
                       {model.designer} •{" "}
                       {model.look}
                     </div>
@@ -695,16 +347,7 @@ function LiveShow() {
                   {/* STATUS */}
 
                   <div
-                    style={{
-                      backgroundColor:
-                        status.background,
-                      color: status.color,
-                      padding:
-                        "7px 9px",
-                      fontSize: "7px",
-                      fontWeight: "700",
-                      flexShrink: 0,
-                    }}
+                    className={`status-badge ${statusClass}`}
                   >
                     {model.status}
                   </div>
@@ -714,178 +357,107 @@ function LiveShow() {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    callModel(model)
-                  }
-                  style={{
-                    width: "100%",
-                    minHeight: "40px",
-                    marginTop: "13px",
-                    border:
-                      `1px solid ${COLORS.purple}`,
-                    backgroundColor:
-                      COLORS.white,
-                    color: COLORS.purple,
-                    cursor: "pointer",
-                    fontSize: "7px",
-                    fontWeight: "700",
-                  }}
+                  className="button button-secondary button-full button-small"
+                  onClick={() => callModel(model)}
                 >
-                  CALL {model.name.toUpperCase()}
+                  CALL{" "}
+                  {model.name.toUpperCase()}
                 </button>
               </article>
             );
           })}
         </section>
 
-        {/* QUICK ACTIONS */}
+        {/* =========================================
+            QUICK ACTIONS
+        ========================================= */}
 
-        <section
-          style={{
-            marginTop: "25px",
-          }}
-        >
-          <div
-            style={{
-              color: COLORS.purple,
-              fontSize: "8px",
-              fontWeight: "700",
-              letterSpacing: "1.5px",
-              marginBottom: "11px",
-            }}
-          >
+        <section className="live-show-quick-actions">
+          <div className="page-header-eyebrow">
             QUICK ACTIONS
           </div>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit, minmax(140px, 1fr))",
-              gap: "8px",
-            }}
-          >
+          <div className="grid grid-auto">
             <button
               type="button"
+              className="quick-action"
               onClick={() =>
                 (window.location.href =
                   "/model-calls")
               }
-              style={{
-                minHeight: "48px",
-                border:
-                  `1px solid ${COLORS.border}`,
-                backgroundColor:
-                  COLORS.white,
-                cursor: "pointer",
-                fontSize: "8px",
-                fontWeight: "700",
-              }}
             >
-              MODEL CALLS
+              <span className="quick-action-content">
+                <span className="quick-action-label">
+                  MODEL CALLS
+                </span>
+              </span>
+
+              <span className="quick-action-arrow">
+                →
+              </span>
             </button>
 
             <button
               type="button"
+              className="quick-action"
               onClick={() =>
                 (window.location.href =
                   "/hair-makeup")
               }
-              style={{
-                minHeight: "48px",
-                border:
-                  `1px solid ${COLORS.border}`,
-                backgroundColor:
-                  COLORS.white,
-                cursor: "pointer",
-                fontSize: "8px",
-                fontWeight: "700",
-              }}
             >
-              HAIR & MAKEUP
+              <span className="quick-action-content">
+                <span className="quick-action-label">
+                  HAIR & MAKEUP
+                </span>
+              </span>
+
+              <span className="quick-action-arrow">
+                →
+              </span>
             </button>
 
             <button
               type="button"
+              className="quick-action"
               onClick={() =>
                 (window.location.href =
                   "/schedule")
               }
-              style={{
-                minHeight: "48px",
-                border:
-                  `1px solid ${COLORS.border}`,
-                backgroundColor:
-                  COLORS.white,
-                cursor: "pointer",
-                fontSize: "8px",
-                fontWeight: "700",
-              }}
             >
-              SCHEDULE
+              <span className="quick-action-content">
+                <span className="quick-action-label">
+                  SCHEDULE
+                </span>
+              </span>
+
+              <span className="quick-action-arrow">
+                →
+              </span>
             </button>
           </div>
         </section>
 
-        {/* FOOTER */}
+        {/* =========================================
+            FOOTER
+        ========================================= */}
 
-        <footer
-          style={{
-            marginTop: "35px",
-            paddingTop: "20px",
-            borderTop:
-              `1px solid ${COLORS.border}`,
-            textAlign: "center",
-          }}
-        >
-          <div
-            style={{
-              fontFamily:
-                '"Cormorant Garamond", Georgia, serif',
-              color: COLORS.purple,
-              fontSize: "24px",
-            }}
-          >
+        <footer className="live-show-footer">
+          <div className="live-show-footer-title">
             First Love Yourself
           </div>
 
-          <div
-            style={{
-              color: COLORS.gray,
-              fontSize: "7px",
-              letterSpacing: "1.5px",
-              marginTop: "4px",
-            }}
-          >
+          <div className="live-show-footer-subtitle">
             FLY SHOWCASE
           </div>
         </footer>
       </div>
 
-      {/* TOAST */}
+      {/* =========================================
+          TOAST
+      ========================================= */}
 
       {showMessage && (
-        <div
-          style={{
-            position: "fixed",
-            left: "50%",
-            bottom: "25px",
-            transform:
-              "translateX(-50%)",
-            width:
-              "calc(100% - 40px)",
-            maxWidth: "440px",
-            backgroundColor:
-              COLORS.black,
-            color: COLORS.white,
-            padding: "15px 18px",
-            textAlign: "center",
-            fontSize: "9px",
-            fontWeight: "700",
-            zIndex: 1000,
-            boxSizing: "border-box",
-          }}
-        >
+        <div className="toast">
           {showMessage}
         </div>
       )}

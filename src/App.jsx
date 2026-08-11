@@ -23,12 +23,10 @@ function App() {
     "/live-show": <LiveShow />,
   };
 
-  const page = routes[path] || <Login />;
-
   return (
     <div className="app">
       <main className="app-page">
-        {page}
+        {routes[path] || <Login />}
       </main>
     </div>
   );
