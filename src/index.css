@@ -1,216 +1,263 @@
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=PT+Sans:wght@400;700&display=swap");
+/* =========================================================
+   FLY SHOWCASE
+   GLOBAL DESIGN SYSTEM
+   ========================================================= */
 
 :root {
-  --black: #161616;
-  --purple: #81247c;
-  --gold: #deb64b;
-  --white: #ffffff;
-  --light-purple: #f5eaf4;
-  --light-gold: #f8f3e5;
-  --border: #e8e8e8;
-  --gray: #777777;
+  /* -------------------------------------------------------
+     BRAND COLORS
+     CHANGE THESE VALUES TO CHANGE THE ENTIRE APP
+     ------------------------------------------------------- */
+
+  --color-black: #161616;
+  --color-purple: #81247c;
+  --color-gold: #deb64b;
+  --color-white: #ffffff;
+
+  /* -------------------------------------------------------
+     SUPPORTING COLORS
+     ------------------------------------------------------- */
+
+  --color-gray-900: #242424;
+  --color-gray-700: #555555;
+  --color-gray-500: #777777;
+  --color-gray-300: #cccccc;
+  --color-gray-200: #e8e8e8;
+  --color-gray-100: #f5f5f5;
+
+  --color-purple-light: #f5eaf4;
+  --color-gold-light: #f8f3e5;
+
+  --color-success: #2f7d5b;
+  --color-success-light: #eaf5ef;
+
+  --color-danger: #b33a3a;
+  --color-danger-light: #faeeee;
+
+  /* -------------------------------------------------------
+     TYPOGRAPHY
+     ------------------------------------------------------- */
+
+  --font-heading: "Cormorant Garamond", Georgia, serif;
+  --font-body: "PT Sans", Arial, sans-serif;
+
+  --font-size-xs: 9px;
+  --font-size-sm: 11px;
+  --font-size-md: 13px;
+  --font-size-lg: 16px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 28px;
+  --font-size-3xl: 38px;
+  --font-size-4xl: 48px;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  /* -------------------------------------------------------
+     SPACING
+     ------------------------------------------------------- */
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+
+  /* -------------------------------------------------------
+     BORDERS
+     ------------------------------------------------------- */
+
+  --border-width: 1px;
+  --border-color: var(--color-gray-200);
+  --border-radius-sm: 2px;
+  --border-radius-md: 4px;
+  --border-radius-lg: 8px;
+
+  /* -------------------------------------------------------
+     SHADOWS
+     ------------------------------------------------------- */
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 35px rgba(0, 0, 0, 0.12);
+
+  /* -------------------------------------------------------
+     LAYOUT
+     ------------------------------------------------------- */
+
+  --content-max-width: 920px;
+  --content-max-width-wide: 1100px;
+
+  --page-padding-mobile: 20px;
+  --page-padding-tablet: 32px;
+  --page-padding-desktop: 48px;
+
+  --header-height: 72px;
+  --bottom-nav-height: 72px;
+
+  /* -------------------------------------------------------
+     BUTTONS
+     ------------------------------------------------------- */
+
+  --button-height: 48px;
+  --button-height-small: 42px;
+  --button-padding-x: 20px;
+
+  /* -------------------------------------------------------
+     TRANSITIONS
+     ------------------------------------------------------- */
+
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
 }
 
-* {
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-html,
-body,
-#root {
+html {
   margin: 0;
   padding: 0;
   width: 100%;
   min-height: 100%;
-}
-
-html {
-  background: var(--black);
+  font-size: 16px;
+  scroll-behavior: smooth;
 }
 
 body {
-  font-family: "PT Sans", Arial, sans-serif;
-  background: var(--black);
-  color: var(--black);
-  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+
+  background: var(--color-white);
+  color: var(--color-black);
+
+  font-family: var(--font-body);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.5;
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1;
+}
+
+h1 {
+  font-size: var(--font-size-4xl);
+}
+
+h2 {
+  font-size: var(--font-size-3xl);
+}
+
+h3 {
+  font-size: var(--font-size-2xl);
+}
+
+p {
+  margin: 0;
 }
 
 button,
 input,
 textarea,
 select {
-  font: inherit;
+  font-family: inherit;
 }
 
 button {
-  -webkit-tap-highlight-color: transparent;
+  font-size: var(--font-size-md);
 }
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+
+/* =========================================================
+   IMAGES
+   ========================================================= */
 
 img {
-  max-width: 100%;
-  height: auto;
   display: block;
+  max-width: 100%;
 }
 
-/* APP SHELL */
 
-.app-shell {
-  width: 100%;
-  min-height: 100vh;
-  min-height: 100dvh;
-  background: var(--white);
-  overflow-x: hidden;
-}
-
-/*
-  On phones and tablets the app uses the full screen.
-  On large screens we give it a comfortable app-like
-  maximum width instead of stretching everything.
-*/
-
-.app-content {
-  width: 100%;
-  min-height: 100vh;
-  min-height: 100dvh;
-  margin: 0 auto;
-}
-
-/* MOBILE */
+/* =========================================================
+   MOBILE
+   ========================================================= */
 
 @media (max-width: 599px) {
-  .app-content {
-    max-width: 100%;
+  :root {
+    --font-size-4xl: 40px;
+    --font-size-3xl: 32px;
+    --font-size-2xl: 25px;
+
+    --page-padding-mobile: 16px;
+
+    --button-height: 48px;
   }
-}
 
-/* LARGE PHONES / SMALL TABLETS */
-
-@media (min-width: 600px) and (max-width: 899px) {
-  .app-content {
-    max-width: 760px;
-  }
-}
-
-/* IPAD / TABLETS */
-
-@media (min-width: 900px) and (max-width: 1199px) {
-  .app-content {
-    max-width: 1000px;
-  }
-}
-
-/* DESKTOP / LAPTOP */
-
-@media (min-width: 1200px) {
   body {
-    padding: 24px 0;
-  }
-
-  .app-shell {
-    width: min(1100px, calc(100% - 48px));
-    min-height: calc(100vh - 48px);
-    margin: 0 auto;
-    border-radius: 18px;
-    overflow: hidden;
-    box-shadow: 0 15px 60px rgba(0, 0, 0, 0.25);
-  }
-
-  .app-content {
-    max-width: 1100px;
+    font-size: var(--font-size-md);
   }
 }
 
-/* SAFE AREA SUPPORT FOR IPHONE */
 
-.safe-bottom {
-  padding-bottom: calc(80px + env(safe-area-inset-bottom));
-}
-
-.bottom-navigation {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-/* RESPONSIVE GRID */
-
-.responsive-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
+/* =========================================================
+   TABLET
+   ========================================================= */
 
 @media (min-width: 600px) {
-  .responsive-grid {
-    grid-template-columns: repeat(2, 1fr);
+  :root {
+    --page-padding-mobile: var(--page-padding-tablet);
   }
 }
+
+
+/* =========================================================
+   DESKTOP
+   ========================================================= */
 
 @media (min-width: 900px) {
-  .responsive-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* RESPONSIVE TEXT */
-
-.responsive-title {
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: clamp(42px, 8vw, 72px);
-  line-height: 0.9;
-}
-
-.responsive-heading {
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: clamp(28px, 4vw, 42px);
-  line-height: 1;
-}
-
-/* TOUCH FRIENDLY */
-
-.touch-button {
-  min-height: 44px;
-  min-width: 44px;
-}
-
-/* PREVENT TEXT FROM BREAKING THE LAYOUT */
-
-.no-overflow {
-  min-width: 0;
-  overflow-wrap: break-word;
-}
-
-/* HIDE SCROLLBAR WHILE KEEPING SCROLLING */
-
-.horizontal-scroll {
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-}
-
-.horizontal-scroll::-webkit-scrollbar {
-  display: none;
-}
-.model-dashboard-content {
-  max-width: 560px;
-}
-
-@media (min-width: 600px) {
-  .model-dashboard-content {
-    max-width: 720px;
-    padding-left: 36px !important;
-    padding-right: 36px !important;
-  }
-}
-
-@media (min-width: 900px) {
-  .model-dashboard-content {
-    max-width: 900px;
-    padding-left: 50px !important;
-    padding-right: 50px !important;
-  }
-}
-
-@media (min-width: 1200px) {
-  .model-dashboard-content {
-    max-width: 920px;
+  :root {
+    --page-padding-mobile: var(--page-padding-desktop);
   }
 }
