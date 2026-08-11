@@ -1,49 +1,43 @@
-import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
 import Splash from "./pages/Splash";
 import Login from "./pages/Login";
-import RoleSelect from "./pages/RoleSelect";
 import ModelDashboard from "./pages/ModelDashboard";
+import EventSelect from "./pages/EventSelect";
+import ManagerDashboard from "./pages/ManagerDashboard";
+import DesignerDashboard from "./pages/DesignerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Schedule from "./pages/Schedule";
-import Lookbook from "./pages/Lookbook";
+import HairMakeup from "./pages/HairMakeup";
+
 
 function App() {
+  const path = window.location.pathname;
+
+  let page;
+
+  if (path === "/login") {
+    page = <Login />;
+  } else if (path === "/events") {
+    page = <EventSelect />;
+  } else if (path === "/model") {
+    page = <ModelDashboard />;
+  } else if (path === "/manager") {
+    page = <ManagerDashboard />;
+  } else if (path === "/designer") {
+    page = <DesignerDashboard />;
+  } else if (path === "/admin") {
+    page = <AdminDashboard />;
+  } else if (path === "/schedule") {
+    page = <Schedule />;
+  } else if (path === "/hair-makeup") {
+    page = <HairMakeup />;
+  } else {
+    page = <Splash />;
+  }
+
   return (
-    <BrowserRouter>
-
-      <Routes>
-
-        <Route path="/" element={<Splash />} />
-
-        <Route path="/login" element={<Login />} />
-
-        <Route path="/roles" element={<RoleSelect />} />
-
-        <Route
-          path="/model"
-          element={<ModelDashboard />}
-        />
-
-        <Route
-          path="/admin"
-          element={<AdminDashboard />}
-        />
-
-        <Route
-          path="/schedule"
-          element={<Schedule />}
-        />
-
-        <Route
-          path="/lookbook"
-          element={<Lookbook />}
-        />
-
-      </Routes>
-
-    </BrowserRouter>
+    <div className="app-shell">
+      <div className="app-content">{page}</div>
+    </div>
   );
 }
 

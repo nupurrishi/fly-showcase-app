@@ -14,94 +14,99 @@ const COLORS = {
   red: "#B33A3A",
 };
 
-const initialSchedule = [
+const initialAppointments = [
   {
     id: 1,
-    time: "08:00 AM",
-    title: "Model Check-In",
-    category: "CHECK-IN",
-    location: "Registration",
-    people: "All Models",
-    status: "UPCOMING",
+    time: "08:30 AM",
+    model: "Model 01",
+    service: "Hair",
+    artist: "Sophia",
+    chair: "Chair 01",
+    status: "WAITING",
   },
   {
     id: 2,
-    time: "09:00 AM",
-    title: "Hair & Makeup",
-    category: "BEAUTY",
-    location: "Beauty Area",
-    people: "Models 01–10",
-    status: "UPCOMING",
+    time: "08:45 AM",
+    model: "Model 02",
+    service: "Makeup",
+    artist: "Maya",
+    chair: "Chair 02",
+    status: "IN CHAIR",
   },
   {
     id: 3,
-    time: "10:30 AM",
-    title: "Designer Fittings",
-    category: "FITTING",
-    location: "Backstage",
-    people: "All Designers",
-    status: "UPCOMING",
+    time: "09:00 AM",
+    model: "Model 03",
+    service: "Hair + Makeup",
+    artist: "Sophia + Maya",
+    chair: "Chair 03",
+    status: "WAITING",
   },
   {
     id: 4,
-    time: "01:00 PM",
-    title: "Full Rehearsal",
-    category: "REHEARSAL",
-    location: "Main Stage",
-    people: "Models + Stage Team",
-    status: "UPCOMING",
+    time: "09:15 AM",
+    model: "Model 04",
+    service: "Makeup",
+    artist: "Aisha",
+    chair: "Chair 04",
+    status: "COMPLETE",
   },
   {
     id: 5,
-    time: "06:30 PM",
-    title: "Backstage Lineup",
-    category: "LINEUP",
-    location: "Stage Left",
-    people: "Models 01–25",
-    status: "UPCOMING",
-  },
-  {
-    id: 6,
-    time: "07:00 PM",
-    title: "FLY SHOWCASE",
-    category: "RUNWAY",
-    location: "Main Stage",
-    people: "All Show Team",
-    status: "UPCOMING",
+    time: "09:30 AM",
+    model: "Model 05",
+    service: "Hair",
+    artist: "Sophia",
+    chair: "Chair 01",
+    status: "WAITING",
   },
 ];
 
-const categoryColors = {
-  "CHECK-IN": COLORS.purple,
-  BEAUTY: COLORS.gold,
-  FITTING: COLORS.green,
-  REHEARSAL: COLORS.black,
-  LINEUP: COLORS.purple,
-  RUNWAY: COLORS.gold,
+const statusColors = {
+  WAITING: {
+    background: COLORS.lightGold,
+    color: "#806313",
+  },
+  "IN CHAIR": {
+    background: COLORS.lightPurple,
+    color: COLORS.purple,
+  },
+  COMPLETE: {
+    background: COLORS.lightGreen,
+    color: COLORS.green,
+  },
 };
 
-function Schedule() {
-  const [schedule, setSchedule] =
-    useState(initialSchedule);
+function HairMakeup() {
+  const [appointments, setAppointments] =
+    useState(initialAppointments);
 
-  const [filter, setFilter] = useState("ALL");
+  const [filter, setFilter] =
+    useState("ALL");
 
   const [showModal, setShowModal] =
     useState(false);
 
-  const [editingItem, setEditingItem] =
+  const [editingAppointment, setEditingAppointment] =
     useState(null);
 
   const [message, setMessage] =
     useState("");
 
-  const [time, setTime] = useState("");
-  const [title, setTitle] = useState("");
-  const [category, setCategory] =
-    useState("CHECK-IN");
-  const [location, setLocation] =
+  const [time, setTime] =
     useState("");
-  const [people, setPeople] = useState("");
+
+  const [model, setModel] =
+    useState("");
+
+  const [service, setService] =
+    useState("Makeup");
+
+  const [artist, setArtist] =
+    useState("");
+
+  const [chair, setChair] =
+    useState("Chair 01");
 
   function showMessage(text) {
     setMessage(text);
@@ -113,11 +118,11 @@ function Schedule() {
 
   function resetForm() {
     setTime("");
-    setTitle("");
-    setCategory("CHECK-IN");
-    setLocation("");
-    setPeople("");
-    setEditingItem(null);
+    setModel("");
+    setService("Makeup");
+    setArtist("");
+    setChair("Chair 01");
+    setEditingAppointment(null);
   }
 
   function openAddModal() {
@@ -125,67 +130,65 @@ function Schedule() {
     setShowModal(true);
   }
 
-  function openEditModal(item) {
-    setEditingItem(item);
-    setTime(item.time);
-    setTitle(item.title);
-    setCategory(item.category);
-    setLocation(item.location);
-    setPeople(item.people);
+  function openEditModal(appointment) {
+    setEditingAppointment(appointment);
+    setTime(appointment.time);
+    setModel(appointment.model);
+    setService(appointment.service);
+    setArtist(appointment.artist);
+    setChair(appointment.chair);
     setShowModal(true);
   }
 
-  function saveItem() {
+  function saveAppointment() {
     if (
       !time.trim() ||
-      !title.trim() ||
-      !location.trim()
+      !model.trim() ||
+      !artist.trim()
     ) {
       showMessage(
-        "Please complete the schedule details."
+        "Please complete the appointment details."
       );
       return;
     }
 
-    if (editingItem) {
-      setSchedule((current) =>
+    if (editingAppointment) {
+      setAppointments((current) =>
         current.map((item) =>
-          item.id === editingItem.id
+          item.id === editingAppointment.id
             ? {
                 ...item,
                 time,
-                title,
-                category,
-                location,
-                people:
-                  people || "Show Team",
+                model,
+                service,
+                artist,
+                chair,
               }
             : item
         )
       );
 
       showMessage(
-        "Schedule item updated."
+        "Appointment updated."
       );
     } else {
-      const newItem = {
+      const newAppointment = {
         id: Date.now(),
         time,
-        title,
-        category,
-        location,
-        people:
-          people || "Show Team",
-        status: "UPCOMING",
+        model,
+        service,
+        artist,
+        chair,
+        status: "WAITING",
       };
 
-      setSchedule((current) => [
+      setAppointments((current) => [
         ...current,
-        newItem,
+        newAppointment,
       ]);
 
       showMessage(
-        "Schedule item added."
+        "Appointment added."
       );
     }
 
@@ -193,63 +196,78 @@ function Schedule() {
     resetForm();
   }
 
-  function deleteItem(id) {
-    setSchedule((current) =>
+  function deleteAppointment(id) {
+    setAppointments((current) =>
       current.filter(
         (item) => item.id !== id
       )
     );
 
     showMessage(
-      "Schedule item removed."
+      "Appointment removed."
     );
   }
 
   function changeStatus(id) {
-    setSchedule((current) =>
+    setAppointments((current) =>
       current.map((item) => {
         if (item.id !== id) {
           return item;
         }
 
-        if (item.status === "UPCOMING") {
+        if (item.status === "WAITING") {
           return {
             ...item,
-            status: "LIVE",
+            status: "IN CHAIR",
           };
         }
 
-        if (item.status === "LIVE") {
+        if (item.status === "IN CHAIR") {
           return {
             ...item,
-            status: "COMPLETED",
+            status: "COMPLETE",
           };
         }
 
         return {
           ...item,
-          status: "UPCOMING",
+          status: "WAITING",
         };
       })
     );
   }
 
-  const filteredSchedule =
+  const filteredAppointments =
     filter === "ALL"
-      ? schedule
-      : schedule.filter(
+      ? appointments
+      : appointments.filter(
           (item) =>
-            item.category === filter
+            item.status === filter
         );
 
-  const categories = [
+  const waitingCount =
+    appointments.filter(
+      (item) =>
+        item.status === "WAITING"
+    ).length;
+
+  const inChairCount =
+    appointments.filter(
+      (item) =>
+        item.status === "IN CHAIR"
+    ).length;
+
+  const completeCount =
+    appointments.filter(
+      (item) =>
+        item.status === "COMPLETE"
+    ).length;
+
+  const filters = [
     "ALL",
-    "CHECK-IN",
-    "BEAUTY",
-    "FITTING",
-    "REHEARSAL",
-    "LINEUP",
-    "RUNWAY",
+    "WAITING",
+    "IN CHAIR",
+    "COMPLETE",
   ];
 
   return (
@@ -262,13 +280,13 @@ function Schedule() {
           '"PT Sans", Arial, sans-serif',
       }}
     >
-      {/* PURPLE TOP BAR */}
+      {/* TOP PURPLE BAR */}
 
       <div
         style={{
           height: "7px",
-          width: "100%",
           backgroundColor: COLORS.purple,
+          width: "100%",
         }}
       />
 
@@ -329,11 +347,11 @@ function Schedule() {
               style={{
                 color: COLORS.purple,
                 fontSize: "8px",
-                letterSpacing: "1.5px",
                 fontWeight: "700",
+                letterSpacing: "1.5px",
               }}
             >
-              EVENT MANAGEMENT
+              BACKSTAGE
             </div>
 
             <div
@@ -344,7 +362,7 @@ function Schedule() {
                 marginTop: "4px",
               }}
             >
-              Schedule Builder
+              Hair & Makeup
             </div>
           </div>
         </header>
@@ -353,7 +371,8 @@ function Schedule() {
 
         <section
           style={{
-            backgroundColor: COLORS.black,
+            backgroundColor:
+              COLORS.black,
             color: COLORS.white,
             padding: "25px",
             marginBottom: "25px",
@@ -368,7 +387,7 @@ function Schedule() {
               marginBottom: "8px",
             }}
           >
-            FLY SHOWCASE
+            SHOW DAY BEAUTY
           </div>
 
           <div
@@ -379,67 +398,69 @@ function Schedule() {
               lineHeight: "0.95",
             }}
           >
-            Master Schedule
+            Hair & Makeup
           </div>
 
           <div
             style={{
               color: "#BBBBBB",
               fontSize: "10px",
+              lineHeight: "1.5",
               marginTop: "9px",
+              maxWidth: "500px",
             }}
           >
-            One place for every important
-            moment of show day.
+            Keep every model moving through
+            beauty smoothly and on time.
           </div>
         </section>
 
-        {/* EVENT INFORMATION */}
+        {/* STATS */}
 
         <section
           style={{
             display: "grid",
             gridTemplateColumns:
-              "repeat(auto-fit, minmax(170px, 1fr))",
+              "repeat(auto-fit, minmax(130px, 1fr))",
             gap: "10px",
             marginBottom: "28px",
           }}
         >
           <div
             style={{
-              border:
-                `1px solid ${COLORS.border}`,
-              padding: "17px",
+              backgroundColor:
+                COLORS.lightGold,
+              padding: "18px",
             }}
           >
             <div
               style={{
-                color: COLORS.purple,
+                color: "#806313",
                 fontSize: "8px",
                 fontWeight: "700",
                 letterSpacing: "1.5px",
               }}
             >
-              EVENT
+              WAITING
             </div>
 
             <div
               style={{
                 fontFamily:
                   '"Cormorant Garamond", Georgia, serif',
-                fontSize: "23px",
-                marginTop: "5px",
+                fontSize: "32px",
+                marginTop: "3px",
               }}
             >
-              Fly Showcase
+              {waitingCount}
             </div>
           </div>
 
           <div
             style={{
-              border:
-                `1px solid ${COLORS.border}`,
-              padding: "17px",
+              backgroundColor:
+                COLORS.lightPurple,
+              padding: "18px",
             }}
           >
             <div
@@ -450,48 +471,48 @@ function Schedule() {
                 letterSpacing: "1.5px",
               }}
             >
-              SHOW DATE
+              IN CHAIR
             </div>
 
             <div
               style={{
                 fontFamily:
                   '"Cormorant Garamond", Georgia, serif',
-                fontSize: "23px",
-                marginTop: "5px",
+                fontSize: "32px",
+                marginTop: "3px",
               }}
             >
-              November 11
+              {inChairCount}
             </div>
           </div>
 
           <div
             style={{
-              border:
-                `1px solid ${COLORS.border}`,
-              padding: "17px",
+              backgroundColor:
+                COLORS.lightGreen,
+              padding: "18px",
             }}
           >
             <div
               style={{
-                color: COLORS.purple,
+                color: COLORS.green,
                 fontSize: "8px",
                 fontWeight: "700",
                 letterSpacing: "1.5px",
               }}
             >
-              SCHEDULE ITEMS
+              COMPLETE
             </div>
 
             <div
               style={{
                 fontFamily:
                   '"Cormorant Garamond", Georgia, serif',
-                fontSize: "23px",
-                marginTop: "5px",
+                fontSize: "32px",
+                marginTop: "3px",
               }}
             >
-              {schedule.length}
+              {completeCount}
             </div>
           </div>
         </section>
@@ -517,7 +538,7 @@ function Schedule() {
                 letterSpacing: "2px",
               }}
             >
-              SHOW DAY TIMELINE
+              BEAUTY BOARD
             </div>
 
             <div
@@ -527,8 +548,7 @@ function Schedule() {
                 marginTop: "4px",
               }}
             >
-              Build and control the official
-              event schedule.
+              Today's hair and makeup schedule.
             </div>
           </div>
 
@@ -547,11 +567,11 @@ function Schedule() {
               fontSize: "8px",
             }}
           >
-            + ADD SCHEDULE ITEM
+            + ADD APPOINTMENT
           </button>
         </section>
 
-        {/* FILTER BUTTONS */}
+        {/* FILTERS */}
 
         <section
           style={{
@@ -562,25 +582,25 @@ function Schedule() {
             marginBottom: "20px",
           }}
         >
-          {categories.map(
-            (categoryItem) => {
+          {filters.map(
+            (filterItem) => {
               const active =
-                filter === categoryItem;
+                filter === filterItem;
 
               return (
                 <button
-                  key={categoryItem}
+                  key={filterItem}
                   type="button"
                   onClick={() =>
                     setFilter(
-                      categoryItem
+                      filterItem
                     )
                   }
                   style={{
                     flexShrink: 0,
                     minHeight: "38px",
                     padding:
-                      "0 12px",
+                      "0 13px",
                     border: active
                       ? `1px solid ${COLORS.purple}`
                       : `1px solid ${COLORS.border}`,
@@ -596,126 +616,83 @@ function Schedule() {
                     fontWeight: "700",
                   }}
                 >
-                  {categoryItem}
+                  {filterItem}
                 </button>
               );
             }
           )}
         </section>
 
-        {/* TIMELINE */}
+        {/* APPOINTMENTS */}
 
         <section>
-          {filteredSchedule.map(
-            (item, index) => {
-              const categoryColor =
-                categoryColors[
-                  item.category
-                ] ||
-                COLORS.purple;
+          {filteredAppointments.map(
+            (appointment) => {
+              const status =
+                statusColors[
+                  appointment.status
+                ];
 
               return (
-                <div
-                  key={item.id}
+                <article
+                  key={appointment.id}
                   style={{
-                    display: "grid",
-                    gridTemplateColumns:
-                      "90px 1fr",
-                    gap: "15px",
-                    position: "relative",
-                    paddingBottom:
-                      "20px",
+                    border:
+                      `1px solid ${COLORS.border}`,
+                    marginBottom: "12px",
+                    padding: "18px",
+                    backgroundColor:
+                      COLORS.white,
                   }}
                 >
-                  {/* TIMELINE LINE */}
-
-                  {index <
-                    filteredSchedule.length -
-                      1 && (
-                    <div
-                      style={{
-                        position:
-                          "absolute",
-                        left: "44px",
-                        top: "28px",
-                        bottom: "0",
-                        width: "1px",
-                        backgroundColor:
-                          COLORS.border,
-                      }}
-                    />
-                  )}
-
-                  {/* TIME */}
+                  {/* TOP ROW */}
 
                   <div
                     style={{
-                      position:
-                        "relative",
-                      zIndex: 1,
-                      backgroundColor:
-                        COLORS.white,
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontFamily:
-                          '"Cormorant Garamond", Georgia, serif',
-                        fontSize: "20px",
-                        lineHeight: "1",
-                      }}
-                    >
-                      {item.time}
-                    </div>
-
-                    <div
-                      style={{
-                        width: "8px",
-                        height: "8px",
-                        borderRadius:
-                          "50%",
-                        backgroundColor:
-                          categoryColor,
-                        margin:
-                          "10px auto 0",
-                        border:
-                          `2px solid ${COLORS.white}`,
-                        boxShadow:
-                          `0 0 0 1px ${categoryColor}`,
-                      }}
-                    />
-                  </div>
-
-                  {/* SCHEDULE CARD */}
-
-                  <article
-                    style={{
-                      border:
-                        `1px solid ${COLORS.border}`,
-                      borderLeft:
-                        `4px solid ${categoryColor}`,
-                      backgroundColor:
-                        COLORS.white,
-                      padding: "17px",
+                      display: "flex",
+                      justifyContent:
+                        "space-between",
+                      alignItems:
+                        "flex-start",
+                      gap: "15px",
+                      flexWrap: "wrap",
                     }}
                   >
                     <div
                       style={{
                         display: "flex",
-                        justifyContent:
-                          "space-between",
                         alignItems:
-                          "flex-start",
-                        gap: "12px",
-                        flexWrap:
-                          "wrap",
+                          "center",
+                        gap: "15px",
                       }}
                     >
+                      {/* TIME */}
+
+                      <div
+                        style={{
+                          minWidth: "75px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontFamily:
+                              '"Cormorant Garamond", Georgia, serif',
+                            fontSize: "22px",
+                          }}
+                        >
+                          {
+                            appointment.time
+                          }
+                        </div>
+                      </div>
+
+                      {/* MODEL */}
+
                       <div>
                         <div
                           style={{
                             color:
-                              categoryColor,
+                              COLORS.purple,
                             fontSize: "7px",
                             fontWeight:
                               "700",
@@ -723,9 +700,7 @@ function Schedule() {
                               "1.5px",
                           }}
                         >
-                          {
-                            item.category
-                          }
+                          MODEL
                         </div>
 
                         <div
@@ -736,231 +711,216 @@ function Schedule() {
                             lineHeight:
                               "1",
                             marginTop:
-                              "5px",
+                              "3px",
                           }}
                         >
-                          {item.title}
+                          {
+                            appointment.model
+                          }
                         </div>
                       </div>
+                    </div>
 
-                      <button
-                        type="button"
-                        onClick={() =>
-                          changeStatus(
-                            item.id
-                          )
-                        }
+                    {/* STATUS */}
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        changeStatus(
+                          appointment.id
+                        )
+                      }
+                      style={{
+                        border: "none",
+                        backgroundColor:
+                          status.background,
+                        color:
+                          status.color,
+                        padding:
+                          "8px 11px",
+                        cursor: "pointer",
+                        fontSize: "7px",
+                        fontWeight:
+                          "700",
+                      }}
+                    >
+                      ●{" "}
+                      {
+                        appointment.status
+                      }
+                    </button>
+                  </div>
+
+                  {/* DETAILS */}
+
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns:
+                        "repeat(auto-fit, minmax(130px, 1fr))",
+                      gap: "15px",
+                      borderTop:
+                        `1px solid ${COLORS.border}`,
+                      marginTop: "15px",
+                      paddingTop: "15px",
+                    }}
+                  >
+                    <div>
+                      <div
                         style={{
-                          border: "none",
-                          backgroundColor:
-                            item.status ===
-                            "LIVE"
-                              ? COLORS.lightGreen
-                              : item.status ===
-                                "COMPLETED"
-                              ? "#EEEEEE"
-                              : COLORS.lightGold,
                           color:
-                            item.status ===
-                            "LIVE"
-                              ? COLORS.green
-                              : item.status ===
-                                "COMPLETED"
-                              ? COLORS.gray
-                              : "#806313",
-                          padding:
-                            "7px 9px",
-                          cursor: "pointer",
+                            COLORS.gray,
                           fontSize: "7px",
                           fontWeight:
                             "700",
+                          letterSpacing:
+                            "1px",
                         }}
                       >
-                        ●{" "}
-                        {item.status}
-                      </button>
-                    </div>
-
-                    <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns:
-                          "repeat(auto-fit, minmax(120px, 1fr))",
-                        gap: "10px",
-                        marginTop:
-                          "15px",
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            color:
-                              COLORS.gray,
-                            fontSize:
-                              "7px",
-                            fontWeight:
-                              "700",
-                            letterSpacing:
-                              "1px",
-                          }}
-                        >
-                          LOCATION
-                        </div>
-
-                        <div
-                          style={{
-                            fontSize:
-                              "9px",
-                            marginTop:
-                              "4px",
-                          }}
-                        >
-                          {
-                            item.location
-                          }
-                        </div>
+                        SERVICE
                       </div>
 
-                      <div>
-                        <div
-                          style={{
-                            color:
-                              COLORS.gray,
-                            fontSize:
-                              "7px",
-                            fontWeight:
-                              "700",
-                            letterSpacing:
-                              "1px",
-                          }}
-                        >
-                          WHO
-                        </div>
-
-                        <div
-                          style={{
-                            fontSize:
-                              "9px",
-                            marginTop:
-                              "4px",
-                          }}
-                        >
-                          {
-                            item.people
-                          }
-                        </div>
+                      <div
+                        style={{
+                          fontSize: "9px",
+                          marginTop: "4px",
+                        }}
+                      >
+                        {
+                          appointment.service
+                        }
                       </div>
                     </div>
 
-                    <div
+                    <div>
+                      <div
+                        style={{
+                          color:
+                            COLORS.gray,
+                          fontSize: "7px",
+                          fontWeight:
+                            "700",
+                          letterSpacing:
+                            "1px",
+                        }}
+                      >
+                        ARTIST
+                      </div>
+
+                      <div
+                        style={{
+                          fontSize: "9px",
+                          marginTop: "4px",
+                        }}
+                      >
+                        {
+                          appointment.artist
+                        }
+                      </div>
+                    </div>
+
+                    <div>
+                      <div
+                        style={{
+                          color:
+                            COLORS.gray,
+                          fontSize: "7px",
+                          fontWeight:
+                            "700",
+                          letterSpacing:
+                            "1px",
+                        }}
+                      >
+                        CHAIR
+                      </div>
+
+                      <div
+                        style={{
+                          fontSize: "9px",
+                          marginTop: "4px",
+                        }}
+                      >
+                        {
+                          appointment.chair
+                        }
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ACTIONS */}
+
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "8px",
+                      marginTop: "15px",
+                    }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openEditModal(
+                          appointment
+                        )
+                      }
                       style={{
-                        display: "flex",
-                        gap: "8px",
-                        marginTop:
-                          "15px",
+                        minHeight:
+                          "38px",
+                        border:
+                          `1px solid ${COLORS.purple}`,
+                        backgroundColor:
+                          COLORS.white,
+                        color:
+                          COLORS.purple,
+                        padding:
+                          "0 13px",
+                        cursor:
+                          "pointer",
+                        fontSize:
+                          "7px",
+                        fontWeight:
+                          "700",
                       }}
                     >
-                      <button
-                        type="button"
-                        onClick={() =>
-                          openEditModal(
-                            item
-                          )
-                        }
-                        style={{
-                          minHeight:
-                            "38px",
-                          border:
-                            `1px solid ${COLORS.purple}`,
-                          backgroundColor:
-                            COLORS.white,
-                          color:
-                            COLORS.purple,
-                          padding:
-                            "0 12px",
-                          cursor:
-                            "pointer",
-                          fontSize:
-                            "7px",
-                          fontWeight:
-                            "700",
-                        }}
-                      >
-                        EDIT
-                      </button>
+                      EDIT
+                    </button>
 
-                      <button
-                        type="button"
-                        onClick={() =>
-                          deleteItem(
-                            item.id
-                          )
-                        }
-                        style={{
-                          minHeight:
-                            "38px",
-                          border:
-                            `1px solid ${COLORS.border}`,
-                          backgroundColor:
-                            COLORS.white,
-                          color:
-                            COLORS.red,
-                          padding:
-                            "0 12px",
-                          cursor:
-                            "pointer",
-                          fontSize:
-                            "7px",
-                          fontWeight:
-                            "700",
-                        }}
-                      >
-                        DELETE
-                      </button>
-                    </div>
-                  </article>
-                </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        deleteAppointment(
+                          appointment.id
+                        )
+                      }
+                      style={{
+                        minHeight:
+                          "38px",
+                        border:
+                          `1px solid ${COLORS.border}`,
+                        backgroundColor:
+                          COLORS.white,
+                        color:
+                          COLORS.red,
+                        padding:
+                          "0 13px",
+                        cursor:
+                          "pointer",
+                        fontSize:
+                          "7px",
+                        fontWeight:
+                          "700",
+                      }}
+                    >
+                      DELETE
+                    </button>
+                  </div>
+                </article>
               );
             }
           )}
         </section>
 
-        {/* EMPTY STATE */}
-
-        {filteredSchedule.length ===
-          0 && (
-          <div
-            style={{
-              border:
-                `1px dashed ${COLORS.border}`,
-              padding: "40px 20px",
-              textAlign: "center",
-            }}
-          >
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "30px",
-              }}
-            >
-              No schedule items
-            </div>
-
-            <div
-              style={{
-                color: COLORS.gray,
-                fontSize: "9px",
-                marginTop: "5px",
-              }}
-            >
-              Try another category or
-              create a new schedule item.
-            </div>
-          </div>
-        )}
-
-        {/* BOTTOM INFO */}
+        {/* INFO CARD */}
 
         <section
           style={{
@@ -978,7 +938,7 @@ function Schedule() {
               letterSpacing: "1.5px",
             }}
           >
-            SCHEDULE CONTROL
+            BACKSTAGE BEAUTY
           </div>
 
           <div
@@ -989,7 +949,7 @@ function Schedule() {
               marginTop: "5px",
             }}
           >
-            Official Show Timeline
+            Keep the glam moving.
           </div>
 
           <div
@@ -1000,15 +960,14 @@ function Schedule() {
               marginTop: "5px",
             }}
           >
-            Changes made here will eventually
-            become the official schedule visible
-            to models, designers, backstage staff,
-            and stage management.
+            Tap a status to move a model
+            from waiting, to in-chair, to
+            complete.
           </div>
         </section>
       </div>
 
-      {/* ADD / EDIT MODAL */}
+      {/* MODAL */}
 
       {showModal && (
         <div
@@ -1045,9 +1004,9 @@ function Schedule() {
                 letterSpacing: "2px",
               }}
             >
-              {editingItem
-                ? "EDIT SCHEDULE ITEM"
-                : "NEW SCHEDULE ITEM"}
+              {editingAppointment
+                ? "EDIT APPOINTMENT"
+                : "NEW APPOINTMENT"}
             </div>
 
             <h2
@@ -1060,7 +1019,7 @@ function Schedule() {
                   "7px 0 22px",
               }}
             >
-              Schedule Details
+              Beauty Appointment
             </h2>
 
             <label
@@ -1081,7 +1040,7 @@ function Schedule() {
                   event.target.value
                 )
               }
-              placeholder="08:00 AM"
+              placeholder="08:30 AM"
               style={{
                 width: "100%",
                 height: "46px",
@@ -1103,17 +1062,17 @@ function Schedule() {
                 marginBottom: "6px",
               }}
             >
-              TITLE
+              MODEL NAME
             </label>
 
             <input
-              value={title}
+              value={model}
               onChange={(event) =>
-                setTitle(
+                setModel(
                   event.target.value
                 )
               }
-              placeholder="Model Check-In"
+              placeholder="Model 01"
               style={{
                 width: "100%",
                 height: "46px",
@@ -1135,13 +1094,13 @@ function Schedule() {
                 marginBottom: "6px",
               }}
             >
-              CATEGORY
+              SERVICE
             </label>
 
             <select
-              value={category}
+              value={service}
               onChange={(event) =>
-                setCategory(
+                setService(
                   event.target.value
                 )
               }
@@ -1159,28 +1118,16 @@ function Schedule() {
                   "14px",
               }}
             >
-              <option value="CHECK-IN">
-                Check-In
+              <option value="Hair">
+                Hair
               </option>
 
-              <option value="BEAUTY">
-                Hair & Makeup
+              <option value="Makeup">
+                Makeup
               </option>
 
-              <option value="FITTING">
-                Fitting
-              </option>
-
-              <option value="REHEARSAL">
-                Rehearsal
-              </option>
-
-              <option value="LINEUP">
-                Backstage Lineup
-              </option>
-
-              <option value="RUNWAY">
-                Runway
+              <option value="Hair + Makeup">
+                Hair + Makeup
               </option>
             </select>
 
@@ -1192,17 +1139,17 @@ function Schedule() {
                 marginBottom: "6px",
               }}
             >
-              LOCATION
+              ARTIST
             </label>
 
             <input
-              value={location}
+              value={artist}
               onChange={(event) =>
-                setLocation(
+                setArtist(
                   event.target.value
                 )
               }
-              placeholder="Main Stage"
+              placeholder="Artist name"
               style={{
                 width: "100%",
                 height: "46px",
@@ -1224,17 +1171,16 @@ function Schedule() {
                 marginBottom: "6px",
               }}
             >
-              WHO NEEDS TO BE THERE?
+              CHAIR
             </label>
 
-            <input
-              value={people}
+            <select
+              value={chair}
               onChange={(event) =>
-                setPeople(
+                setChair(
                   event.target.value
                 )
               }
-              placeholder="All Models"
               style={{
                 width: "100%",
                 height: "46px",
@@ -1243,10 +1189,32 @@ function Schedule() {
                 padding: "0 12px",
                 boxSizing:
                   "border-box",
+                backgroundColor:
+                  COLORS.white,
                 marginBottom:
                   "20px",
               }}
-            />
+            >
+              <option value="Chair 01">
+                Chair 01
+              </option>
+
+              <option value="Chair 02">
+                Chair 02
+              </option>
+
+              <option value="Chair 03">
+                Chair 03
+              </option>
+
+              <option value="Chair 04">
+                Chair 04
+              </option>
+
+              <option value="Chair 05">
+                Chair 05
+              </option>
+            </select>
 
             <div
               style={{
@@ -1281,7 +1249,9 @@ function Schedule() {
 
               <button
                 type="button"
-                onClick={saveItem}
+                onClick={
+                  saveAppointment
+                }
                 style={{
                   flex: 1,
                   minHeight:
@@ -1299,9 +1269,9 @@ function Schedule() {
                     "8px",
                 }}
               >
-                {editingItem
+                {editingAppointment
                   ? "SAVE CHANGES"
-                  : "ADD TO SCHEDULE"}
+                  : "ADD APPOINTMENT"}
               </button>
             </div>
           </div>
@@ -1344,4 +1314,4 @@ function Schedule() {
   );
 }
 
-export default Schedule;
+export default HairMakeup;

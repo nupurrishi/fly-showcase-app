@@ -1,209 +1,190 @@
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 function Lookbook() {
-  const navigate = useNavigate();
+
+  const [selectedLook, setSelectedLook] = useState(null);
 
   const looks = [
     {
       number: "01",
       designer: "Designer One",
-      title: "Opening Look",
-      category: "RUNWAY",
-      status: "READY",
-      description: "Your opening runway look.",
+      model: "Model One",
+      description: "Structured evening silhouette",
     },
     {
       number: "02",
-      designer: "Designer Two",
-      title: "Editorial Look",
-      category: "EDITORIAL",
-      status: "FITTING",
-      description: "Second look for the showcase.",
+      designer: "Designer One",
+      model: "Model Two",
+      description: "Modern editorial look",
     },
     {
       number: "03",
-      designer: "Designer Three",
-      title: "Finale Look",
-      category: "FINALE",
-      status: "UPCOMING",
-      description: "Your finale runway look.",
+      designer: "Designer Two",
+      model: "Model One",
+      description: "Statement runway ensemble",
+    },
+    {
+      number: "04",
+      designer: "Designer Two",
+      model: "Model Three",
+      description: "Contemporary couture look",
     },
   ];
 
   return (
     <main className="lookbook-page">
 
-      {/* HEADER */}
-
-      <header className="lookbook-header">
-
-        <button
-          className="back-button"
-          onClick={() => navigate("/model")}
-        >
-          ←
-        </button>
+      <header className="page-header">
 
         <div>
-          <span className="dashboard-brand">
+
+          <span className="eyebrow dark">
             FLY SHOWCASE
           </span>
 
           <h1>
-            My Lookbook
+            The<br />
+            <em>Lookbook.</em>
           </h1>
+
         </div>
 
-        <div className="look-count">
-          03
-          <span>LOOKS</span>
-        </div>
+        <button className="header-icon">
+          +
+        </button>
 
       </header>
 
 
-      {/* INTRO */}
-
       <section className="lookbook-intro">
 
         <span className="eyebrow dark">
-          YOUR RUNWAY
+          FIRST LOVE YOURSELF
         </span>
 
-        <h2>
-          Every look tells a story.
-        </h2>
-
         <p>
-          Keep track of your assigned looks,
-          fittings and runway details.
+          Explore the looks created for
+          this season's runway.
         </p>
 
       </section>
 
 
-      {/* LOOKS */}
+      <div className="look-filter">
+
+        <button className="filter-active">
+          ALL
+        </button>
+
+        <button>
+          MY LOOKS
+        </button>
+
+        <button>
+          DESIGNERS
+        </button>
+
+      </div>
+
 
       <section className="lookbook-grid">
 
         {looks.map((look) => (
 
-          <article
-            className="look-card"
+          <button
+            className="lookbook-item"
             key={look.number}
+            onClick={() => setSelectedLook(look)}
           >
-
-            {/* IMAGE PLACEHOLDER */}
 
             <div className="look-image">
 
               <span>
-                FLY
+                LOOK
               </span>
 
-              <div className="look-number">
+              <strong>
                 {look.number}
-              </div>
+              </strong>
 
             </div>
 
 
-            {/* DETAILS */}
+            <div className="lookbook-info">
 
-            <div className="look-details">
+              <div>
 
-              <div className="look-top">
-
-                <span className="event-type">
-                  {look.category}
+                <span>
+                  {look.designer}
                 </span>
 
-                <span
-                  className={`look-status ${look.status
-                    .toLowerCase()
-                    .replace(" ", "-")}`}
-                >
-                  {look.status}
-                </span>
+                <h3>
+                  Look #{look.number}
+                </h3>
 
               </div>
 
-              <h2>
-                {look.title}
-              </h2>
-
-              <h3>
-                {look.designer}
-              </h3>
-
-              <p>
-                {look.description}
-              </p>
-
-              <button className="details-button">
-                VIEW DETAILS →
-              </button>
+              <span>
+                →
+              </span>
 
             </div>
 
-          </article>
+          </button>
 
         ))}
 
       </section>
 
 
-      {/* RUNWAY NOTE */}
+      {selectedLook && (
 
-      <section className="lookbook-note">
+        <div className="modal-overlay">
 
-        <div className="note-icon">
-          ✦
+          <div className="look-modal">
+
+            <button
+              className="modal-close"
+              onClick={() => setSelectedLook(null)}
+            >
+              ×
+            </button>
+
+            <div className="modal-look-image">
+
+              LOOK {selectedLook.number}
+
+            </div>
+
+            <span className="eyebrow dark">
+              {selectedLook.designer}
+            </span>
+
+            <h2>
+              Look #{selectedLook.number}
+            </h2>
+
+            <p>
+              {selectedLook.description}
+            </p>
+
+            <div className="look-assignment">
+
+              <span>
+                ASSIGNED MODEL
+              </span>
+
+              <strong>
+                {selectedLook.model}
+              </strong>
+
+            </div>
+
+          </div>
+
         </div>
 
-        <div>
-          <strong>
-            Fitting reminder
-          </strong>
-
-          <p>
-            Your next fitting is scheduled for
-            12:00 PM in Fitting Room 2.
-          </p>
-        </div>
-
-      </section>
-
-
-      {/* BOTTOM NAV */}
-
-      <nav className="bottom-nav">
-
-        <button
-          onClick={() => navigate("/model")}
-        >
-          <span>⌂</span>
-          Home
-        </button>
-
-        <button
-          onClick={() => navigate("/schedule")}
-        >
-          <span>◷</span>
-          Schedule
-        </button>
-
-        <button className="active">
-          <span>◇</span>
-          Lookbook
-        </button>
-
-        <button>
-          <span>♢</span>
-          Alerts
-        </button>
-
-      </nav>
+      )}
 
     </main>
   );

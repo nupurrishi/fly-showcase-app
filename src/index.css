@@ -1,16 +1,216 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=PT+Sans:wght@400;700&display=swap");
 
 :root {
-  font-family: "Montserrat", sans-serif;
-  color: #211d24;
-  background: #f8f6fa;
+  --black: #161616;
+  --purple: #81247c;
+  --gold: #deb64b;
+  --white: #ffffff;
+  --light-purple: #f5eaf4;
+  --light-gold: #f8f3e5;
+  --border: #e8e8e8;
+  --gray: #777777;
 }
 
 * {
   box-sizing: border-box;
 }
 
-body {
+html,
+body,
+#root {
   margin: 0;
-  min-width: 320px;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+html {
+  background: var(--black);
+}
+
+body {
+  font-family: "PT Sans", Arial, sans-serif;
+  background: var(--black);
+  color: var(--black);
+  overflow-x: hidden;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* APP SHELL */
+
+.app-shell {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--white);
+  overflow-x: hidden;
+}
+
+/*
+  On phones and tablets the app uses the full screen.
+  On large screens we give it a comfortable app-like
+  maximum width instead of stretching everything.
+*/
+
+.app-content {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+}
+
+/* MOBILE */
+
+@media (max-width: 599px) {
+  .app-content {
+    max-width: 100%;
+  }
+}
+
+/* LARGE PHONES / SMALL TABLETS */
+
+@media (min-width: 600px) and (max-width: 899px) {
+  .app-content {
+    max-width: 760px;
+  }
+}
+
+/* IPAD / TABLETS */
+
+@media (min-width: 900px) and (max-width: 1199px) {
+  .app-content {
+    max-width: 1000px;
+  }
+}
+
+/* DESKTOP / LAPTOP */
+
+@media (min-width: 1200px) {
+  body {
+    padding: 24px 0;
+  }
+
+  .app-shell {
+    width: min(1100px, calc(100% - 48px));
+    min-height: calc(100vh - 48px);
+    margin: 0 auto;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 15px 60px rgba(0, 0, 0, 0.25);
+  }
+
+  .app-content {
+    max-width: 1100px;
+  }
+}
+
+/* SAFE AREA SUPPORT FOR IPHONE */
+
+.safe-bottom {
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+}
+
+.bottom-navigation {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* RESPONSIVE GRID */
+
+.responsive-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 600px) {
+  .responsive-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .responsive-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* RESPONSIVE TEXT */
+
+.responsive-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(42px, 8vw, 72px);
+  line-height: 0.9;
+}
+
+.responsive-heading {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1;
+}
+
+/* TOUCH FRIENDLY */
+
+.touch-button {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* PREVENT TEXT FROM BREAKING THE LAYOUT */
+
+.no-overflow {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+/* HIDE SCROLLBAR WHILE KEEPING SCROLLING */
+
+.horizontal-scroll {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.horizontal-scroll::-webkit-scrollbar {
+  display: none;
+}
+.model-dashboard-content {
+  max-width: 560px;
+}
+
+@media (min-width: 600px) {
+  .model-dashboard-content {
+    max-width: 720px;
+    padding-left: 36px !important;
+    padding-right: 36px !important;
+  }
+}
+
+@media (min-width: 900px) {
+  .model-dashboard-content {
+    max-width: 900px;
+    padding-left: 50px !important;
+    padding-right: 50px !important;
+  }
+}
+
+@media (min-width: 1200px) {
+  .model-dashboard-content {
+    max-width: 920px;
+  }
 }

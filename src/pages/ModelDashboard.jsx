@@ -1,280 +1,907 @@
-import { useNavigate } from "react-router-dom";
+import React from "react";
 
-function ModelDashboard() {
-  // Temporary test model.
-  // Later, Supabase will provide this information automatically.
-  const model = {
-    firstName: "Maya",
-    initial: "M",
-  };
+const colors = {
+  black: "#161616",
+  purple: "#81247C",
+  gold: "#DEB64B",
+  white: "#FFFFFF",
+  lightPurple: "#F5EAF4",
+  lightGold: "#F8F3E5",
+  border: "#E8E8E8",
+  gray: "#777777",
+  lightGray: "#F7F7F7",
+};
 
-  const navigate = useNavigate();
+const schedule = [
+  {
+    time: "4:00 PM",
+    title: "Hair & Makeup",
+    location: "Makeup Room A",
+    type: "MAKEUP",
+    color: "purple",
+  },
+  {
+    time: "5:45 PM",
+    title: "Designer Fitting",
+    location: "Designer Studio",
+    type: "FITTING",
+    color: "gold",
+  },
+  {
+    time: "6:30 PM",
+    title: "Backstage Lineup",
+    location: "Stage 2",
+    type: "CALL TIME",
+    color: "purple",
+  },
+  {
+    time: "7:00 PM",
+    title: "Runway",
+    location: "Main Stage • Look 03",
+    type: "RUNWAY",
+    color: "dark",
+  },
+];
+
+const updates = [
+  {
+    type: "IMPORTANT",
+    time: "JUST NOW",
+    title: "All models to Stage 2",
+    message: "Please report to backstage for lineup.",
+    important: true,
+  },
+  {
+    type: "SCHEDULE UPDATE",
+    time: "5 MIN AGO",
+    title: "Fitting moved to 5:45 PM",
+    message: "Designer Studio • Updated by Stage Manager",
+    important: false,
+  },
+  {
+    type: "SHOW UPDATE",
+    time: "12 MIN AGO",
+    title: "Runway begins at 7:00 PM",
+    message: "Main Stage",
+    important: false,
+  },
+];
+
+function ScheduleItem({ item }) {
+  const isGold = item.color === "gold";
+  const isDark = item.color === "dark";
 
   return (
-    <main className="dashboard-page">
+    <div
+      style={{
+        display: "flex",
+        gap: "16px",
+        padding: "19px 0",
+        borderTop: `1px solid ${colors.border}`,
+      }}
+    >
+      <div
+        style={{
+          width: "58px",
+          flexShrink: 0,
+          color: colors.purple,
+          fontSize: "10px",
+          fontWeight: "700",
+          paddingTop: "3px",
+        }}
+      >
+        {item.time}
+      </div>
 
-      {/* HEADER */}
-      <header className="dashboard-header">
-        <div>
-          <span className="dashboard-brand">
-            FLY SHOWCASE
-          </span>
+      <div style={{ flex: 1 }}>
+        <div
+          style={{
+            fontFamily: '"Cormorant Garamond", Georgia, serif',
+            fontSize: "24px",
+            lineHeight: "1.05",
+            color: colors.black,
+          }}
+        >
+          {item.title}
+        </div>
 
-          <h1>
-            Good evening, {model.firstName}.
+        <div
+          style={{
+            color: colors.gray,
+            fontSize: "9px",
+            marginTop: "6px",
+          }}
+        >
+          {item.location}
+        </div>
+
+        <span
+          style={{
+            display: "inline-block",
+            marginTop: "9px",
+            padding: "5px 8px",
+            backgroundColor: isDark
+              ? colors.purple
+              : isGold
+              ? colors.lightGold
+              : colors.lightPurple,
+            color: isDark
+              ? colors.white
+              : isGold
+              ? "#806313"
+              : colors.purple,
+            fontSize: "8px",
+            fontWeight: "700",
+            letterSpacing: "0.5px",
+          }}
+        >
+          {item.type}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function ModelDashboard() {
+  return (
+    <main
+      style={{
+        minHeight: "100vh",
+        width: "100%",
+        backgroundColor: colors.white,
+        color: colors.black,
+        fontFamily: '"PT Sans", Arial, sans-serif',
+      }}
+    >
+      {/* TOP BRAND BAR */}
+
+      <div
+        style={{
+          height: "7px",
+          width: "100%",
+          backgroundColor: colors.purple,
+        }}
+      />
+
+      {/* MOBILE APP CONTAINER */}
+
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "520px",
+          margin: "0 auto",
+          padding: "25px 20px 100px",
+          boxSizing: "border-box",
+        }}
+      >
+        {/* HEADER */}
+
+        <header
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: "42px",
+          }}
+        >
+          <div>
+            <div
+              style={{
+                fontFamily:
+                  '"Cormorant Garamond", Georgia, serif',
+                fontSize: "39px",
+                lineHeight: "0.8",
+                fontWeight: "600",
+                color: colors.purple,
+              }}
+            >
+              FLY
+            </div>
+
+            <div
+              style={{
+                marginTop: "9px",
+                fontSize: "8px",
+                letterSpacing: "3px",
+                fontWeight: "700",
+                color: colors.black,
+              }}
+            >
+              SHOWCASE
+            </div>
+          </div>
+
+          {/* PROFILE */}
+
+          <button
+            type="button"
+            aria-label="Profile"
+            style={{
+              width: "44px",
+              height: "44px",
+              borderRadius: "50%",
+              border: `2px solid ${colors.gold}`,
+              backgroundColor: colors.purple,
+              color: colors.white,
+              fontFamily:
+                '"Cormorant Garamond", Georgia, serif',
+              fontSize: "19px",
+              fontWeight: "600",
+              cursor: "pointer",
+            }}
+          >
+            M
+          </button>
+        </header>
+
+        {/* MODEL INTRO */}
+
+        <section>
+          <div
+            style={{
+              display: "inline-block",
+              backgroundColor: colors.gold,
+              color: colors.black,
+              padding: "7px 11px",
+              fontSize: "8px",
+              fontWeight: "700",
+              letterSpacing: "2px",
+              marginBottom: "17px",
+            }}
+          >
+            MODEL
+          </div>
+
+          <h1
+            style={{
+              margin: 0,
+              fontFamily:
+                '"Cormorant Garamond", Georgia, serif',
+              fontSize: "56px",
+              lineHeight: "0.86",
+              fontWeight: "500",
+            }}
+          >
+            Hello,
+            <br />
+
+            <span style={{ color: colors.purple }}>
+              Your Name.
+            </span>
           </h1>
 
-          <p className="welcome-text">
-            Here's what's happening with your showcase.
+          <p
+            style={{
+              marginTop: "18px",
+              color: colors.gray,
+              fontSize: "13px",
+              lineHeight: "1.6",
+            }}
+          >
+            Here's everything you need for today's show.
           </p>
-        </div>
+        </section>
 
-        <button className="profile-circle">
-          {model.initial}
-        </button>
-      </header>
+        {/* CURRENT SHOW STATUS */}
 
-
-      {/* LIVE SHOW STATUS */}
-      <section className="live-banner">
-        <div>
-          <span className="live-dot">●</span>
-          <span> SHOW STATUS</span>
-        </div>
-
-        <strong>PREPARATION</strong>
-
-        <p>
-          The team is getting ready for the showcase.
-        </p>
-      </section>
-
-
-      {/* NEXT SHOW */}
-      <section className="show-card">
-
-        <span className="eyebrow">
-          NEXT SHOW
-        </span>
-
-        <h2>
-          FLY Showcase — Season 4
-        </h2>
-
-        <p>
-          Your runway experience begins soon.
-        </p>
-
-        <div className="countdown">
-
-          <div>
-            <strong>02</strong>
-            <span>DAYS</span>
+        <section
+          style={{
+            marginTop: "32px",
+            backgroundColor: colors.black,
+            color: colors.white,
+            padding: "22px",
+            borderLeft: `5px solid ${colors.purple}`,
+          }}
+        >
+          <div
+            style={{
+              color: colors.gold,
+              fontSize: "8px",
+              fontWeight: "700",
+              letterSpacing: "2px",
+              marginBottom: "12px",
+            }}
+          >
+            CURRENT SHOW STATUS
           </div>
 
-          <div>
-            <strong>14</strong>
-            <span>HOURS</span>
+          <div
+            style={{
+              fontFamily:
+                '"Cormorant Garamond", Georgia, serif',
+              fontSize: "32px",
+              lineHeight: "1",
+            }}
+          >
+            Hair & Makeup
           </div>
 
-          <div>
-            <strong>36</strong>
-            <span>MIN</span>
+          <p
+            style={{
+              color: "#BBBBBB",
+              fontSize: "10px",
+              lineHeight: "1.5",
+              marginBottom: 0,
+            }}
+          >
+            Your backstage team will update this status
+            throughout the show.
+          </p>
+        </section>
+
+        {/* NEXT CALL */}
+
+        <section style={{ marginTop: "30px" }}>
+          <div
+            style={{
+              fontSize: "9px",
+              letterSpacing: "2px",
+              fontWeight: "700",
+              marginBottom: "12px",
+            }}
+          >
+            YOUR NEXT CALL
           </div>
 
-        </div>
+          <div
+            style={{
+              position: "relative",
+              border: `1px solid ${colors.border}`,
+              backgroundColor: colors.white,
+              padding: "22px 20px 22px 25px",
+              boxSizing: "border-box",
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                left: 0,
+                top: 0,
+                width: "5px",
+                height: "100%",
+                backgroundColor: colors.gold,
+              }}
+            />
 
-      </section>
+            <div
+              style={{
+                color: colors.purple,
+                fontSize: "11px",
+                fontWeight: "700",
+                letterSpacing: "1px",
+              }}
+            >
+              6:30 PM
+            </div>
 
-
-      {/* QUICK ACTIONS */}
-      <section className="quick-actions">
-
-        <button onClick={() => navigate("/schedule")}>
-          <span>◷</span>
-          <strong>My Schedule</strong>
-          <small>View your day</small>
-        </button>
-
-        <button onClick={() => navigate("/lookbook")}>
-          <span>◇</span>
-          <strong>My Lookbook</strong>
-          <small>View your outfits</small>
-        </button>
-
-        <button>
-          <span>♢</span>
-          <strong>Notifications</strong>
-          <small>3 new updates</small>
-        </button>
-
-      </section>
-
-
-      {/* TODAY'S SCHEDULE */}
-      <section className="dashboard-section">
-
-        <div className="section-heading">
-
-          <div>
-            <span className="eyebrow dark">
-              TODAY
-            </span>
-
-            <h2>
-              Your Schedule
+            <h2
+              style={{
+                margin: "7px 0 6px",
+                fontFamily:
+                  '"Cormorant Garamond", Georgia, serif',
+                fontSize: "30px",
+                lineHeight: "1",
+                fontWeight: "500",
+              }}
+            >
+              Backstage Lineup
             </h2>
-          </div>
 
-          <button
-            className="view-button"
-            onClick={() => navigate("/schedule")}
+            <p
+              style={{
+                margin: 0,
+                color: colors.gray,
+                fontSize: "10px",
+                lineHeight: "1.5",
+              }}
+            >
+              Main Stage
+            </p>
+
+            <div
+              style={{
+                marginTop: "16px",
+                paddingTop: "13px",
+                borderTop: `1px solid ${colors.border}`,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span
+                style={{
+                  color: colors.gray,
+                  fontSize: "9px",
+                }}
+              >
+                Be ready 15 minutes early
+              </span>
+
+              <span
+                style={{
+                  color: colors.purple,
+                  fontSize: "16px",
+                }}
+              >
+                →
+              </span>
+            </div>
+          </div>
+        </section>
+
+        {/* LIVE UPDATES */}
+
+        <section style={{ marginTop: "35px" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "14px",
+            }}
           >
-            View all
-          </button>
-
-        </div>
-
-
-        <div className="schedule-list">
-
-          {/* HAIR & MAKEUP */}
-          <div className="schedule-item">
-
-            <div className="time">
-              <strong>10:00</strong>
-              <span>AM</span>
+            <div
+              style={{
+                fontSize: "9px",
+                letterSpacing: "2px",
+                fontWeight: "700",
+              }}
+            >
+              LIVE UPDATES
             </div>
 
-            <div className="schedule-icon">
-              ✦
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "5px",
+                color: colors.purple,
+                fontSize: "8px",
+                fontWeight: "700",
+              }}
+            >
+              <span
+                style={{
+                  width: "6px",
+                  height: "6px",
+                  borderRadius: "50%",
+                  backgroundColor: colors.purple,
+                }}
+              />
+
+              LIVE
             </div>
-
-            <div className="schedule-info">
-              <h3>Hair & Makeup</h3>
-              <p>Beauty Room A</p>
-            </div>
-
-            <span className="schedule-status">
-              UPCOMING
-            </span>
-
           </div>
 
+          {updates.map((update, index) => (
+            <div
+              key={index}
+              style={{
+                backgroundColor: update.important
+                  ? colors.purple
+                  : colors.white,
+                color: update.important
+                  ? colors.white
+                  : colors.black,
+                border: update.important
+                  ? "none"
+                  : `1px solid ${colors.border}`,
+                padding: "18px",
+                marginBottom: "10px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "9px",
+                }}
+              >
+                <span
+                  style={{
+                    color: update.important
+                      ? colors.gold
+                      : colors.purple,
+                    fontSize: "8px",
+                    fontWeight: "700",
+                    letterSpacing: "1.5px",
+                  }}
+                >
+                  {update.type}
+                </span>
 
-          {/* RUNWAY REHEARSAL */}
-          <div className="schedule-item">
+                <span
+                  style={{
+                    color: update.important
+                      ? "#E8CDE6"
+                      : "#999999",
+                    fontSize: "8px",
+                  }}
+                >
+                  {update.time}
+                </span>
+              </div>
 
-            <div className="time">
-              <strong>1:30</strong>
-              <span>PM</span>
+              <div
+                style={{
+                  fontFamily:
+                    '"Cormorant Garamond", Georgia, serif',
+                  fontSize: "23px",
+                  lineHeight: "1.05",
+                  marginBottom: "7px",
+                }}
+              >
+                {update.title}
+              </div>
+
+              <div
+                style={{
+                  color: update.important
+                    ? "#F0DDF0"
+                    : colors.gray,
+                  fontSize: "9px",
+                  lineHeight: "1.5",
+                }}
+              >
+                {update.message}
+              </div>
             </div>
+          ))}
+        </section>
 
-            <div className="schedule-icon">
-              ◇
-            </div>
+        {/* TODAY'S SCHEDULE */}
 
-            <div className="schedule-info">
-              <h3>Runway Rehearsal</h3>
-              <p>Main Stage</p>
-            </div>
-
-            <span className="schedule-status">
-              UPCOMING
-            </span>
-
-          </div>
-
-
-          {/* BACKSTAGE */}
-          <div className="schedule-item">
-
-            <div className="time">
-              <strong>6:45</strong>
-              <span>PM</span>
-            </div>
-
-            <div className="schedule-icon">
-              ◆
-            </div>
-
-            <div className="schedule-info">
-              <h3>Backstage Lineup</h3>
-              <p>Stage Entrance</p>
-            </div>
-
-            <span className="schedule-status urgent">
-              IMPORTANT
-            </span>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* TODAY'S LOOK */}
-      <section className="outfit-card">
-
-        <div>
-
-          <span className="eyebrow dark">
-            TODAY'S LOOK
-          </span>
-
-          <h2>
-            Designer Look #07
-          </h2>
-
-          <p>
-            Your assigned runway look.
-          </p>
-
-          <button
-            onClick={() => navigate("/lookbook")}
+        <section style={{ marginTop: "38px" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "15px",
+            }}
           >
-            Open Lookbook →
-          </button>
+            <div
+              style={{
+                fontSize: "9px",
+                letterSpacing: "2px",
+                fontWeight: "700",
+              }}
+            >
+              TODAY'S SCHEDULE
+            </div>
 
-        </div>
+            <div
+              style={{
+                color: colors.purple,
+                fontSize: "9px",
+                fontWeight: "700",
+              }}
+            >
+              MY SCHEDULE
+            </div>
+          </div>
 
-        <div className="outfit-placeholder">
-          FLY
-        </div>
+          <div
+            style={{
+              borderBottom: `1px solid ${colors.border}`,
+            }}
+          >
+            {schedule.map((item, index) => (
+              <ScheduleItem
+                key={index}
+                item={item}
+              />
+            ))}
+          </div>
+        </section>
 
-      </section>
+        {/* LOOKBOOK */}
 
+        <section style={{ marginTop: "40px" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "15px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "9px",
+                letterSpacing: "2px",
+                fontWeight: "700",
+              }}
+            >
+              MY LOOKBOOK
+            </div>
 
-      {/* BOTTOM NAVIGATION */}
-      <nav className="bottom-nav">
+            <div
+              style={{
+                color: colors.purple,
+                fontSize: "9px",
+                fontWeight: "700",
+              }}
+            >
+              3 LOOKS
+            </div>
+          </div>
 
-        <button className="active">
-          <span>⌂</span>
-          Home
-        </button>
+          {/* LOOK 01 */}
 
-        <button
-          onClick={() => navigate("/schedule")}
+          <div
+            style={{
+              border: `1px solid ${colors.border}`,
+              marginBottom: "12px",
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                height: "190px",
+                backgroundColor: colors.black,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: colors.gold,
+                fontFamily:
+                  '"Cormorant Garamond", Georgia, serif',
+                fontSize: "46px",
+              }}
+            >
+              01
+            </div>
+
+            <div style={{ padding: "17px" }}>
+              <div
+                style={{
+                  color: colors.purple,
+                  fontSize: "8px",
+                  fontWeight: "700",
+                  letterSpacing: "1.5px",
+                  marginBottom: "7px",
+                }}
+              >
+                DESIGNER
+              </div>
+
+              <div
+                style={{
+                  fontFamily:
+                    '"Cormorant Garamond", Georgia, serif',
+                  fontSize: "25px",
+                }}
+              >
+                Designer Name
+              </div>
+
+              <div
+                style={{
+                  color: colors.gray,
+                  fontSize: "9px",
+                  marginTop: "5px",
+                }}
+              >
+                Look 03 • Main Runway
+              </div>
+            </div>
+          </div>
+
+          {/* LOOK 02 */}
+
+          <div
+            style={{
+              border: `1px solid ${colors.border}`,
+              marginBottom: "12px",
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                height: "160px",
+                backgroundColor: colors.lightPurple,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: colors.purple,
+                fontFamily:
+                  '"Cormorant Garamond", Georgia, serif',
+                fontSize: "42px",
+              }}
+            >
+              02
+            </div>
+
+            <div style={{ padding: "17px" }}>
+              <div
+                style={{
+                  color: colors.purple,
+                  fontSize: "8px",
+                  fontWeight: "700",
+                  letterSpacing: "1.5px",
+                  marginBottom: "7px",
+                }}
+              >
+                DESIGNER
+              </div>
+
+              <div
+                style={{
+                  fontFamily:
+                    '"Cormorant Garamond", Georgia, serif',
+                  fontSize: "25px",
+                }}
+              >
+                Designer Name
+              </div>
+
+              <div
+                style={{
+                  color: colors.gray,
+                  fontSize: "9px",
+                  marginTop: "5px",
+                }}
+              >
+                Look 07 • Second Runway
+              </div>
+            </div>
+          </div>
+
+          {/* LOOK 03 */}
+
+          <div
+            style={{
+              border: `1px solid ${colors.border}`,
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                height: "160px",
+                backgroundColor: colors.lightGold,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#8A6814",
+                fontFamily:
+                  '"Cormorant Garamond", Georgia, serif',
+                fontSize: "42px",
+              }}
+            >
+              03
+            </div>
+
+            <div style={{ padding: "17px" }}>
+              <div
+                style={{
+                  color: colors.purple,
+                  fontSize: "8px",
+                  fontWeight: "700",
+                  letterSpacing: "1.5px",
+                  marginBottom: "7px",
+                }}
+              >
+                DESIGNER
+              </div>
+
+              <div
+                style={{
+                  fontFamily:
+                    '"Cormorant Garamond", Georgia, serif',
+                  fontSize: "25px",
+                }}
+              >
+                Designer Name
+              </div>
+
+              <div
+                style={{
+                  color: colors.gray,
+                  fontSize: "9px",
+                  marginTop: "5px",
+                }}
+              >
+                Look 11 • Finale
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* BOTTOM APP NAVIGATION */}
+
+        <nav
+          style={{
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "70px",
+            backgroundColor: colors.white,
+            borderTop: `1px solid ${colors.border}`,
+            display: "flex",
+            justifyContent: "center",
+            zIndex: 100,
+          }}
         >
-          <span>◷</span>
-          Schedule
-        </button>
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "520px",
+              display: "flex",
+              justifyContent: "space-around",
+              alignItems: "center",
+            }}
+          >
+            <button
+              type="button"
+              style={{
+                border: "none",
+                background: "none",
+                color: colors.purple,
+                fontSize: "9px",
+                fontWeight: "700",
+                cursor: "pointer",
+              }}
+            >
+              <div style={{ fontSize: "20px", marginBottom: "4px" }}>
+                ⌂
+              </div>
+              HOME
+            </button>
 
-        <button
-          onClick={() => navigate("/lookbook")}
-        >
-          <span>◇</span>
-          Lookbook
-        </button>
+            <button
+              type="button"
+              style={{
+                border: "none",
+                background: "none",
+                color: colors.gray,
+                fontSize: "9px",
+                fontWeight: "700",
+                cursor: "pointer",
+              }}
+            >
+              <div style={{ fontSize: "19px", marginBottom: "4px" }}>
+                ◷
+              </div>
+              SCHEDULE
+            </button>
 
-        <button>
-          <span>♢</span>
-          Alerts
-        </button>
+            <button
+              type="button"
+              style={{
+                border: "none",
+                background: "none",
+                color: colors.gray,
+                fontSize: "9px",
+                fontWeight: "700",
+                cursor: "pointer",
+              }}
+            >
+              <div style={{ fontSize: "19px", marginBottom: "4px" }}>
+                ♢
+              </div>
+              LOOKBOOK
+            </button>
 
-      </nav>
-
+            <button
+              type="button"
+              style={{
+                border: "none",
+                background: "none",
+                color: colors.gray,
+                fontSize: "9px",
+                fontWeight: "700",
+                cursor: "pointer",
+              }}
+            >
+              <div style={{ fontSize: "19px", marginBottom: "4px" }}>
+                ●
+              </div>
+              PROFILE
+            </button>
+          </div>
+        </nav>
+      </div>
     </main>
   );
 }
