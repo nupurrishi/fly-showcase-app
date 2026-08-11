@@ -1,7 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import React from "react";
 
 function EventSelect() {
-  const navigate = useNavigate();
+  const goToLogin = () => {
+    window.location.href = "/login";
+  };
 
   return (
     <main
@@ -22,11 +24,7 @@ function EventSelect() {
           maxWidth: "520px",
         }}
       >
-
-        {/* =========================================
-            TOP BRAND BAR
-        ========================================= */}
-
+        {/* TOP BRAND BAR */}
         <div
           style={{
             height: "7px",
@@ -36,10 +34,7 @@ function EventSelect() {
           }}
         />
 
-        {/* =========================================
-            HEADER
-        ========================================= */}
-
+        {/* HEADER */}
         <header
           style={{
             display: "flex",
@@ -49,7 +44,6 @@ function EventSelect() {
           }}
         >
           <div>
-
             <div
               style={{
                 fontFamily: '"Cormorant Garamond", Georgia, serif',
@@ -65,7 +59,6 @@ function EventSelect() {
             <div
               style={{
                 marginTop: "8px",
-                fontFamily: '"PT Sans", Arial, sans-serif',
                 fontSize: "9px",
                 letterSpacing: "3px",
                 fontWeight: "700",
@@ -74,10 +67,7 @@ function EventSelect() {
             >
               SHOWCASE
             </div>
-
           </div>
-
-          {/* GOLD MARK */}
 
           <div
             style={{
@@ -94,20 +84,10 @@ function EventSelect() {
           >
             ✦
           </div>
-
         </header>
 
-
-        {/* =========================================
-            HERO
-        ========================================= */}
-
-        <section
-          style={{
-            marginBottom: "42px",
-          }}
-        >
-
+        {/* HERO */}
+        <section style={{ marginBottom: "42px" }}>
           <div
             style={{
               display: "inline-block",
@@ -123,7 +103,6 @@ function EventSelect() {
             FASHION EVENT PLATFORM
           </div>
 
-
           <h1
             style={{
               fontFamily: '"Cormorant Garamond", Georgia, serif',
@@ -131,20 +110,12 @@ function EventSelect() {
               lineHeight: "0.86",
               fontWeight: "500",
               margin: 0,
-              color: "#161616",
             }}
           >
             Where fashion
             <br />
-            <em
-              style={{
-                color: "#81247C",
-              }}
-            >
-              comes alive.
-            </em>
+            <em style={{ color: "#81247C" }}>comes alive.</em>
           </h1>
-
 
           <p
             style={{
@@ -155,20 +126,13 @@ function EventSelect() {
               lineHeight: "1.7",
             }}
           >
-            Your backstage home for fashion shows,
-            schedules, lookbooks, runway calls and
-            everything happening behind the scenes.
+            Your backstage home for fashion shows, schedules, lookbooks,
+            runway calls and everything happening behind the scenes.
           </p>
-
         </section>
 
-
-        {/* =========================================
-            UPCOMING EVENTS
-        ========================================= */}
-
+        {/* UPCOMING EVENTS */}
         <section>
-
           <div
             style={{
               display: "flex",
@@ -177,13 +141,11 @@ function EventSelect() {
               marginBottom: "14px",
             }}
           >
-
             <span
               style={{
                 fontSize: "9px",
                 fontWeight: "700",
                 letterSpacing: "2px",
-                color: "#161616",
               }}
             >
               UPCOMING EVENTS
@@ -198,16 +160,12 @@ function EventSelect() {
             >
               01 EVENT
             </span>
-
           </div>
 
-
-          {/* =========================================
-              FLY SHOWCASE CARD
-          ========================================= */}
-
+          {/* EVENT CARD */}
           <button
-            onClick={() => navigate("/login")}
+            type="button"
+            onClick={goToLogin}
             style={{
               width: "100%",
               border: "none",
@@ -220,9 +178,6 @@ function EventSelect() {
               cursor: "pointer",
             }}
           >
-
-            {/* PURPLE SIDE BAR */}
-
             <div
               style={{
                 position: "absolute",
@@ -234,15 +189,7 @@ function EventSelect() {
               }}
             />
 
-
-            <div
-              style={{
-                paddingLeft: "8px",
-              }}
-            >
-
-              {/* EVENT LABEL */}
-
+            <div style={{ paddingLeft: "8px" }}>
               <div
                 style={{
                   display: "flex",
@@ -251,7 +198,6 @@ function EventSelect() {
                   marginBottom: "32px",
                 }}
               >
-
                 <span
                   style={{
                     background: "#81247C",
@@ -274,11 +220,7 @@ function EventSelect() {
                 >
                   2026
                 </span>
-
               </div>
-
-
-              {/* TITLE */}
 
               <h2
                 style={{
@@ -294,9 +236,6 @@ function EventSelect() {
                 Showcase
               </h2>
 
-
-              {/* GOLD LINE */}
-
               <div
                 style={{
                   width: "55px",
@@ -306,13 +245,9 @@ function EventSelect() {
                 }}
               />
 
-
-              {/* TAGLINE */}
-
               <p
                 style={{
                   margin: 0,
-                  color: "#FFFFFF",
                   fontSize: "10px",
                   letterSpacing: "2px",
                   fontWeight: "700",
@@ -320,9 +255,6 @@ function EventSelect() {
               >
                 FIRST LOVE YOURSELF
               </p>
-
-
-              {/* BOTTOM */}
 
               <div
                 style={{
@@ -332,7 +264,6 @@ function EventSelect() {
                   alignItems: "center",
                 }}
               >
-
                 <span
                   style={{
                     color: "#AAAAAA",
@@ -359,26 +290,13 @@ function EventSelect() {
                 >
                   →
                 </span>
-
               </div>
-
             </div>
-
           </button>
-
         </section>
 
-
-        {/* =========================================
-            FUTURE FASHION WEEKS
-        ========================================= */}
-
-        <section
-          style={{
-            marginTop: "42px",
-          }}
-        >
-
+        {/* FUTURE FASHION */}
+        <section style={{ marginTop: "42px" }}>
           <div
             style={{
               fontSize: "9px",
@@ -391,91 +309,58 @@ function EventSelect() {
             THE FUTURE OF FASHION
           </div>
 
-
           <div
             style={{
               background: "#81247C",
               color: "#FFFFFF",
               padding: "26px",
-              position: "relative",
-              overflow: "hidden",
             }}
           >
-
-            {/* GOLD DECORATION */}
-
             <div
               style={{
-                position: "absolute",
-                width: "100px",
-                height: "100px",
-                border: "1px solid #DEB64B",
-                borderRadius: "50%",
-                right: "-35px",
-                top: "-35px",
-              }}
-            />
-
-            <div
-              style={{
-                position: "relative",
+                fontFamily: '"Cormorant Garamond", Georgia, serif',
+                fontSize: "31px",
+                lineHeight: "0.95",
               }}
             >
-
-              <div
-                style={{
-                  fontFamily: '"Cormorant Garamond", Georgia, serif',
-                  fontSize: "31px",
-                  lineHeight: "0.95",
-                }}
-              >
-                More fashion weeks
-                <br />
-                <em>coming soon.</em>
-              </div>
-
-
-              <p
-                style={{
-                  margin: "18px 0",
-                  color: "#FFFFFF",
-                  opacity: 0.85,
-                  fontSize: "11px",
-                  lineHeight: "1.6",
-                }}
-              >
-                Milan. Los Angeles. New York. Paris.
-                <br />
-                Discover future opportunities through FLY.
-              </p>
-
-
-              <button
-                onClick={() => navigate("/login")}
-                style={{
-                  border: "1px solid #DEB64B",
-                  background: "#DEB64B",
-                  color: "#161616",
-                  padding: "12px 16px",
-                  fontSize: "8px",
-                  fontWeight: "700",
-                  letterSpacing: "1.5px",
-                }}
-              >
-                EXPLORE OPPORTUNITIES →
-              </button>
-
+              More fashion weeks
+              <br />
+              <em>coming soon.</em>
             </div>
 
-          </div>
+            <p
+              style={{
+                margin: "18px 0",
+                fontSize: "11px",
+                lineHeight: "1.6",
+                opacity: 0.85,
+              }}
+            >
+              Milan. Los Angeles. New York. Paris.
+              <br />
+              Discover future opportunities through FLY.
+            </p>
 
+            <button
+              type="button"
+              onClick={goToLogin}
+              style={{
+                border: "1px solid #DEB64B",
+                background: "#DEB64B",
+                color: "#161616",
+                padding: "12px 16px",
+                fontSize: "8px",
+                fontWeight: "700",
+                letterSpacing: "1.5px",
+                cursor: "pointer",
+              }}
+            >
+              EXPLORE OPPORTUNITIES →
+            </button>
+          </div>
         </section>
 
-
-        {/* =========================================
-            FOOTER
-        ========================================= */}
-
+        {/* FOOTER */}
         <footer
           style={{
             textAlign: "center",
@@ -485,7 +370,6 @@ function EventSelect() {
             letterSpacing: "2px",
           }}
         >
-
           <span
             style={{
               color: "#81247C",
@@ -493,12 +377,9 @@ function EventSelect() {
             }}
           >
             FLY
-          </span>
-
-          {" "}• FIRST LOVE YOURSELF
-
+          </span>{" "}
+          • FIRST LOVE YOURSELF
         </footer>
-
       </div>
     </main>
   );

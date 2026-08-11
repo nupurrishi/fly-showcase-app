@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Button from "../components/Button";
 
-function Login() {
+function Login({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -15,9 +15,28 @@ function Login() {
       return;
     }
 
-    // Temporary UI behavior.
-    // Supabase authentication will be connected later.
-    setMessage("Login system coming next.");
+    // Temporary demo login.
+    // Real Supabase authentication will replace this later.
+    if (
+      email === "demo@flyshowcase.com" &&
+      password === "fly123"
+    ) {
+      setMessage("");
+
+      if (onLogin) {
+        onLogin({
+          email,
+          role: "model",
+          name: "Demo Model",
+        });
+      }
+
+      return;
+    }
+
+    setMessage(
+      "Demo login: use demo@flyshowcase.com and fly123"
+    );
   };
 
   const handleForgotPassword = () => {
@@ -30,7 +49,7 @@ function Login() {
 
   return (
     <main className="login-page">
-      <div className="login-brand-bar" />
+      <div className="login-brand-bar"></div>
 
       <div className="login-container">
         {/* BRAND */}

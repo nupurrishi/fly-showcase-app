@@ -4,7 +4,7 @@
    ========================================================= */
 
 /* =========================================================
-   APP SHELL
+   1. APP SHELL & PAGE CONTAINERS
    ========================================================= */
 
 .app {
@@ -33,10 +33,6 @@
   padding: var(--space-6) var(--page-padding-mobile);
 }
 
-/* =========================================================
-   PAGE CONTAINERS
-   ========================================================= */
-
 .page-container {
   width: 100%;
   max-width: var(--content-max-width);
@@ -55,8 +51,9 @@
   width: 100%;
 }
 
+
 /* =========================================================
-   BRAND COLORS
+   2. UTILITY COLORS
    ========================================================= */
 
 .text-black {
@@ -95,8 +92,9 @@
   background-color: var(--color-white);
 }
 
+
 /* =========================================================
-   GLOBAL SECTION SPACING
+   3. SECTIONS & SPACING
    ========================================================= */
 
 .section {
@@ -112,8 +110,9 @@
   margin-bottom: var(--space-8);
 }
 
+
 /* =========================================================
-   CARD SYSTEM
+   4. CARD SYSTEM
    ========================================================= */
 
 .card {
@@ -144,8 +143,9 @@
   border-color: var(--color-black);
 }
 
+
 /* =========================================================
-   GRID SYSTEM
+   5. GRID SYSTEM
    ========================================================= */
 
 .grid {
@@ -168,8 +168,9 @@
   );
 }
 
+
 /* =========================================================
-   FLEX SYSTEM
+   6. FLEX SYSTEM
    ========================================================= */
 
 .flex {
@@ -197,6 +198,11 @@
   flex-wrap: wrap;
 }
 
+
+/* =========================================================
+   7. GAP UTILITIES
+   ========================================================= */
+
 .gap-1 {
   gap: var(--space-1);
 }
@@ -217,8 +223,9 @@
   gap: var(--space-5);
 }
 
+
 /* =========================================================
-   DIVIDERS
+   8. DIVIDERS
    ========================================================= */
 
 .divider {
@@ -235,24 +242,23 @@
   background: var(--color-gold);
 }
 
+
 /* =========================================================
-   STATUS BADGES
+   9. STATUS BADGES
    ========================================================= */
 
 .status-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   min-height: 28px;
   padding: 5px 10px;
-
   border-radius: var(--border-radius-sm);
-
   font-family: var(--font-body);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
   letter-spacing: 0.5px;
+  line-height: 1.2;
 }
 
 .status-ready {
@@ -285,28 +291,23 @@
   background: var(--color-danger-light);
 }
 
+
 /* =========================================================
-   FORM ELEMENTS
+   10. FORM ELEMENTS
    ========================================================= */
 
 .input,
 .select,
 .textarea {
   width: 100%;
-
   border: var(--border-width) solid var(--border-color);
   border-radius: var(--border-radius-md);
-
   background: var(--color-white);
   color: var(--color-black);
-
   font-family: var(--font-body);
   font-size: var(--font-size-md);
-
   padding: 12px 14px;
-
   outline: none;
-
   transition:
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
@@ -316,9 +317,7 @@
 .select:focus,
 .textarea:focus {
   border-color: var(--color-purple);
-
-  box-shadow:
-    0 0 0 3px var(--color-purple-light);
+  box-shadow: 0 0 0 3px var(--color-purple-light);
 }
 
 .textarea {
@@ -326,30 +325,25 @@
   resize: vertical;
 }
 
+
 /* =========================================================
-   BUTTON SYSTEM
+   11. BUTTON SYSTEM
    ========================================================= */
 
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   min-height: var(--button-height);
   padding: 0 var(--button-padding-x);
-
   border: 1px solid transparent;
   border-radius: var(--border-radius-md);
-
   font-family: var(--font-body);
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-bold);
-
   letter-spacing: 0.3px;
   line-height: 1.2;
-
   cursor: pointer;
-
   transition:
     background-color var(--transition-fast),
     color var(--transition-fast),
@@ -411,385 +405,37 @@
   width: 100%;
 }
 
+
 /* =========================================================
-   TOAST / NOTIFICATION
+   12. TOAST
    ========================================================= */
 
 .toast {
   position: fixed;
   left: 50%;
   bottom: var(--space-5);
-
   transform: translateX(-50%);
-
   width: calc(100% - 40px);
   max-width: 440px;
-
   padding: 14px 18px;
-
   background: var(--color-black);
   color: var(--color-white);
-
   text-align: center;
-
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
-
   box-shadow: var(--shadow-md);
-
   z-index: 1000;
 }
 
-/* =========================================================
-   LOGIN PAGE
-   ========================================================= */
-
-.login-page {
-  width: 100%;
-  min-height: 100vh;
-
-  background: var(--color-white);
-  color: var(--color-black);
-
-  font-family: var(--font-body);
-}
-
-.login-brand-bar {
-  width: 100%;
-  height: 7px;
-
-  background: var(--color-purple);
-}
-
-.login-container {
-  width: 100%;
-  max-width: 520px;
-
-  margin: 0 auto;
-
-  padding:
-    42px
-    var(--page-padding-mobile)
-    50px;
-}
-
-/* ---------------------------------------------------------
-   LOGIN BRAND
-   --------------------------------------------------------- */
-
-.login-header {
-  text-align: center;
-  margin-bottom: 52px;
-}
-
-.login-logo {
-  font-family: var(--font-heading);
-  font-size: 56px;
-  line-height: 0.8;
-  font-weight: 600;
-
-  color: var(--color-purple);
-}
-
-.login-logo-subtitle {
-  margin-top: 12px;
-
-  color: var(--color-black);
-
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-
-  letter-spacing: 4px;
-}
-
-/* ---------------------------------------------------------
-   LOGIN INTRO
-   --------------------------------------------------------- */
-
-.login-intro {
-  margin-bottom: 35px;
-}
-
-.login-eyebrow {
-  display: inline-block;
-
-  margin-bottom: 18px;
-  padding: 7px 12px;
-
-  background: var(--color-purple);
-  color: var(--color-white);
-
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-
-  letter-spacing: 2px;
-}
-
-.login-title {
-  margin: 0;
-
-  font-family: var(--font-heading);
-  font-size: clamp(48px, 13vw, 62px);
-  line-height: 0.85;
-  font-weight: 500;
-
-  color: var(--color-black);
-}
-
-.login-title span {
-  color: var(--color-purple);
-}
-
-.login-description {
-  margin-top: 22px;
-
-  color: var(--color-gray-500);
-
-  font-size: var(--font-size-md);
-  line-height: 1.7;
-}
-
-/* ---------------------------------------------------------
-   LOGIN CARD
-   --------------------------------------------------------- */
-
-.login-card {
-  padding: 26px 22px 25px;
-
-  background: var(--color-black);
-
-  border-top:
-    5px solid var(--color-purple);
-}
-
-.login-card-title {
-  margin-bottom: 25px;
-
-  color: var(--color-gold);
-
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-
-  letter-spacing: 2px;
-}
-
-/* ---------------------------------------------------------
-   LOGIN FORM
-   --------------------------------------------------------- */
-
-.login-field {
-  margin-bottom: 19px;
-}
-
-.login-password-field {
-  margin-bottom: 10px;
-}
-
-.login-label {
-  display: block;
-
-  margin-bottom: 8px;
-
-  color: var(--color-white);
-
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-
-  letter-spacing: 1.5px;
-}
-
-.login-input {
-  width: 100%;
-  height: 52px;
-
-  padding: 0 14px;
-
-  border: none;
-  border-radius: 0;
-
-  background: var(--color-white);
-  color: var(--color-black);
-
-  font-family: var(--font-body);
-  font-size: var(--font-size-md);
-
-  outline: none;
-}
-
-.login-input::placeholder {
-  color: var(--color-gray-500);
-}
-
-.login-input:focus {
-  box-shadow:
-    0 0 0 3px var(--color-gold);
-}
-
-.login-password-wrapper {
-  position: relative;
-}
-
-.login-password-input {
-  padding-right: 75px;
-}
-
-.login-show-password {
-  position: absolute;
-  top: 0;
-  right: 0;
-
-  width: 65px;
-  height: 52px;
-
-  padding: 0;
-
-  border: none;
-  background: transparent;
-
-  color: var(--color-purple);
-
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-
-  letter-spacing: 1px;
-
-  cursor: pointer;
-}
-
-.login-show-password:hover {
-  color: var(--color-gold);
-}
-
-/* ---------------------------------------------------------
-   FORGOT PASSWORD
-   --------------------------------------------------------- */
-
-.login-forgot-wrapper {
-  display: flex;
-  justify-content: flex-end;
-
-  margin-bottom: 24px;
-}
-
-.login-forgot-button {
-  padding: 0;
-
-  border: none;
-  background: transparent;
-
-  color: var(--color-gold);
-
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-
-  letter-spacing: 1px;
-
-  cursor: pointer;
-}
-
-.login-forgot-button:hover {
-  text-decoration: underline;
-}
-
-/* ---------------------------------------------------------
-   LOGIN MESSAGE
-   --------------------------------------------------------- */
-
-.login-message {
-  margin-top: 16px;
-  padding: 12px;
-
-  background: var(--color-purple);
-  color: var(--color-white);
-
-  font-size: var(--font-size-sm);
-  line-height: 1.5;
-}
-
-/* ---------------------------------------------------------
-   ACCESS INFORMATION
-   --------------------------------------------------------- */
-
-.login-access-info {
-  margin-top: 20px;
-  padding: 16px;
-
-  border:
-    var(--border-width)
-    solid
-    var(--border-color);
-
-  border-left:
-    4px solid
-    var(--color-gold);
-
-  background: var(--color-white);
-}
-
-.login-access-info p {
-  margin: 0;
-
-  color: var(--color-gray-500);
-
-  font-size: var(--font-size-sm);
-  line-height: 1.6;
-}
-
-/* ---------------------------------------------------------
-   REQUEST ACCESS
-   --------------------------------------------------------- */
-
-.login-request {
-  margin-top: 42px;
-  padding-top: 30px;
-
-  border-top:
-    var(--border-width)
-    solid
-    var(--border-color);
-
-  text-align: center;
-}
-
-.login-request p {
-  margin: 0 0 14px;
-
-  color: var(--color-gray-500);
-
-  font-size: var(--font-size-sm);
-}
-
-/* ---------------------------------------------------------
-   LOGIN FOOTER
-   --------------------------------------------------------- */
-
-.login-footer {
-  margin-top: 55px;
-
-  color: var(--color-gray-500);
-
-  text-align: center;
-
-  font-size: var(--font-size-xs);
-  letter-spacing: 2px;
-}
-
-.login-footer span {
-  color: var(--color-purple);
-  font-weight: var(--font-weight-bold);
-}
 
 /* =========================================================
-   LOGO COMPONENT
+   13. LOGO
    ========================================================= */
 
 .fly-logo {
   display: inline-flex;
   flex-direction: column;
   align-items: flex-start;
-
   color: var(--color-purple);
 }
 
@@ -799,26 +445,22 @@
 
 .fly-logo-wordmark {
   font-family: var(--font-heading);
-
   font-size: 38px;
   font-weight: 600;
-
   line-height: 0.8;
 }
 
 .fly-logo-tagline {
   margin-top: 9px;
-
   font-family: var(--font-body);
-
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
-
   letter-spacing: 3px;
 }
 
+
 /* =========================================================
-   PAGE HEADER
+   14. PAGE HEADER
    ========================================================= */
 
 .page-header {
@@ -830,10 +472,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   width: 100%;
   min-height: 48px;
-
   margin-bottom: var(--space-5);
 }
 
@@ -841,41 +481,32 @@
   width: 100%;
 }
 
+.page-header-logo {
+  margin-bottom: var(--space-5);
+}
+
 .page-header-eyebrow {
   margin-bottom: var(--space-2);
-
   color: var(--color-purple);
-
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
-
   letter-spacing: 1.5px;
 }
 
 .page-header-title {
   margin: 0;
-
   color: var(--color-black);
-
   font-family: var(--font-heading);
-
   font-size: var(--font-size-3xl);
   font-weight: 500;
-
   line-height: 1;
 }
 
 .page-header-subtitle {
-  margin:
-    var(--space-2)
-    0
-    0;
-
+  margin: var(--space-2) 0 0;
   color: var(--color-gray-500);
-
   font-family: var(--font-body);
   font-size: var(--font-size-md);
-
   line-height: 1.6;
 }
 
@@ -883,19 +514,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
   width: 44px;
   height: 44px;
-
   border: none;
   border-radius: var(--border-radius-full);
-
   background: transparent;
-
   font-size: 20px;
-
   cursor: pointer;
-
   transition:
     background-color var(--transition-fast),
     transform var(--transition-fast);
@@ -909,242 +534,10 @@
   transform: scale(0.94);
 }
 
+
 /* =========================================================
-   BOTTOM NAVIGATION
+   15. LOOK CARD
    ========================================================= */
-
-.bottom-nav {
-  position: fixed;
-
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  z-index: 900;
-
-  display: grid;
-
-  grid-template-columns:
-    repeat(
-      var(--bottom-nav-columns),
-      1fr
-    );
-
-  min-height: var(--bottom-nav-height);
-
-  padding:
-    var(--space-2)
-    var(--space-2)
-    env(safe-area-inset-bottom);
-
-  background: var(--color-white);
-
-  border-top:
-    var(--border-width)
-    solid
-    var(--border-color);
-
-  box-shadow: var(--shadow-sm);
-}
-
-.bottom-nav-item {
-  display: flex;
-  flex-direction: column;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 3px;
-
-  min-width: 0;
-  min-height: 44px;
-
-  border: none;
-  background: transparent;
-
-  color: var(--color-gray-500);
-
-  font-family: var(--font-body);
-
-  cursor: pointer;
-
-  transition:
-    color var(--transition-fast),
-    background-color var(--transition-fast);
-}
-
-.bottom-nav-item:hover {
-  color: var(--color-purple);
-}
-
-.bottom-nav-item.active {
-  color: var(--color-purple);
-}
-
-.bottom-nav-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 18px;
-  line-height: 1;
-}
-
-.bottom-nav-label {
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-
-  line-height: 1.2;
-}
-
-/* =========================================================
-   DESKTOP
-   ========================================================= */
-
-@media (min-width: 900px) {
-  .app-content,
-  .page-container {
-    padding-left: 48px;
-    padding-right: 48px;
-  }
-
-  .app-content-wide,
-  .page-container-wide {
-    padding-left: 48px;
-    padding-right: 48px;
-  }
-}
-
-/* =========================================================
-   TABLET
-   ========================================================= */
-
-@media (min-width: 600px) and (max-width: 899px) {
-  .grid-2 {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-  }
-
-  .page-header-top {
-    min-height: 56px;
-  }
-
-  .page-header-title {
-    font-size: var(--font-size-4xl);
-  }
-}
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 599px) {
-  .grid-2,
-  .grid-3 {
-    grid-template-columns: 1fr;
-  }
-
-  .grid-auto {
-    grid-template-columns: 1fr;
-  }
-
-  .button {
-    min-height: 48px;
-    font-size: var(--font-size-md);
-  }
-
-  .button-small {
-    min-height: 44px;
-    font-size: var(--font-size-sm);
-  }
-
-  .card {
-    padding: var(--space-4);
-  }
-
-  .login-container {
-    padding-top: 36px;
-    padding-bottom: 40px;
-  }
-
-  .login-header {
-    margin-bottom: 44px;
-  }
-
-  .login-logo {
-    font-size: 50px;
-  }
-
-  .login-card {
-    padding: 24px 18px 22px;
-  }
-
-  .login-title {
-    font-size: clamp(44px, 14vw, 56px);
-  }
-
-  .fly-logo-wordmark {
-    font-size: 34px;
-  }
-
-  .fly-logo-tagline {
-    font-size: 8px;
-  }
-
-  .page-header {
-    margin-bottom: var(--space-6);
-  }
-
-  .page-header-top {
-    margin-bottom: var(--space-4);
-  }
-
-  .page-header-title {
-    font-size: var(--font-size-2xl);
-  }
-}
-
-/* =========================================================
-   TABLET / DESKTOP BOTTOM NAV
-   ========================================================= */
-
-@media (min-width: 768px) {
-  .bottom-nav {
-    display: none;
-  }
-}
-
-/* =========================================================
-   ACCESSIBILITY
-   ========================================================= */
-
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid var(--color-purple);
-  outline-offset: 2px;
-}
-
-/* =========================================================
-   REDUCED MOTION
-   ========================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-  }
-}
-
-/* =========================================================
-   LOOK CARD
-========================================================= */
 
 .look-card {
   width: 100%;
@@ -1204,9 +597,10 @@ textarea:focus-visible {
   line-height: 1.5;
 }
 
+
 /* =========================================================
-   NOTIFICATION CARD
-========================================================= */
+   16. NOTIFICATION CARD
+   ========================================================= */
 
 .notification-card {
   width: 100%;
@@ -1264,9 +658,10 @@ textarea:focus-visible {
   font-size: var(--font-size-xs);
 }
 
+
 /* =========================================================
-   QUICK ACTION
-========================================================= */
+   17. QUICK ACTION
+   ========================================================= */
 
 .quick-action {
   width: 100%;
@@ -1339,9 +734,10 @@ textarea:focus-visible {
   font-weight: var(--font-weight-bold);
 }
 
+
 /* =========================================================
-   SCHEDULE CARD
-========================================================= */
+   18. SCHEDULE CARD
+   ========================================================= */
 
 .schedule-card {
   width: 100%;
@@ -1390,4 +786,458 @@ textarea:focus-visible {
   color: var(--color-gray-500);
   font-size: var(--font-size-sm);
   line-height: 1.5;
+}
+
+
+/* =========================================================
+   19. BOTTOM NAVIGATION
+   ========================================================= */
+
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 900;
+  display: grid;
+  grid-template-columns: repeat(
+    var(--bottom-nav-columns),
+    1fr
+  );
+  min-height: var(--bottom-nav-height);
+  padding:
+    var(--space-2)
+    var(--space-2)
+    env(safe-area-inset-bottom);
+  background: var(--color-white);
+  border-top:
+    var(--border-width)
+    solid
+    var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+  min-height: 44px;
+  border: none;
+  background: transparent;
+  color: var(--color-gray-500);
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.bottom-nav-item:hover,
+.bottom-nav-item.active {
+  color: var(--color-purple);
+}
+
+.bottom-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.bottom-nav-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+}
+
+
+/* =========================================================
+   20. LOGIN PAGE
+   ========================================================= */
+
+.login-page {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--color-white);
+  color: var(--color-black);
+  font-family: var(--font-body);
+}
+
+.login-brand-bar {
+  width: 100%;
+  height: 7px;
+  background: var(--color-purple);
+}
+
+.login-container {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 42px var(--page-padding-mobile) 50px;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 52px;
+}
+
+.login-logo {
+  font-family: var(--font-heading);
+  font-size: 56px;
+  line-height: 0.8;
+  font-weight: 600;
+  color: var(--color-purple);
+}
+
+.login-logo-subtitle {
+  margin-top: 12px;
+  color: var(--color-black);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 4px;
+}
+
+.login-intro {
+  margin-bottom: 35px;
+}
+
+.login-eyebrow {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding: 7px 12px;
+  background: var(--color-purple);
+  color: var(--color-white);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 2px;
+}
+
+.login-title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(48px, 13vw, 62px);
+  line-height: 0.85;
+  font-weight: 500;
+  color: var(--color-black);
+}
+
+.login-title span {
+  color: var(--color-purple);
+}
+
+.login-description {
+  margin-top: 22px;
+  color: var(--color-gray-500);
+  font-size: var(--font-size-md);
+  line-height: 1.7;
+}
+
+.login-card {
+  padding: 26px 22px 25px;
+  background: var(--color-black);
+  border-top: 5px solid var(--color-purple);
+}
+
+.login-card-title {
+  margin-bottom: 25px;
+  color: var(--color-gold);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 2px;
+}
+
+.login-field {
+  margin-bottom: 19px;
+}
+
+.login-password-field {
+  margin-bottom: 10px;
+}
+
+.login-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--color-white);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 1.5px;
+}
+
+.login-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 0;
+  background: var(--color-white);
+  color: var(--color-black);
+  font-family: var(--font-body);
+  font-size: var(--font-size-md);
+  outline: none;
+}
+
+.login-input::placeholder {
+  color: var(--color-gray-500);
+}
+
+.login-input:focus {
+  box-shadow: 0 0 0 3px var(--color-gold);
+}
+
+.login-password-wrapper {
+  position: relative;
+}
+
+.login-password-input {
+  padding-right: 75px;
+}
+
+.login-show-password {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 65px;
+  height: 52px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-purple);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.login-show-password:hover {
+  color: var(--color-gold);
+}
+
+.login-forgot-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.login-forgot-button {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-gold);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.login-forgot-button:hover {
+  text-decoration: underline;
+}
+
+.login-message {
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--color-purple);
+  color: var(--color-white);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+
+.login-access-info {
+  margin-top: 20px;
+  padding: 16px;
+  border:
+    var(--border-width)
+    solid
+    var(--border-color);
+  border-left: 4px solid var(--color-gold);
+  background: var(--color-white);
+}
+
+.login-access-info p {
+  margin: 0;
+  color: var(--color-gray-500);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
+.login-request {
+  margin-top: 42px;
+  padding-top: 30px;
+  border-top:
+    var(--border-width)
+    solid
+    var(--border-color);
+  text-align: center;
+}
+
+.login-request p {
+  margin: 0 0 14px;
+  color: var(--color-gray-500);
+  font-size: var(--font-size-sm);
+}
+
+.login-footer {
+  margin-top: 55px;
+  color: var(--color-gray-500);
+  text-align: center;
+  font-size: var(--font-size-xs);
+  letter-spacing: 2px;
+}
+
+.login-footer span {
+  color: var(--color-purple);
+  font-weight: var(--font-weight-bold);
+}
+
+
+/* =========================================================
+   21. ACCESSIBILITY
+   ========================================================= */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-purple);
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   22. RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 599px) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-auto {
+    grid-template-columns: 1fr;
+  }
+
+  .button {
+    min-height: 48px;
+    font-size: var(--font-size-md);
+  }
+
+  .button-small {
+    min-height: 44px;
+    font-size: var(--font-size-sm);
+  }
+
+  .card {
+    padding: var(--space-4);
+  }
+
+  .login-container {
+    padding-top: 36px;
+    padding-bottom: 40px;
+  }
+
+  .login-header {
+    margin-bottom: 44px;
+  }
+
+  .login-logo {
+    font-size: 50px;
+  }
+
+  .login-card {
+    padding: 24px 18px 22px;
+  }
+
+  .login-title {
+    font-size: clamp(44px, 14vw, 56px);
+  }
+
+  .fly-logo-wordmark {
+    font-size: 34px;
+  }
+
+  .fly-logo-tagline {
+    font-size: 8px;
+  }
+
+  .page-header {
+    margin-bottom: var(--space-6);
+  }
+
+  .page-header-top {
+    margin-bottom: var(--space-4);
+  }
+
+  .page-header-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .schedule-card {
+    gap: var(--space-3);
+  }
+
+  .schedule-card-time {
+    min-width: 60px;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 899px) {
+  .grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .page-header-top {
+    min-height: 56px;
+  }
+
+  .page-header-title {
+    font-size: var(--font-size-4xl);
+  }
+}
+
+@media (min-width: 768px) {
+  .bottom-nav {
+    display: none;
+  }
+}
+
+@media (min-width: 900px) {
+  .app-content,
+  .page-container,
+  .app-content-wide,
+  .page-container-wide {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  .fly-logo-wordmark {
+    font-size: 42px;
+  }
+
+  .page-header-title {
+    font-size: var(--font-size-4xl);
+  }
+}
+
+
+/* =========================================================
+   23. REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
