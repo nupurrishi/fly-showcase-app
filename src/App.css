@@ -1671,3 +1671,573 @@ textarea:focus-visible {
     flex-direction: column;
   }
 }
+
+/* =========================================================
+   MODEL DASHBOARD
+   MOBILE-FIRST / EASY TO READ
+========================================================= */
+
+.model-dashboard {
+  min-height: 100vh;
+  background: #ffffff;
+  color: #161616;
+  font-family: "PT Sans", Arial, sans-serif;
+  font-size: 16px;
+}
+
+.model-dashboard-top-bar {
+  height: 8px;
+  width: 100%;
+  background: #81247c;
+}
+
+.model-dashboard-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 18px 70px;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.model-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.model-dashboard-logo {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  color: #81247c;
+  font-size: 42px;
+  font-weight: 600;
+  line-height: 0.8;
+}
+
+.model-dashboard-logo-subtitle {
+  margin-top: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+.model-dashboard-heading {
+  text-align: right;
+}
+
+.model-dashboard-role {
+  color: #81247c;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.model-dashboard-title-small {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 27px;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.model-dashboard-loading {
+  text-align: center;
+  padding: 70px 20px;
+}
+
+.model-dashboard-loading-logo {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  color: #81247c;
+  font-size: 52px;
+  font-weight: 600;
+}
+
+.model-dashboard-loading-subtitle {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+.model-dashboard-loading p {
+  color: #777777;
+  font-size: 16px;
+  margin-top: 25px;
+}
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+.model-dashboard-message {
+  background: #f5eaf4;
+  border-left: 6px solid #81247c;
+  padding: 16px;
+  margin-bottom: 22px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.model-profile-card {
+  background: #161616;
+  color: #ffffff;
+  padding: 26px;
+  margin-bottom: 25px;
+}
+
+.model-profile-label {
+  color: #deb64b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.model-profile-name {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 44px;
+  line-height: 1;
+  margin-top: 10px;
+}
+
+.model-profile-event {
+  color: #cccccc;
+  font-size: 15px;
+  margin-top: 12px;
+}
+
+/* =========================================================
+   INFORMATION BOXES
+========================================================= */
+
+.model-info-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(180px, 1fr)
+  );
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.model-info-box {
+  border: 1px solid #e8e8e8;
+  padding: 18px;
+}
+
+.model-info-box-title {
+  color: #81247c;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.model-info-box-value {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 26px;
+  margin-top: 8px;
+}
+
+/* =========================================================
+   INFORMATION NOTICE
+========================================================= */
+
+.model-information-notice {
+  background: #f5eaf4;
+  border-left: 6px solid #81247c;
+  padding: 18px;
+  margin-bottom: 34px;
+}
+
+.model-information-label {
+  color: #81247c;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+}
+
+.model-information-text {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+.model-dashboard-section {
+  margin-bottom: 42px;
+}
+
+.model-section-title {
+  margin-bottom: 18px;
+}
+
+.model-section-title-main {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.model-section-title-subtitle {
+  color: #777777;
+  font-size: 14px;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+/* =========================================================
+   SCHEDULE
+========================================================= */
+
+.model-schedule-list {
+  border-top: 1px solid #e8e8e8;
+}
+
+.model-schedule-item {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 19px 0;
+  border-bottom: 1px solid #e8e8e8;
+  flex-wrap: wrap;
+}
+
+.model-schedule-time {
+  min-width: 82px;
+  color: #81247c;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.model-schedule-details {
+  flex: 1;
+  min-width: 150px;
+}
+
+.model-schedule-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 26px;
+  line-height: 1;
+}
+
+.model-schedule-location {
+  color: #777777;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.model-schedule-notes {
+  color: #777777;
+  font-size: 13px;
+  margin-top: 7px;
+  line-height: 1.5;
+}
+
+.model-empty-state {
+  border: 1px solid #e8e8e8;
+  padding: 30px 20px;
+  text-align: center;
+  color: #777777;
+  font-size: 15px;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.model-status-completed,
+.model-status-upcoming,
+.model-status-cancelled {
+  padding: 8px 11px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.model-status-completed {
+  background: #eaf5ef;
+  color: #2f7d5b;
+}
+
+.model-status-upcoming {
+  background: #f8f3e5;
+  color: #806313;
+}
+
+.model-status-cancelled {
+  background: #fbeaea;
+  color: #b33a3a;
+}
+
+/* =========================================================
+   LOOKS
+========================================================= */
+
+.model-looks-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(250px, 1fr)
+  );
+  gap: 16px;
+}
+
+.model-look-card {
+  border: 1px solid #e8e8e8;
+  overflow: hidden;
+}
+
+.model-look-image {
+  height: 200px;
+  background: #161616;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.model-look-number {
+  color: #deb64b;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 68px;
+}
+
+.model-look-content {
+  padding: 20px;
+}
+
+.model-look-name {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.model-look-designer {
+  color: #81247c;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.model-look-notes {
+  background: #f8f3e5;
+  padding: 13px;
+  margin-top: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   CHECKLIST
+========================================================= */
+
+.model-checklist {
+  display: grid;
+  gap: 10px;
+}
+
+.model-checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 52px;
+  padding: 13px 15px;
+  border: 1px solid #e8e8e8;
+  font-size: 15px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.model-checklist-item input {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  accent-color: #81247c;
+}
+
+/* =========================================================
+   BACKSTAGE HELP
+========================================================= */
+
+.model-backstage-help {
+  background: #f8f3e5;
+  padding: 24px;
+}
+
+.model-backstage-label {
+  color: #806313;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.model-backstage-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 32px;
+  line-height: 1;
+  margin-top: 9px;
+}
+
+.model-backstage-text {
+  color: #777777;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.model-backstage-button {
+  width: 100%;
+  min-height: 52px;
+  border: none;
+  background: #161616;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.model-dashboard-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 440px;
+  background: #161616;
+  color: #ffffff;
+  padding: 17px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   PHONE
+========================================================= */
+
+@media (max-width: 600px) {
+  .model-dashboard-container {
+    padding: 20px 16px 60px;
+  }
+
+  .model-dashboard-header {
+    margin-bottom: 28px;
+  }
+
+  .model-dashboard-logo {
+    font-size: 40px;
+  }
+
+  .model-dashboard-title-small {
+    font-size: 23px;
+  }
+
+  .model-profile-card {
+    padding: 22px;
+  }
+
+  .model-profile-name {
+    font-size: 39px;
+  }
+
+  .model-profile-event {
+    font-size: 14px;
+  }
+
+  .model-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .model-info-box-value {
+    font-size: 25px;
+  }
+
+  .model-schedule-item {
+    gap: 10px;
+    padding: 18px 0;
+  }
+
+  .model-schedule-time {
+    min-width: 78px;
+    font-size: 13px;
+  }
+
+  .model-schedule-details {
+    min-width: 120px;
+  }
+
+  .model-schedule-title {
+    font-size: 24px;
+  }
+
+  .model-schedule-location {
+    font-size: 13px;
+  }
+
+  .model-schedule-notes {
+    font-size: 13px;
+  }
+
+  .model-status-completed,
+  .model-status-upcoming,
+  .model-status-cancelled {
+    margin-left: 88px;
+  }
+
+  .model-section-title-main {
+    font-size: 13px;
+  }
+
+  .model-section-title-subtitle {
+    font-size: 13px;
+  }
+
+  .model-look-image {
+    height: 190px;
+  }
+
+  .model-look-name {
+    font-size: 29px;
+  }
+
+  .model-look-designer {
+    font-size: 12px;
+  }
+
+  .model-look-notes {
+    font-size: 13px;
+  }
+
+  .model-checklist-item {
+    font-size: 15px;
+    min-height: 54px;
+  }
+
+  .model-backstage-title {
+    font-size: 30px;
+  }
+
+  .model-backstage-text {
+    font-size: 14px;
+  }
+
+  .model-backstage-button {
+    min-height: 54px;
+    font-size: 12px;
+  }
+}

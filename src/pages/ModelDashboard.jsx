@@ -1,440 +1,664 @@
-import React, { useState } from "react";
-
-const COLORS = {
-  black: "#161616",
-  purple: "#81247C",
-  gold: "#DEB64B",
-  white: "#FFFFFF",
-  gray: "#777777",
-  lightPurple: "#F5EAF4",
-  lightGold: "#F8F3E5",
-  green: "#2F7D5B",
-  lightGreen: "#EAF5EF",
-  border: "#E8E8E8",
-  red: "#B33A3A",
-};
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
 
 function ModelDashboard() {
+  const [profile, setProfile] = useState(null);
+  const [event, setEvent] = useState(null);
+  const [scheduleItems, setScheduleItems] = useState([]);
+  const [assignedItems, setAssignedItems] = useState([]);
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
-  // EDIT YOUR MODEL INFORMATION HERE
-  const model = {
-    name: "Model One",
-    number: "MODEL 01",
-    event: "Fly Showcase",
-    date: "November 11",
-  };
+  useEffect(() => {
+    loadModelDashboard();
+  }, []);
 
-  // EDIT YOUR SCHEDULE HERE
-  const schedule = [
-    {
-      time: "9:00 AM",
-      title: "Check In",
-      location: "Model Check-In",
-      status: "COMPLETED",
-    },
-    {
-      time: "10:00 AM",
-      title: "Hair & Makeup",
-      location: "Beauty Area",
-      status: "UPCOMING",
-    },
-    {
-      time: "12:00 PM",
-      title: "Fitting",
-      location: "Designer Room",
-      status: "UPCOMING",
-    },
-    {
-      time: "2:00 PM",
-      title: "Backstage Call",
-      location: "Backstage",
-      status: "UPCOMING",
-    },
-    {
-      time: "3:00 PM",
-      title: "Runway",
-      location: "Main Stage",
-      status: "UPCOMING",
-    },
-  ];
+  async function loadModelDashboard() {
+    setIsLoading(true);
+    setMessage("");
 
-  // EDIT YOUR LOOKS HERE
-  const looks = [
-    {
-      number: "01",
-      name: "Opening Look",
-      designer: "Designer A",
-      notes: "Gold accessories. Hair pulled back.",
-    },
-    {
-      number: "02",
-      name: "Evening Silhouette",
-      designer: "Designer A",
-      notes: "Silver earrings required.",
-    },
-    {
-      number: "03",
-      name: "Finale Look",
-      designer: "Designer A",
-      notes: "Finale position.",
-    },
-  ];
+    try {
+      // ==========================================
+      // 1. GET CURRENT USER
+      // ==========================================
 
-  function showMessage(text) {
-    setMessage(text);
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
 
-    setTimeout(() => {
-      setMessage("");
-    }, 2500);
+      if (userError) {
+        console.error("User error:", userError);
+        setMessage("Unable to load your account.");
+        setIsLoading(false);
+        return;
+      }
+
+      if (!user) {
+        setMessage("You are not signed in.");
+        setIsLoading(false);
+        return;
+      }
+
+      console.log("Logged-in user:", user);
+
+      // ==========================================
+      // 2. GET PROFILE
+      // ==========================================
+
+      const { data: profileData, error: profileError } =
+        await supabase
+          .from("profiles")
+          .select(
+            "id, full_name, email, role, phone, profile_image_url"
+          )
+          .eq("id", user.id)
+          .single();
+
+      if (profileError) {
+        console.error("Profile error:", profileError);
+        setMessage(
+          "Your account was found, but your profile could not be loaded."
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      setProfile(profileData);
+
+      // ==========================================
+      // 3. GET EVENT MEMBERSHIP
+      // ==========================================
+
+      const {
+        data: membershipData,
+        error: membershipError,
+      } = await supabase
+        .from("event_members")
+        .select("id, event_id, user_id, joined_at")
+        .eq("user_id", user.id)
+        .limit(1)
+        .maybeSingle();
+
+      if (membershipError) {
+        console.error(
+          "Event membership error:",
+          membershipError
+        );
+
+        setMessage(
+          "Your event assignment could not be loaded."
+        );
+
+        setIsLoading(false);
+        return;
+      }
+
+      if (!membershipData) {
+        setEvent(null);
+        setScheduleItems([]);
+        setAssignedItems([]);
+        setIsLoading(false);
+        return;
+      }
+
+      // ==========================================
+      // 4. GET EVENT
+      // ==========================================
+
+      const { data: eventData, error: eventError } =
+        await supabase
+          .from("events")
+          .select(
+            "id, name, description, event_date, location, status"
+          )
+          .eq("id", membershipData.event_id)
+          .single();
+
+      if (eventError) {
+        console.error("Event error:", eventError);
+        setMessage(
+          "Your event details could not be loaded."
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      setEvent(eventData);
+
+      // ==========================================
+      // 5. GET EVENT SCHEDULE
+      // ==========================================
+
+      const {
+        data: scheduleData,
+        error: scheduleError,
+      } = await supabase
+        .from("schedule_items")
+        .select(
+          "id, event_id, title, location, start_time, end_time, status, notes"
+        )
+        .eq("event_id", eventData.id)
+        .order("start_time", {
+          ascending: true,
+        });
+
+      if (scheduleError) {
+        console.error(
+          "Schedule error:",
+          scheduleError
+        );
+
+        setMessage(
+          "The event schedule could not be loaded."
+        );
+
+        setIsLoading(false);
+        return;
+      }
+
+      setScheduleItems(scheduleData || []);
+
+      // ==========================================
+      // 6. GET MODEL-SPECIFIC ASSIGNMENTS
+      // ==========================================
+
+      const {
+        data: assignmentData,
+        error: assignmentError,
+      } = await supabase
+        .from("schedule_assignments")
+        .select(
+          `
+          id,
+          schedule_item_id,
+          user_id,
+          schedule_items (
+            id,
+            event_id,
+            title,
+            location,
+            start_time,
+            end_time,
+            status,
+            notes
+          )
+          `
+        )
+        .eq("user_id", user.id);
+
+      if (assignmentError) {
+        console.error(
+          "Assignment error:",
+          assignmentError
+        );
+
+        setMessage(
+          "Your assigned schedule could not be loaded."
+        );
+
+        setIsLoading(false);
+        return;
+      }
+
+      console.log(
+        "Assigned schedule:",
+        assignmentData
+      );
+
+      const assignedSchedule = (assignmentData || [])
+        .map((assignment) => assignment.schedule_items)
+        .filter(
+          (item) =>
+            item &&
+            item.event_id === eventData.id
+        )
+        .sort(
+          (a, b) =>
+            new Date(a.start_time) -
+            new Date(b.start_time)
+        );
+
+      setAssignedItems(assignedSchedule);
+    } catch (error) {
+      console.error(
+        "Unexpected dashboard error:",
+        error
+      );
+
+      setMessage(
+        "Something went wrong while loading your dashboard."
+      );
+    }
+
+    setIsLoading(false);
   }
 
-  return (
-    <main
-      style={{
-        minHeight: "100vh",
-        background: COLORS.white,
-        color: COLORS.black,
-        fontFamily: '"PT Sans", Arial, sans-serif',
-      }}
-    >
-      {/* TOP BRAND BAR */}
-      <div
-        style={{
-          height: "7px",
-          background: COLORS.purple,
-        }}
-      />
+  // ==========================================
+  // FORMAT DATE
+  // ==========================================
 
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "1000px",
-          margin: "0 auto",
-          padding: "24px 20px 80px",
-          boxSizing: "border-box",
-        }}
-      >
+  function formatEventDate(date) {
+    if (!date) {
+      return "Date TBA";
+    }
+
+    const formattedDate = new Date(date);
+
+    if (Number.isNaN(formattedDate.getTime())) {
+      return date;
+    }
+
+    return formattedDate.toLocaleDateString(
+      "en-US",
+      {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }
+    );
+  }
+
+  // ==========================================
+  // FORMAT TIME
+  // ==========================================
+
+  function formatTime(time) {
+    if (!time) {
+      return "TBA";
+    }
+
+    const date = new Date(time);
+
+    if (Number.isNaN(date.getTime())) {
+      return time;
+    }
+
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  }
+
+  // ==========================================
+  // LOADING
+  // ==========================================
+
+  if (isLoading) {
+    return (
+      <main className="model-dashboard">
+        <div className="model-dashboard-top-bar" />
+
+        <div className="model-dashboard-loading">
+          <div className="model-dashboard-loading-logo">
+            FLY
+          </div>
+
+          <div className="model-dashboard-loading-subtitle">
+            SHOWCASE
+          </div>
+
+          <p>Loading your dashboard...</p>
+        </div>
+      </main>
+    );
+  }
+
+  // ==========================================
+  // DASHBOARD
+  // ==========================================
+
+  return (
+    <main className="model-dashboard">
+
+      <div className="model-dashboard-top-bar" />
+
+      <div className="model-dashboard-container">
+
         {/* HEADER */}
-        <header
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "30px",
-          }}
-        >
+
+        <header className="model-dashboard-header">
+
           <div>
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                color: COLORS.purple,
-                fontSize: "38px",
-                fontWeight: "600",
-              }}
-            >
+            <div className="model-dashboard-logo">
               FLY
             </div>
 
-            <div
-              style={{
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "3px",
-              }}
-            >
+            <div className="model-dashboard-logo-subtitle">
               SHOWCASE
             </div>
           </div>
 
-          <div style={{ textAlign: "right" }}>
-            <div
-              style={{
-                color: COLORS.purple,
-                fontSize: "8px",
-                fontWeight: "700",
-                letterSpacing: "1.5px",
-              }}
-            >
-              MODEL
+          <div className="model-dashboard-heading">
+
+            <div className="model-dashboard-role">
+              {profile?.role?.toUpperCase() || "MODEL"}
             </div>
 
-            <div
-              style={{
-                fontFamily:
-                  '"Cormorant Garamond", Georgia, serif',
-                fontSize: "23px",
-              }}
-            >
+            <div className="model-dashboard-title-small">
               My Dashboard
             </div>
+
           </div>
+
         </header>
 
-        {/* MODEL PROFILE */}
-        <section
-          style={{
-            background: COLORS.black,
-            color: COLORS.white,
-            padding: "25px",
-            marginBottom: "25px",
-          }}
-        >
-          <div
-            style={{
-              color: COLORS.gold,
-              fontSize: "8px",
-              fontWeight: "700",
-              letterSpacing: "2px",
-            }}
-          >
+        {/* MESSAGE */}
+
+        {message && (
+          <div className="model-dashboard-message">
+            {message}
+          </div>
+        )}
+
+        {/* PROFILE */}
+
+        <section className="model-profile-card">
+
+          <div className="model-profile-label">
             YOUR MODEL PROFILE
           </div>
 
-          <div
-            style={{
-              fontFamily:
-                '"Cormorant Garamond", Georgia, serif',
-              fontSize: "42px",
-              marginTop: "7px",
-            }}
-          >
-            {model.name}
+          <div className="model-profile-name">
+            {profile?.full_name || "Welcome"}
           </div>
 
-          <div
-            style={{
-              color: "#BBBBBB",
-              fontSize: "10px",
-              marginTop: "8px",
-            }}
-          >
-            {model.number} • {model.event}
+          <div className="model-profile-event">
+            {profile?.email || ""}
           </div>
+
         </section>
 
-        {/* SHOW INFORMATION */}
-        <section
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(180px, 1fr))",
-            gap: "10px",
-            marginBottom: "30px",
-          }}
-        >
-          <InfoBox
-            title="SHOW DATE"
-            value={model.date}
-          />
+        {/* EVENT */}
 
-          <InfoBox
-            title="RUNWAY"
-            value="Main Stage"
-          />
+        {event ? (
+          <>
+            <section className="model-info-grid">
 
-          <InfoBox
-            title="STATUS"
-            value="CONFIRMED"
-          />
-        </section>
-
-        {/* IMPORTANT NOTICE */}
-        <section
-          style={{
-            background: COLORS.lightPurple,
-            borderLeft: `5px solid ${COLORS.purple}`,
-            padding: "17px",
-            marginBottom: "32px",
-          }}
-        >
-          <div
-            style={{
-              color: COLORS.purple,
-              fontSize: "8px",
-              fontWeight: "700",
-              letterSpacing: "1.5px",
-              marginBottom: "6px",
-            }}
-          >
-            MODEL INFORMATION
-          </div>
-
-          <div
-            style={{
-              fontSize: "10px",
-              lineHeight: "1.5",
-            }}
-          >
-            Please check your schedule regularly.
-            Your backstage team may update call
-            times during the show.
-          </div>
-        </section>
-
-        {/* TODAY'S SCHEDULE */}
-        <section style={{ marginBottom: "35px" }}>
-          <SectionTitle
-            title="YOUR SCHEDULE"
-            subtitle="Everything you need to know for show day"
-          />
-
-          <div
-            style={{
-              borderTop: `1px solid ${COLORS.border}`,
-            }}
-          >
-            {schedule.map((item, index) => (
-              <div
-                key={index}
-                style={{
-                  display: "flex",
-                  gap: "15px",
-                  alignItems: "center",
-                  padding: "16px 0",
-                  borderBottom:
-                    `1px solid ${COLORS.border}`,
-                  flexWrap: "wrap",
-                }}
-              >
-                <div
-                  style={{
-                    minWidth: "70px",
-                    color: COLORS.purple,
-                    fontSize: "9px",
-                    fontWeight: "700",
-                  }}
-                >
-                  {item.time}
+              <div className="model-info-box">
+                <div className="model-info-box-title">
+                  EVENT
                 </div>
 
-                <div style={{ flex: 1 }}>
-                  <div
-                    style={{
-                      fontFamily:
-                        '"Cormorant Garamond", Georgia, serif',
-                      fontSize: "22px",
-                    }}
-                  >
-                    {item.title}
-                  </div>
-
-                  <div
-                    style={{
-                      color: COLORS.gray,
-                      fontSize: "8px",
-                      marginTop: "3px",
-                    }}
-                  >
-                    {item.location}
-                  </div>
-                </div>
-
-                <Status status={item.status} />
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* MY LOOKS */}
-        <section style={{ marginBottom: "35px" }}>
-          <SectionTitle
-            title="MY RUNWAY LOOKS"
-            subtitle="Your assigned outfits"
-          />
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit, minmax(250px, 1fr))",
-              gap: "14px",
-            }}
-          >
-            {looks.map((look) => (
-              <div
-                key={look.number}
-                style={{
-                  border:
-                    `1px solid ${COLORS.border}`,
-                  overflow: "hidden",
-                }}
-              >
-                {/* LOOK IMAGE PLACEHOLDER */}
-                <div
-                  style={{
-                    height: "180px",
-                    background: COLORS.black,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <div
-                    style={{
-                      color: COLORS.gold,
-                      fontFamily:
-                        '"Cormorant Garamond", Georgia, serif',
-                      fontSize: "58px",
-                    }}
-                  >
-                    {look.number}
-                  </div>
-                </div>
-
-                <div style={{ padding: "17px" }}>
-                  <div
-                    style={{
-                      fontFamily:
-                        '"Cormorant Garamond", Georgia, serif',
-                      fontSize: "27px",
-                    }}
-                  >
-                    {look.name}
-                  </div>
-
-                  <div
-                    style={{
-                      color: COLORS.purple,
-                      fontSize: "8px",
-                      fontWeight: "700",
-                      marginTop: "7px",
-                    }}
-                  >
-                    DESIGNER: {look.designer}
-                  </div>
-
-                  <div
-                    style={{
-                      background: COLORS.lightGold,
-                      padding: "10px",
-                      marginTop: "12px",
-                      fontSize: "9px",
-                      lineHeight: "1.5",
-                    }}
-                  >
-                    {look.notes}
-                  </div>
+                <div className="model-info-box-value">
+                  {event.name}
                 </div>
               </div>
-            ))}
+
+              <div className="model-info-box">
+                <div className="model-info-box-title">
+                  SHOW DATE
+                </div>
+
+                <div className="model-info-box-value">
+                  {formatEventDate(
+                    event.event_date
+                  )}
+                </div>
+              </div>
+
+              <div className="model-info-box">
+                <div className="model-info-box-title">
+                  LOCATION
+                </div>
+
+                <div className="model-info-box-value">
+                  {event.location || "TBA"}
+                </div>
+              </div>
+
+              <div className="model-info-box">
+                <div className="model-info-box-title">
+                  STATUS
+                </div>
+
+                <div className="model-info-box-value">
+                  {event.status
+                    ? event.status.toUpperCase()
+                    : "CONFIRMED"}
+                </div>
+              </div>
+
+            </section>
+
+            {event.description && (
+              <section className="model-information-notice">
+
+                <div className="model-information-label">
+                  EVENT INFORMATION
+                </div>
+
+                <div className="model-information-text">
+                  {event.description}
+                </div>
+
+              </section>
+            )}
+
+          </>
+        ) : (
+          <section className="model-information-notice">
+
+            <div className="model-information-label">
+              EVENT ASSIGNMENT
+            </div>
+
+            <div className="model-information-text">
+              You have not been assigned to an event yet.
+              Please contact the Fly Showcase team.
+            </div>
+
+          </section>
+        )}
+
+        {/* ==========================================
+            YOUR ASSIGNED CALLS
+        ========================================== */}
+
+        <section className="model-dashboard-section">
+
+          <div className="model-section-title">
+
+            <div className="model-section-title-main">
+              YOUR ASSIGNED CALLS
+            </div>
+
+            <div className="model-section-title-subtitle">
+              Your personal backstage schedule.
+            </div>
+
           </div>
+
+          {assignedItems.length === 0 ? (
+            <div className="model-empty-state">
+              No personal schedule assignments yet.
+            </div>
+          ) : (
+            <div className="model-schedule-list">
+
+              {assignedItems.map((item) => (
+
+                <div
+                  key={item.id}
+                  className="model-schedule-item"
+                >
+
+                  <div className="model-schedule-time">
+                    {formatTime(item.start_time)}
+                  </div>
+
+                  <div className="model-schedule-details">
+
+                    <div className="model-schedule-title">
+                      {item.title}
+                    </div>
+
+                    {item.location && (
+                      <div className="model-schedule-location">
+                        {item.location}
+                      </div>
+                    )}
+
+                    {item.notes && (
+                      <div className="model-schedule-notes">
+                        {item.notes}
+                      </div>
+                    )}
+
+                    {item.end_time && (
+                      <div className="model-schedule-end">
+                        Until {formatTime(item.end_time)}
+                      </div>
+                    )}
+
+                  </div>
+
+                  <div
+                    className={`model-schedule-status ${
+                      item.status === "completed"
+                        ? "completed"
+                        : item.status === "cancelled"
+                        ? "cancelled"
+                        : "upcoming"
+                    }`}
+                  >
+                    {item.status
+                      ? item.status.toUpperCase()
+                      : "UPCOMING"}
+                  </div>
+
+                </div>
+
+              ))}
+
+            </div>
+          )}
+
         </section>
 
-        {/* MODEL CHECKLIST */}
-        <section style={{ marginBottom: "35px" }}>
-          <SectionTitle
-            title="SHOW DAY CHECKLIST"
-            subtitle="Make sure you are ready"
-          />
+        {/* ==========================================
+            FULL EVENT SCHEDULE
+        ========================================== */}
 
-          <div
-            style={{
-              display: "grid",
-              gap: "8px",
-            }}
-          >
+        <section className="model-dashboard-section">
+
+          <div className="model-section-title">
+
+            <div className="model-section-title-main">
+              EVENT SCHEDULE
+            </div>
+
+            <div className="model-section-title-subtitle">
+              Important times for the entire show.
+            </div>
+
+          </div>
+
+          {scheduleItems.length === 0 ? (
+            <div className="model-empty-state">
+              No event schedule has been added yet.
+            </div>
+          ) : (
+            <div className="model-schedule-list">
+
+              {scheduleItems.map((item) => (
+
+                <div
+                  key={item.id}
+                  className="model-schedule-item"
+                >
+
+                  <div className="model-schedule-time">
+                    {formatTime(item.start_time)}
+                  </div>
+
+                  <div className="model-schedule-details">
+
+                    <div className="model-schedule-title">
+                      {item.title}
+                    </div>
+
+                    {item.location && (
+                      <div className="model-schedule-location">
+                        {item.location}
+                      </div>
+                    )}
+
+                    {item.notes && (
+                      <div className="model-schedule-notes">
+                        {item.notes}
+                      </div>
+                    )}
+
+                  </div>
+
+                  <div
+                    className={`model-schedule-status ${
+                      item.status === "completed"
+                        ? "completed"
+                        : item.status === "cancelled"
+                        ? "cancelled"
+                        : "upcoming"
+                    }`}
+                  >
+                    {item.status
+                      ? item.status.toUpperCase()
+                      : "UPCOMING"}
+                  </div>
+
+                </div>
+
+              ))}
+
+            </div>
+          )}
+
+        </section>
+
+        {/* ==========================================
+            RUNWAY LOOKS
+        ========================================== */}
+
+        <section className="model-dashboard-section">
+
+          <div className="model-section-title">
+
+            <div className="model-section-title-main">
+              MY RUNWAY LOOKS
+            </div>
+
+            <div className="model-section-title-subtitle">
+              Your assigned outfits will appear here.
+            </div>
+
+          </div>
+
+          <div className="model-empty-state">
+            No runway looks have been assigned yet.
+          </div>
+
+        </section>
+
+        {/* ==========================================
+            CHECKLIST
+        ========================================== */}
+
+        <section className="model-dashboard-section">
+
+          <div className="model-section-title">
+
+            <div className="model-section-title-main">
+              SHOW DAY CHECKLIST
+            </div>
+
+            <div className="model-section-title-subtitle">
+              Make sure you are ready.
+            </div>
+
+          </div>
+
+          <div className="model-checklist">
+
             {[
               "Arrive on time",
               "Check in with backstage",
@@ -443,70 +667,39 @@ function ModelDashboard() {
               "Have all accessories",
               "Be ready for backstage call",
             ].map((item, index) => (
+
               <label
                 key={index}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  padding: "13px",
-                  border:
-                    `1px solid ${COLORS.border}`,
-                  fontSize: "10px",
-                  cursor: "pointer",
-                }}
+                className="model-checklist-item"
               >
-                <input
-                  type="checkbox"
-                  onChange={() =>
-                    showMessage(
-                      `${item} updated.`
-                    )
-                  }
-                />
 
-                {item}
+                <input type="checkbox" />
+
+                <span>{item}</span>
+
               </label>
+
             ))}
+
           </div>
+
         </section>
 
-        {/* BACKSTAGE HELP */}
-        <section
-          style={{
-            background: COLORS.lightGold,
-            padding: "22px",
-          }}
-        >
-          <div
-            style={{
-              color: "#806313",
-              fontSize: "8px",
-              fontWeight: "700",
-              letterSpacing: "2px",
-            }}
-          >
+        {/* ==========================================
+            BACKSTAGE HELP
+        ========================================== */}
+
+        <section className="model-backstage-help">
+
+          <div className="model-backstage-label">
             NEED HELP?
           </div>
 
-          <div
-            style={{
-              fontFamily:
-                '"Cormorant Garamond", Georgia, serif',
-              fontSize: "28px",
-              marginTop: "6px",
-            }}
-          >
+          <div className="model-backstage-title">
             Ask the backstage team.
           </div>
 
-          <p
-            style={{
-              color: COLORS.gray,
-              fontSize: "9px",
-              lineHeight: "1.5",
-            }}
-          >
+          <p className="model-backstage-text">
             If you are unsure about your call time,
             location, outfit, or runway position,
             contact your backstage manager.
@@ -514,131 +707,35 @@ function ModelDashboard() {
 
           <button
             type="button"
-            onClick={() =>
-              showMessage(
+            className="model-backstage-button"
+            onClick={() => {
+
+              setMessage(
                 "Backstage team contact feature coming soon."
-              )
-            }
-            style={{
-              width: "100%",
-              minHeight: "45px",
-              border: "none",
-              background: COLORS.black,
-              color: COLORS.white,
-              fontSize: "8px",
-              fontWeight: "700",
-              cursor: "pointer",
+              );
+
+              setTimeout(() => {
+                setMessage("");
+              }, 2500);
+
             }}
           >
             CONTACT BACKSTAGE
           </button>
+
         </section>
+
       </div>
 
       {/* TOAST */}
+
       {message && (
-        <div
-          style={{
-            position: "fixed",
-            left: "50%",
-            bottom: "25px",
-            transform: "translateX(-50%)",
-            width: "calc(100% - 40px)",
-            maxWidth: "440px",
-            background: COLORS.black,
-            color: COLORS.white,
-            padding: "15px",
-            textAlign: "center",
-            fontSize: "10px",
-            fontWeight: "700",
-            zIndex: 1000,
-          }}
-        >
+        <div className="model-dashboard-toast">
           {message}
         </div>
       )}
+
     </main>
-  );
-}
-
-function InfoBox({ title, value }) {
-  return (
-    <div
-      style={{
-        border: `1px solid ${COLORS.border}`,
-        padding: "17px",
-      }}
-    >
-      <div
-        style={{
-          color: COLORS.purple,
-          fontSize: "8px",
-          fontWeight: "700",
-          letterSpacing: "1.5px",
-        }}
-      >
-        {title}
-      </div>
-
-      <div
-        style={{
-          fontFamily:
-            '"Cormorant Garamond", Georgia, serif',
-          fontSize: "23px",
-          marginTop: "6px",
-        }}
-      >
-        {value}
-      </div>
-    </div>
-  );
-}
-
-function Status({ status }) {
-  const completed = status === "COMPLETED";
-
-  return (
-    <div
-      style={{
-        padding: "6px 9px",
-        background: completed
-          ? COLORS.lightGreen
-          : COLORS.lightGold,
-        color: completed
-          ? COLORS.green
-          : "#806313",
-        fontSize: "7px",
-        fontWeight: "700",
-      }}
-    >
-      {status}
-    </div>
-  );
-}
-
-function SectionTitle({ title, subtitle }) {
-  return (
-    <div style={{ marginBottom: "15px" }}>
-      <div
-        style={{
-          fontSize: "9px",
-          fontWeight: "700",
-          letterSpacing: "2px",
-        }}
-      >
-        {title}
-      </div>
-
-      <div
-        style={{
-          color: COLORS.gray,
-          fontSize: "9px",
-          marginTop: "4px",
-        }}
-      >
-        {subtitle}
-      </div>
-    </div>
   );
 }
 
