@@ -1,28 +1,192 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
 
 function EventSelect() {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    loadEvents();
+  }, []);
+
+  async function loadEvents() {
+    setLoading(true);
+    setMessage("");
+
+    try {
+      // Get the currently logged-in user
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) {
+        console.error("User error:", userError);
+        setMessage("Unable to verify your account.");
+        setLoading(false);
+        return;
+      }
+
+      // If nobody is logged in, send them to login
+      if (!user) {
+        window.location.href = "/login";
+        return;
+      }
+
+      // Get the events assigned to this user
+      const { data, error } = await supabase
+        .from("event_members")
+        .select(`
+          event_id,
+          events (
+            id,
+            name,
+            description,
+            event_date,
+            location,
+            status
+          )
+        `)
+        .eq("user_id", user.id);
+
+      if (error) {
+        console.error("Event loading error:", error);
+        setMessage("Unable to load your events. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      // Pull the actual event objects out of the membership results
+      const userEvents = (data || [])
+        .map((membership) => membership.events)
+        .filter(Boolean);
+
+      setEvents(userEvents);
+    } catch (error) {
+      console.error("Unexpected event loading error:", error);
+      setMessage("Something went wrong while loading your events.");
+    }
+
+    setLoading(false);
+  }
+
+  async function selectEvent(event) {
+    try {
+      // Save the selected event locally so the rest of the app
+      // knows which Fly Showcase event the user is currently viewing.
+      localStorage.setItem("flyShowcaseEventId", event.id);
+
+      localStorage.setItem(
+        "flyShowcaseEvent",
+        JSON.stringify({
+          id: event.id,
+          name: event.name,
+          event_date: event.event_date,
+          location: event.location,
+        })
+      );
+
+      // Get the user's role
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        window.location.href = "/login";
+        return;
+      }
+
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (error) {
+        console.error("Profile loading error:", error);
+        setMessage("Unable to determine your account role.");
+        return;
+      }
+
+      // Send the user to the correct dashboard
+      switch (profile.role) {
+        case "model":
+          window.location.href = "/model";
+          break;
+
+        case "designer":
+          window.location.href = "/designer";
+          break;
+
+        case "manager":
+          window.location.href = "/manager";
+          break;
+
+        case "admin":
+          window.location.href = "/admin";
+          break;
+
+        default:
+          setMessage(
+            "Your account does not have a valid Fly Showcase role."
+          );
+      }
+    } catch (error) {
+      console.error("Unexpected event selection error:", error);
+      setMessage("Unable to enter this event.");
+    }
+  }
+
   function goToLogin() {
     window.location.href = "/login";
+  }
+
+  function formatEventDate(date) {
+    if (!date) {
+      return "DATE TBA";
+    }
+
+    const formattedDate = new Date(`${date}T00:00:00`);
+
+    return formattedDate.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  }
+
+  function getEventYear(date) {
+    if (!date) {
+      return "----";
+    }
+
+    return new Date(`${date}T00:00:00`).getFullYear();
   }
 
   return (
     <main style={styles.page}>
       <div style={styles.container}>
-
         {/* TOP PURPLE BAR */}
+
         <div style={styles.topBar}></div>
 
         {/* HEADER */}
+
         <header style={styles.header}>
           <div>
             <div style={styles.logo}>FLY</div>
-            <div style={styles.logoSubtitle}>SHOWCASE</div>
+
+            <div style={styles.logoSubtitle}>
+              SHOWCASE
+            </div>
           </div>
 
           <div style={styles.star}>✦</div>
         </header>
 
         {/* HERO */}
+
         <section style={styles.hero}>
           <div style={styles.label}>
             FASHION EVENT PLATFORM
@@ -42,6 +206,7 @@ function EventSelect() {
         </section>
 
         {/* UPCOMING EVENTS */}
+
         <section>
           <div style={styles.sectionHeader}>
             <span style={styles.sectionTitle}>
@@ -49,56 +214,112 @@ function EventSelect() {
             </span>
 
             <span style={styles.eventCount}>
-              01 EVENT
+              {loading
+                ? "LOADING..."
+                : `${events.length
+                    .toString()
+                    .padStart(2, "0")} ${
+                    events.length === 1 ? "EVENT" : "EVENTS"
+                  }`}
             </span>
           </div>
 
-          {/* EVENT CARD */}
-          <button
-            onClick={goToLogin}
-            style={styles.eventCard}
-          >
-            <div style={styles.eventStripe}></div>
+          {/* LOADING */}
 
-            <div style={styles.eventContent}>
+          {loading && (
+            <div style={styles.messageBox}>
+              Loading your events...
+            </div>
+          )}
 
-              <div style={styles.eventTop}>
-                <span style={styles.featured}>
-                  FEATURED EVENT
-                </span>
+          {/* ERROR / MESSAGE */}
 
-                <span style={styles.year}>
-                  2026
-                </span>
+          {!loading && message && (
+            <div style={styles.messageBox}>
+              {message}
+            </div>
+          )}
+
+          {/* NO EVENTS */}
+
+          {!loading && !message && events.length === 0 && (
+            <div style={styles.emptyBox}>
+              <div style={styles.emptyTitle}>
+                No events assigned yet.
               </div>
 
-              <h2 style={styles.eventName}>
-                Fly
-                <br />
-                Showcase
-              </h2>
-
-              <div style={styles.goldLine}></div>
-
-              <p style={styles.tagline}>
-                FIRST LOVE YOURSELF
+              <p style={styles.emptyText}>
+                Your Fly Showcase team will assign you
+                to an event when your access is ready.
               </p>
 
-              <div style={styles.enterRow}>
-                <span style={styles.enterText}>
-                  ENTER EVENT
-                </span>
-
-                <span style={styles.arrow}>
-                  →
-                </span>
-              </div>
-
+              <button
+                onClick={goToLogin}
+                style={styles.exploreButton}
+              >
+                RETURN TO LOGIN
+              </button>
             </div>
-          </button>
+          )}
+
+          {/* EVENT CARDS */}
+
+          {!loading &&
+            events.map((event) => (
+              <button
+                key={event.id}
+                onClick={() => selectEvent(event)}
+                style={styles.eventCard}
+              >
+                <div style={styles.eventStripe}></div>
+
+                <div style={styles.eventContent}>
+                  <div style={styles.eventTop}>
+                    <span style={styles.featured}>
+                      {event.status === "active"
+                        ? "LIVE EVENT"
+                        : "FEATURED EVENT"}
+                    </span>
+
+                    <span style={styles.year}>
+                      {getEventYear(event.event_date)}
+                    </span>
+                  </div>
+
+                  <h2 style={styles.eventName}>
+                    {event.name}
+                  </h2>
+
+                  <div style={styles.goldLine}></div>
+
+                  <p style={styles.tagline}>
+                    FIRST LOVE YOURSELF
+                  </p>
+
+                  <p style={styles.eventDetails}>
+                    {formatEventDate(event.event_date)}
+
+                    {event.location
+                      ? ` • ${event.location}`
+                      : ""}
+                  </p>
+
+                  <div style={styles.enterRow}>
+                    <span style={styles.enterText}>
+                      ENTER EVENT
+                    </span>
+
+                    <span style={styles.arrow}>
+                      →
+                    </span>
+                  </div>
+                </div>
+              </button>
+            ))}
         </section>
 
         {/* FUTURE EVENTS */}
+
         <section style={styles.futureSection}>
           <div style={styles.futureLabel}>
             THE FUTURE OF FASHION
@@ -127,26 +348,23 @@ function EventSelect() {
         </section>
 
         {/* FOOTER */}
+
         <footer style={styles.footer}>
           <span style={styles.footerLogo}>
             FLY
           </span>{" "}
           • FIRST LOVE YOURSELF
         </footer>
-
       </div>
     </main>
   );
 }
 
-
 /* ================================
    STYLES
-   Change colors and sizes here.
-================================ */
+   ================================ */
 
 const styles = {
-
   page: {
     width: "100%",
     minHeight: "100vh",
@@ -265,6 +483,8 @@ const styles = {
     overflow: "hidden",
     cursor: "pointer",
     boxSizing: "border-box",
+    display: "block",
+    marginBottom: "16px",
   },
 
   eventStripe: {
@@ -306,7 +526,7 @@ const styles = {
     fontFamily: '"Cormorant Garamond", Georgia, serif',
     fontSize: "46px",
     fontWeight: "500",
-    lineHeight: "0.82",
+    lineHeight: "0.9",
     margin: 0,
   },
 
@@ -322,6 +542,13 @@ const styles = {
     fontSize: "10px",
     letterSpacing: "2px",
     fontWeight: "700",
+  },
+
+  eventDetails: {
+    margin: "12px 0 0",
+    color: "#AAAAAA",
+    fontSize: "10px",
+    lineHeight: "1.5",
   },
 
   enterRow: {
@@ -348,6 +575,33 @@ const styles = {
     color: "#161616",
     fontSize: "20px",
     fontWeight: "700",
+  },
+
+  messageBox: {
+    background: "#F4F4F4",
+    padding: "22px",
+    textAlign: "center",
+    fontSize: "12px",
+    color: "#777777",
+  },
+
+  emptyBox: {
+    background: "#F4F4F4",
+    padding: "28px",
+    textAlign: "center",
+  },
+
+  emptyTitle: {
+    fontFamily: '"Cormorant Garamond", Georgia, serif',
+    fontSize: "27px",
+    marginBottom: "10px",
+  },
+
+  emptyText: {
+    color: "#777777",
+    fontSize: "12px",
+    lineHeight: "1.6",
+    marginBottom: "20px",
   },
 
   futureSection: {

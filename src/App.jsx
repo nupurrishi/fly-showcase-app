@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import Login from "./pages/Login";
 import EventSelect from "./pages/EventSelect";
 
@@ -14,6 +16,8 @@ import LookBook from "./pages/Lookbook";
 import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
 import Opportunities from "./pages/Opportunities";
+
+import { supabase } from "./lib/supabase";
 
 function App() {
   const path = window.location.pathname;
@@ -37,13 +41,7 @@ function App() {
     "/opportunities": <Opportunities />,
   };
 
-  return (
-    <div className="app">
-      <main className="app-page">
-        {routes[path] || <Login />}
-      </main>
-    </div>
-  );
+  return routes[path] || <Login />;
 }
 
 export default App;
