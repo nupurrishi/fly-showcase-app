@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
 
 const COLORS = {
   black: "#161616",
@@ -14,103 +15,185 @@ const COLORS = {
   border: "#E8E8E8",
 };
 
-const STARTING_CALLS = [
-  {
-    id: 1,
-    time: "5:00 PM",
-    name: "Hair & Makeup",
-    location: "Backstage",
-    status: "UPCOMING",
-  },
-  {
-    id: 2,
-    time: "6:15 PM",
-    name: "Model Lineup",
-    location: "Stage Left",
-    status: "UPCOMING",
-  },
-  {
-    id: 3,
-    time: "7:00 PM",
-    name: "Show Begins",
-    location: "Main Stage",
-    status: "READY",
-  },
-];
-
-const STARTING_TASKS = [
-  {
-    id: 1,
-    name: "Confirm all models",
-    status: "DONE",
-  },
-  {
-    id: 2,
-    name: "Confirm designer looks",
-    status: "DONE",
-  },
-  {
-    id: 3,
-    name: "Check backstage area",
-    status: "PENDING",
-  },
-  {
-    id: 4,
-    name: "Final model lineup",
-    status: "PENDING",
-  },
-];
-
 export default function ManagerDashboard() {
-  const [calls, setCalls] = useState(STARTING_CALLS);
-  const [tasks, setTasks] = useState(STARTING_TASKS);
+  const [manager, setManager] = useState(null);
+  const [event, setEvent] = useState(null);
+  const [schedule, setSchedule] = useState([]);
+  const [modelCount, setModelCount] = useState(0);
+  const [designerCount, setDesignerCount] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
-  const showMessage = (text) => {
+  useEffect(() => {
+    loadManagerDashboard();
+  }, []);
+
+  async function loadManagerDashboard() {
+    try {
+      setLoading(true);
+      setMessage("");
+
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) throw userError;
+
+      if (!user) {
+        throw new Error("Please log in first.");
+      }
+
+      // GET MANAGER PROFILE
+      const {
+        data: profile,
+        error: profileError,
+      } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError) throw profileError;
+
+      setManager(profile);
+
+      // GET MANAGER'S EVENT
+      const {
+        data: membership,
+        error: membershipError,
+      } = await supabase
+        .from("event_members")
+        .select("event_id")
+        .eq("user_id", user.id)
+        .limit(1)
+        .single();
+
+      if (membershipError) {
+        throw new Error(
+          "This manager is not assigned to an event."
+        );
+      }
+
+      // GET EVENT
+      const {
+        data: eventData,
+        error: eventError,
+      } = await supabase
+        .from("events")
+        .select("*")
+        .eq("id", membership.event_id)
+        .single();
+
+      if (eventError) throw eventError;
+
+      setEvent(eventData);
+
+      // GET SCHEDULE
+      const {
+        data: scheduleData,
+        error: scheduleError,
+      } = await supabase
+        .from("schedule_items")
+        .select("*")
+        .eq("event_id", membership.event_id)
+        .order("start_time", {
+          ascending: true,
+        });
+
+      if (scheduleError) throw scheduleError;
+
+      setSchedule(scheduleData || []);
+
+      // GET MODEL + DESIGNER COUNTS
+      const {
+        data: roleCounts,
+        error: roleCountsError,
+      } = await supabase.rpc(
+        "get_event_role_counts",
+        {
+          p_event_id: membership.event_id,
+        }
+      );
+
+      if (roleCountsError) {
+        throw roleCountsError;
+      }
+
+      const counts = roleCounts?.[0];
+
+      setModelCount(
+        Number(counts?.model_count || 0)
+      );
+
+      setDesignerCount(
+        Number(counts?.designer_count || 0)
+      );
+    } catch (error) {
+      console.error(
+        "Manager dashboard error:",
+        error
+      );
+
+      setMessage(
+        error.message ||
+          "Unable to load manager dashboard."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function showMessage(text) {
     setMessage(text);
 
     setTimeout(() => {
       setMessage("");
     }, 2500);
-  };
+  }
 
-  const changeCallStatus = (id) => {
-    setCalls(
-      calls.map((call) =>
-        call.id === id
-          ? {
-              ...call,
-              status:
-                call.status === "UPCOMING"
-                  ? "READY"
-                  : call.status === "READY"
-                  ? "LIVE"
-                  : "UPCOMING",
-            }
-          : call
-      )
+  function formatDate(date) {
+    if (!date) return "—";
+
+    return new Date(date).toLocaleDateString(
+      "en-US",
+      {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }
     );
-  };
+  }
 
-  const toggleTask = (id) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id
-          ? {
-              ...task,
-              status:
-                task.status === "DONE"
-                  ? "PENDING"
-                  : "DONE",
-            }
-          : task
-      )
+  function formatTime(time) {
+    if (!time) return "—";
+
+    return new Date(time).toLocaleTimeString(
+      "en-US",
+      {
+        hour: "numeric",
+        minute: "2-digit",
+      }
     );
-  };
+  }
 
-  const doneTasks = tasks.filter(
-    (task) => task.status === "DONE"
-  ).length;
+  if (loading) {
+    return (
+      <main
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: COLORS.white,
+          fontFamily: "Arial, sans-serif",
+          fontSize: "18px",
+        }}
+      >
+        Loading manager dashboard...
+      </main>
+    );
+  }
 
   return (
     <main
@@ -121,7 +204,6 @@ export default function ManagerDashboard() {
         fontFamily: "Arial, sans-serif",
       }}
     >
-      {/* TOP BAR */}
       <div
         style={{
           height: "7px",
@@ -131,17 +213,21 @@ export default function ManagerDashboard() {
 
       <div
         style={{
+          width: "100%",
           maxWidth: "1000px",
-          margin: "auto",
-          padding: "25px 20px 70px",
+          margin: "0 auto",
+          padding: "25px 20px 80px",
+          boxSizing: "border-box",
         }}
       >
         {/* HEADER */}
+
         <header
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            gap: "20px",
             marginBottom: "30px",
           }}
         >
@@ -158,7 +244,7 @@ export default function ManagerDashboard() {
 
             <div
               style={{
-                fontSize: "9px",
+                fontSize: "10px",
                 letterSpacing: "3px",
                 fontWeight: "bold",
               }}
@@ -167,365 +253,234 @@ export default function ManagerDashboard() {
             </div>
           </div>
 
-          <div style={{ textAlign: "right" }}>
+          <div
+            style={{
+              textAlign: "right",
+            }}
+          >
             <div
               style={{
                 color: COLORS.purple,
-                fontSize: "9px",
+                fontSize: "11px",
                 fontWeight: "bold",
+                letterSpacing: "1px",
               }}
             >
               STAGE MANAGER
             </div>
 
-            <div style={{ fontSize: "22px" }}>
-              Show Control
+            <div
+              style={{
+                fontSize: "24px",
+              }}
+            >
+              {manager?.full_name || "Manager"}
             </div>
           </div>
         </header>
 
-        {/* HERO */}
+        {/* EVENT HERO */}
+
         <section
           style={{
             background: COLORS.black,
             color: COLORS.white,
-            padding: "25px",
+            padding: "28px",
             marginBottom: "25px",
           }}
         >
           <div
             style={{
               color: COLORS.gold,
-              fontSize: "9px",
+              fontSize: "11px",
               fontWeight: "bold",
               letterSpacing: "2px",
             }}
           >
-            FLY SHOWCASE • MAIN STAGE
+            FLY SHOWCASE
           </div>
 
           <h1
             style={{
-              fontSize: "42px",
+              fontFamily:
+                '"Cormorant Garamond", Georgia, serif',
+              fontSize: "44px",
               fontWeight: "normal",
               margin: "8px 0",
             }}
           >
-            Show Control
+            {event?.name || "Event"}
           </h1>
 
           <p
             style={{
               color: "#BBBBBB",
-              fontSize: "11px",
+              fontSize: "14px",
+              lineHeight: "1.5",
               margin: 0,
             }}
           >
-            Manage the runway, model calls and
-            backstage operations.
+            {event?.description ||
+              "Manage the runway, model calls and backstage operations."}
           </p>
         </section>
 
-        {/* SHOW STATUS */}
+        {/* EVENT INFORMATION */}
+
         <section
           style={{
-            background: COLORS.lightPurple,
-            padding: "20px",
-            marginBottom: "25px",
-            borderLeft: `5px solid ${COLORS.purple}`,
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "10px",
+            marginBottom: "30px",
           }}
         >
-          <div
-            style={{
-              color: COLORS.purple,
-              fontSize: "9px",
-              fontWeight: "bold",
-              letterSpacing: "2px",
-            }}
-          >
-            CURRENT SHOW STATUS
-          </div>
+          <InfoBox
+            title="EVENT DATE"
+            value={formatDate(event?.event_date)}
+          />
 
-          <div
-            style={{
-              fontSize: "28px",
-              marginTop: "6px",
-            }}
-          >
-            PREPARATION
-          </div>
+          <InfoBox
+            title="LOCATION"
+            value={event?.location || "—"}
+          />
 
-          <div
-            style={{
-              color: COLORS.gray,
-              fontSize: "10px",
-              marginTop: "5px",
-            }}
-          >
-            The show has not started yet.
-          </div>
-
-          <button
-            onClick={() =>
-              showMessage("Show status updated.")
-            }
-            style={{
-              ...buttonStyle,
-              marginTop: "15px",
-            }}
-          >
-            UPDATE SHOW STATUS
-          </button>
+          <InfoBox
+            title="STATUS"
+            value={event?.status || "—"}
+          />
         </section>
 
         {/* QUICK STATS */}
+
         <section
           style={{
             display: "grid",
             gridTemplateColumns:
               "repeat(auto-fit, minmax(150px, 1fr))",
             gap: "10px",
-            marginBottom: "30px",
+            marginBottom: "35px",
           }}
         >
           <Stat
             title="MODELS"
-            value="24"
+            value={modelCount}
           />
 
           <Stat
             title="DESIGNERS"
-            value="13"
+            value={designerCount}
           />
 
           <Stat
-            title="CALLS"
-            value={calls.length}
-          />
-
-          <Stat
-            title="TASKS DONE"
-            value={`${doneTasks}/${tasks.length}`}
+            title="SCHEDULE ITEMS"
+            value={schedule.length}
           />
         </section>
 
         {/* MODEL CALL BOARD */}
+
         <section style={{ marginBottom: "35px" }}>
           <SectionTitle
             title="MODEL CALL BOARD"
-            subtitle="Control the next important backstage calls."
+            subtitle="Live schedule for this event"
           />
 
-          <div
-            style={{
-              borderTop: `1px solid ${COLORS.border}`,
-            }}
-          >
-            {calls.map((call) => (
-              <div
-                key={call.id}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: "15px",
-                  padding: "16px 0",
-                  borderBottom: `1px solid ${COLORS.border}`,
-                  flexWrap: "wrap",
-                }}
-              >
-                <div>
-                  <div
-                    style={{
-                      color: COLORS.purple,
-                      fontSize: "9px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {call.time}
-                  </div>
-
-                  <div
-                    style={{
-                      fontSize: "21px",
-                      marginTop: "4px",
-                    }}
-                  >
-                    {call.name}
-                  </div>
-
-                  <div
-                    style={{
-                      color: COLORS.gray,
-                      fontSize: "9px",
-                      marginTop: "3px",
-                    }}
-                  >
-                    {call.location}
-                  </div>
-                </div>
-
-                <button
-                  onClick={() =>
-                    changeCallStatus(call.id)
-                  }
+          {schedule.length === 0 ? (
+            <div
+              style={{
+                border: `1px solid ${COLORS.border}`,
+                padding: "25px",
+                fontSize: "15px",
+                color: COLORS.gray,
+              }}
+            >
+              No schedule items have been added yet.
+            </div>
+          ) : (
+            <div
+              style={{
+                borderTop: `1px solid ${COLORS.border}`,
+              }}
+            >
+              {schedule.map((item) => (
+                <div
+                  key={item.id}
                   style={{
-                    ...statusButton,
-                    background:
-                      call.status === "LIVE"
-                        ? COLORS.green
-                        : call.status === "READY"
-                        ? COLORS.lightGold
-                        : COLORS.lightPurple,
-                    color:
-                      call.status === "LIVE"
-                        ? COLORS.white
-                        : call.status === "READY"
-                        ? "#806313"
-                        : COLORS.purple,
-                  }}
-                >
-                  {call.status}
-                </button>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* RUNWAY STATUS */}
-        <section style={{ marginBottom: "35px" }}>
-          <SectionTitle
-            title="RUNWAY STATUS"
-            subtitle="Quick controls for the live show."
-          />
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit, minmax(200px, 1fr))",
-              gap: "10px",
-            }}
-          >
-            <StatusCard
-              title="PREP"
-              description="Models and crew preparing."
-              onClick={() =>
-                showMessage("Show set to PREP.")
-              }
-            />
-
-            <StatusCard
-              title="BACKSTAGE"
-              description="Models lining up."
-              onClick={() =>
-                showMessage(
-                  "Show set to BACKSTAGE."
-                )
-              }
-            />
-
-            <StatusCard
-              title="LIVE ON RUNWAY"
-              description="Show is currently live."
-              onClick={() =>
-                showMessage(
-                  "Show set to LIVE ON RUNWAY."
-                )
-              }
-            />
-
-            <StatusCard
-              title="SHOW ENDED"
-              description="Runway has finished."
-              onClick={() =>
-                showMessage(
-                  "Show marked as ended."
-                )
-              }
-            />
-          </div>
-        </section>
-
-        {/* CHECKLIST */}
-        <section style={{ marginBottom: "35px" }}>
-          <SectionTitle
-            title="SHOW CHECKLIST"
-            subtitle="Keep track of important tasks."
-          />
-
-          <div
-            style={{
-              borderTop: `1px solid ${COLORS.border}`,
-            }}
-          >
-            {tasks.map((task) => (
-              <button
-                key={task.id}
-                onClick={() => toggleTask(task.id)}
-                style={{
-                  width: "100%",
-                  border: "none",
-                  borderBottom: `1px solid ${COLORS.border}`,
-                  background: COLORS.white,
-                  padding: "15px 0",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  textAlign: "left",
-                  cursor: "pointer",
-                }}
-              >
-                <span
-                  style={{
-                    width: "22px",
-                    height: "22px",
-                    border: `1px solid ${
-                      task.status === "DONE"
-                        ? COLORS.green
-                        : COLORS.border
-                    }`,
-                    background:
-                      task.status === "DONE"
-                        ? COLORS.green
-                        : COLORS.white,
-                    color: COLORS.white,
                     display: "flex",
+                    justifyContent:
+                      "space-between",
                     alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
+                    gap: "20px",
+                    padding: "18px 0",
+                    borderBottom: `1px solid ${COLORS.border}`,
+                    flexWrap: "wrap",
                   }}
                 >
-                  {task.status === "DONE"
-                    ? "✓"
-                    : ""}
-                </span>
+                  <div>
+                    <div
+                      style={{
+                        color: COLORS.purple,
+                        fontSize: "12px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {formatTime(item.start_time)}
+                    </div>
 
-                <span
-                  style={{
-                    fontSize: "11px",
-                    textDecoration:
-                      task.status === "DONE"
-                        ? "line-through"
-                        : "none",
-                    color:
-                      task.status === "DONE"
-                        ? COLORS.gray
-                        : COLORS.black,
-                  }}
-                >
-                  {task.name}
-                </span>
-              </button>
-            ))}
-          </div>
+                    <div
+                      style={{
+                        fontFamily:
+                          '"Cormorant Garamond", Georgia, serif',
+                        fontSize: "27px",
+                        marginTop: "4px",
+                      }}
+                    >
+                      {item.title}
+                    </div>
+
+                    <div
+                      style={{
+                        color: COLORS.gray,
+                        fontSize: "13px",
+                        marginTop: "4px",
+                      }}
+                    >
+                      {item.location ||
+                        "Location TBD"}
+                    </div>
+
+                    {item.notes && (
+                      <div
+                        style={{
+                          color: COLORS.gray,
+                          fontSize: "12px",
+                          marginTop: "6px",
+                        }}
+                      >
+                        {item.notes}
+                      </div>
+                    )}
+                  </div>
+
+                  <Status
+                    status={
+                      item.status || "UPCOMING"
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* QUICK ACTIONS */}
+
         <section>
           <SectionTitle
             title="QUICK ACTIONS"
-            subtitle="Important tools for show day."
+            subtitle="Manager controls"
           />
 
           <div
@@ -537,30 +492,13 @@ export default function ManagerDashboard() {
             }}
           >
             <ActionButton
-              title="SEND MODEL CALL"
-              onClick={() =>
+              title="REFRESH DATA"
+              onClick={() => {
+                loadManagerDashboard();
                 showMessage(
-                  "Model call notification sent."
-                )
-              }
-            />
-
-            <ActionButton
-              title="NOTIFY BACKSTAGE"
-              onClick={() =>
-                showMessage(
-                  "Backstage notification sent."
-                )
-              }
-            />
-
-            <ActionButton
-              title="CONTACT ADMIN"
-              onClick={() =>
-                showMessage(
-                  "Admin contact opened."
-                )
-              }
+                  "Dashboard refreshed."
+                );
+              }}
             />
 
             <ActionButton
@@ -570,22 +508,35 @@ export default function ManagerDashboard() {
                   "/live-show")
               }
             />
+
+            <ActionButton
+              title="VIEW SCHEDULE"
+              onClick={() =>
+                (window.location.href =
+                  "/schedule")
+              }
+            />
           </div>
         </section>
       </div>
 
       {/* TOAST */}
+
       {message && (
         <div
           style={{
             position: "fixed",
             bottom: "25px",
             left: "50%",
-            transform: "translateX(-50%)",
+            transform:
+              "translateX(-50%)",
+            width: "calc(100% - 40px)",
+            maxWidth: "500px",
             background: COLORS.black,
             color: COLORS.white,
-            padding: "15px 25px",
-            fontSize: "10px",
+            padding: "16px 20px",
+            textAlign: "center",
+            fontSize: "14px",
             zIndex: 2000,
           }}
         >
@@ -596,7 +547,38 @@ export default function ManagerDashboard() {
   );
 }
 
-/* REUSABLE COMPONENTS */
+function InfoBox({ title, value }) {
+  return (
+    <div
+      style={{
+        border: `1px solid ${COLORS.border}`,
+        padding: "18px",
+      }}
+    >
+      <div
+        style={{
+          color: COLORS.purple,
+          fontSize: "10px",
+          fontWeight: "bold",
+          letterSpacing: "1.5px",
+        }}
+      >
+        {title}
+      </div>
+
+      <div
+        style={{
+          fontFamily:
+            '"Cormorant Garamond", Georgia, serif',
+          fontSize: "24px",
+          marginTop: "7px",
+        }}
+      >
+        {value}
+      </div>
+    </div>
+  );
+}
 
 function Stat({ title, value }) {
   return (
@@ -609,7 +591,7 @@ function Stat({ title, value }) {
       <div
         style={{
           color: COLORS.gray,
-          fontSize: "8px",
+          fontSize: "10px",
           fontWeight: "bold",
           letterSpacing: "1.5px",
         }}
@@ -629,12 +611,19 @@ function Stat({ title, value }) {
   );
 }
 
-function SectionTitle({ title, subtitle }) {
+function SectionTitle({
+  title,
+  subtitle,
+}) {
   return (
-    <div style={{ marginBottom: "15px" }}>
+    <div
+      style={{
+        marginBottom: "15px",
+      }}
+    >
       <div
         style={{
-          fontSize: "10px",
+          fontSize: "11px",
           fontWeight: "bold",
           letterSpacing: "2px",
         }}
@@ -645,8 +634,8 @@ function SectionTitle({ title, subtitle }) {
       <div
         style={{
           color: COLORS.gray,
-          fontSize: "9px",
-          marginTop: "4px",
+          fontSize: "13px",
+          marginTop: "5px",
         }}
       >
         {subtitle}
@@ -655,58 +644,53 @@ function SectionTitle({ title, subtitle }) {
   );
 }
 
-function StatusCard({
+function Status({ status }) {
+  const normalized =
+    status?.toUpperCase() || "UPCOMING";
+
+  const isLive = normalized === "LIVE";
+  const isComplete =
+    normalized === "COMPLETED";
+
+  return (
+    <div
+      style={{
+        padding: "8px 12px",
+        background: isLive
+          ? COLORS.green
+          : isComplete
+          ? COLORS.lightGreen
+          : COLORS.lightGold,
+        color: isLive
+          ? COLORS.white
+          : isComplete
+          ? COLORS.green
+          : "#806313",
+        fontSize: "10px",
+        fontWeight: "bold",
+      }}
+    >
+      {normalized}
+    </div>
+  );
+}
+
+function ActionButton({
   title,
-  description,
   onClick,
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       style={{
-        textAlign: "left",
-        border: `1px solid ${COLORS.border}`,
-        background: COLORS.white,
-        padding: "18px",
-        cursor: "pointer",
-      }}
-    >
-      <div
-        style={{
-          color: COLORS.purple,
-          fontSize: "9px",
-          fontWeight: "bold",
-        }}
-      >
-        {title}
-      </div>
-
-      <div
-        style={{
-          color: COLORS.gray,
-          fontSize: "10px",
-          marginTop: "6px",
-          lineHeight: "1.5",
-        }}
-      >
-        {description}
-      </div>
-    </button>
-  );
-}
-
-function ActionButton({ title, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        minHeight: "48px",
+        minHeight: "50px",
         border: "none",
         background: COLORS.purple,
         color: COLORS.white,
         cursor: "pointer",
         fontWeight: "bold",
-        fontSize: "8px",
+        fontSize: "11px",
         letterSpacing: "1px",
       }}
     >
@@ -714,24 +698,3 @@ function ActionButton({ title, onClick }) {
     </button>
   );
 }
-
-/* STYLES */
-
-const buttonStyle = {
-  minHeight: "44px",
-  border: "none",
-  background: COLORS.purple,
-  color: COLORS.white,
-  padding: "0 16px",
-  cursor: "pointer",
-  fontWeight: "bold",
-  fontSize: "9px",
-};
-
-const statusButton = {
-  border: "none",
-  padding: "8px 12px",
-  cursor: "pointer",
-  fontSize: "8px",
-  fontWeight: "bold",
-};
